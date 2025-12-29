@@ -13,7 +13,7 @@ export const Header = () => {
       <Toolbar sx={{ justifyContent: "space-between" }}>
         <Box>
           <Typography variant="h5" component="h2">
-            <Link to="/">Promptly Vault</Link>
+            <Link to="/">ThePromptBook</Link>
           </Typography>
         </Box>
         {user ? (
