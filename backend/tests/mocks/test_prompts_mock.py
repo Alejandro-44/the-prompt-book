@@ -1,4 +1,4 @@
-[
+prompt_create_mocks = [
   {
     "title": "Integration test",
     "prompt": "Write a poem",

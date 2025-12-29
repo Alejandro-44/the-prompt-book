@@ -1,9 +1,8 @@
 import pytest
-import json
 from bson import ObjectId
 
 from app.schemas.prompt_schema import Prompt, PromptSummary
-
+from tests.mocks.test_prompts_mock import prompt_create_mocks
 
 PROMPT_MOCKS_FILE = "./tests/mocks/test_prompts_mock.json"
 MOCK_RANDOM_ID = str(ObjectId())
@@ -62,12 +61,8 @@ async def test_add_prompts_and_get_prompts(e2e_client):
 
     response = await e2e_client.post("/auth/login", json=login_data)
     e2e_client.cookies.set("access_token", response.cookies.get("access_token"))
-
-    # Get mock prompts and add each one
-    with open(PROMPT_MOCKS_FILE, "r", encoding="utf-8") as prompts_file:
-        mock_prompts = json.load(prompts_file)
         
-    for mock_prompt in mock_prompts:
+    for mock_prompt in prompt_create_mocks:
         response = await e2e_client.post("/prompts/", json=mock_prompt)
         assert response.status_code == 201
 

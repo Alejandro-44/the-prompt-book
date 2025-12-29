@@ -1,8 +1,7 @@
-import json
 import pytest
 
 from app.schemas.user_schema import User
-
+from tests.mocks.test_prompts_mock import prompt_create_mocks
 
 PROMPT_MOCKS_FILE = "./tests/mocks/test_prompts_mock.json"
 
@@ -45,10 +44,7 @@ async def test_user_create_prompts_and_get_only_its_own_prompts(e2e_client):
     response = await e2e_client.post("/auth/login", json=login_data)
     e2e_client.cookies.set("access_token", response.cookies.get("access_token"))
 
-    with open(PROMPT_MOCKS_FILE, "r", encoding="utf-8") as prompts_file:
-        mock_prompts = json.load(prompts_file)
-
-    for mock_prompt in mock_prompts:
+    for mock_prompt in prompt_create_mocks:
         response = await e2e_client.post("/prompts/", json=mock_prompt)
         assert response.status_code == 201
 
@@ -72,7 +68,7 @@ async def test_user_create_prompts_and_get_only_its_own_prompts(e2e_client):
     response = await e2e_client.post("/auth/login", json=login_data)
     e2e_client.cookies.set("access_token", response.cookies.get("access_token"))
 
-    response = await e2e_client.post("/prompts/", json=mock_prompts[0])
+    response = await e2e_client.post("/prompts/", json=prompt_create_mocks[0])
     assert response.status_code == 201
     data = response.json()
 
