@@ -37,3 +37,15 @@ export type PromptCreateResponse = {
 }
 
 export type PromptUpdate = Partial<PromptCreate>;
+
+export type PromptComment = {
+  id: string;
+  content: string;
+  promptId: string;
+  author: string;
+  pubDate: Date;
+}
+
+export type PromptCommentCreate = {
+  content: string;
+}

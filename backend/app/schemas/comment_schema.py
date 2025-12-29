@@ -14,6 +14,7 @@ class Comment(CommentBase):
     user_id: str
     prompt_id: str
     pub_date: datetime
+    author: str
 
     @staticmethod
     def from_document(document):
@@ -22,6 +23,7 @@ class Comment(CommentBase):
             content=document["content"],
             prompt_id=str(document["prompt_id"]),
             user_id=str(document["user_id"]),
+            author=str(document["author"]),
             pub_date=document["pub_date"],
         )
 

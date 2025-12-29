@@ -1,16 +1,17 @@
 import { useFormContext } from "react-hook-form";
 import { TextField } from "@mui/material";
 
-type Props = {
+type InputProps = {
   name: string;
   type?: string;
   label?: string;
   placeholder?: string;
   multiline?: boolean;
   rows?: number;
+  variant?: "filled" | "outlined" | "standard"
 };
 
-function Input({ name, type, label, placeholder, multiline, rows }: Props) {
+function Input({ name, type, label, placeholder, multiline, rows, variant }: InputProps) {
   const {
     register,
     formState: { errors },
@@ -28,6 +29,7 @@ function Input({ name, type, label, placeholder, multiline, rows }: Props) {
     <TextField
       {...register(name)}
       sx={{ whiteSpace: "pre-line" }}
+      variant={variant}
       name={name}
       type={type}
       label={label}

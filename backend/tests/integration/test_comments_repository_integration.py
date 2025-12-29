@@ -9,19 +9,34 @@ from app.repositories.comments_repository import CommentsRepository
 async def test_comment_lifecycle(db):
     repo = CommentsRepository(db)
 
+    mock_user_id_a = ObjectId()
+    await db.users.insert_one({
+        "_id": mock_user_id_a,
+        "username": "testuser",
+        "email": "testuser@example.com"
+    })
+
+    mock_user_id_b = ObjectId()
+    await db.users.insert_one({
+        "_id": mock_user_id_b,
+        "username": "testuser",
+        "email": "testuser@example.com"
+    })
+
+
     prompt_mock_id = ObjectId()
 
     comment_data_a = {
         "content": "Comment test",
         "prompt_id": prompt_mock_id,
-        "user_id": ObjectId(),
+        "user_id": mock_user_id_a,
         "pub_date": datetime.now()
     }
 
     comment_data_b = {
         "content": "Comment test",
         "prompt_id": prompt_mock_id,
-        "user_id": ObjectId(),
+        "user_id": mock_user_id_b,
         "pub_date": datetime.now()
     }
 
@@ -33,7 +48,6 @@ async def test_comment_lifecycle(db):
     assert isinstance(inserted_id_b, str)
 
     # --- GET BY PROMPT ---
-    print(prompt_mock_id)
     found_comments = await repo.get_by_prompt(prompt_mock_id)
     assert len(found_comments) == 2
 

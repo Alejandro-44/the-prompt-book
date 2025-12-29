@@ -278,8 +278,7 @@ async def trying_to_delete_a_prompt_that_does_not_exist_or_not_being_the_owner_r
 
 
 @pytest.mark.asyncio
-async def test_add_commnet_to_a_prompt(e2e_client):
-    # Register and login a new user to add prompts
+async def test_add_comment_to_a_prompt(e2e_client):
     test_user = {"username": "john", "email": "john@example.com", "password": "1234"}
     await e2e_client.post(
         "/auth/register",
@@ -335,4 +334,3 @@ async def test_add_commnet_to_a_prompt(e2e_client):
     comments = response.json()
 
     assert len(comments) == 1
-

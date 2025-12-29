@@ -7,7 +7,7 @@ export function renderHookWithClient<Props, Result>(
   options?: RenderHookOptions<Props>
 ) {
 
-  const client = new QueryClient({
+  const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
         retry: false,
@@ -16,12 +16,17 @@ export function renderHookWithClient<Props, Result>(
     },
   });
 
-  return renderHook(callback, {
+  const renderResult = renderHook(callback, {
     ...options,
     wrapper: ({ children }) => (
-      <QueryClientProvider client={client}>
+      <QueryClientProvider client={queryClient}>
         <MemoryRouter>{children}</MemoryRouter>
       </QueryClientProvider>
     ),
   });
+
+  return {
+    ...renderResult,
+    queryClient,
+  };
 }

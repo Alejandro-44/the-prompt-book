@@ -18,7 +18,7 @@ describe("usePromptDelete", () => {
     const mockPromptId = "abc-123";
     const { result } = renderHookWithClient(() => usePromptDelete({ promptId: mockPromptId }));
 
-    result.current.mutate(mockPromptId);
+    result.current.mutate();
     await waitFor(() => {
       expect(navigateMock).toHaveBeenCalledWith("/users/me");
     })  

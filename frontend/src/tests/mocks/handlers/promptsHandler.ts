@@ -1,6 +1,6 @@
 import { delay, http, HttpResponse } from "msw";
-import { promptMocks, promptSummaryMocks } from "../data/mocks";
-import type { PromptCreateDTO } from "@/services/prompts/prompts.dto";
+import { comments, promptMocks, promptSummaryMocks } from "../data/mocks";
+import type { PromptCommentCreateDTO, PromptCreateDTO } from "@/services/prompts/prompts.dto";
 
 export const promptsHandlers = [
   http.get("http://127.0.0.1:8000/prompts/", async () => {
@@ -49,31 +49,78 @@ export const promptsHandlers = [
       );
     }
   ),
-  http.patch<{ id: string }>("http://127.0.0.1:8000/prompts/:id", async ({ request, params }) => {
-    const updatedData = await request.json();
+  http.patch<{ id: string }>(
+    "http://127.0.0.1:8000/prompts/:id",
+    async ({ request, params }) => {
+      const updatedData = await request.json();
 
-    const updatedPrompt = promptMocks.find(prompt => prompt.id === params.id);
-    if (!updatedPrompt) {
-      return HttpResponse.json(
-        { message: "Prompt not found" },
-        { status: 404 }
+      const updatedPrompt = promptMocks.find(
+        (prompt) => prompt.id === params.id
       );
+      if (!updatedPrompt) {
+        return HttpResponse.json(
+          { message: "Prompt not found" },
+          { status: 404 }
+        );
+      }
+
+      Object.assign(updatedPrompt, updatedData);
+
+      return HttpResponse.json({}, { status: 201 });
     }
+  ),
+  http.delete<{ id: string }>(
+    "http://127.0.0.1:8000/prompts/:id",
+    async ({ params }) => {
+      const prompt = promptMocks.find((prompt) => prompt.id === params.id);
+      if (!prompt) {
+        return HttpResponse.json(
+          { message: "Prompt not found" },
+          { status: 404 }
+        );
+      }
+      promptMocks.splice(promptMocks.indexOf(prompt), 1);
 
-    Object.assign(updatedPrompt, updatedData);
-
-    return HttpResponse.json({}, { status: 201 });
-  }),
-  http.delete<{ id: string }>("http://127.0.0.1:8000/prompts/:id", async ({ params }) => {
-    const prompt = promptMocks.find(prompt => prompt.id === params.id);
-    if (!prompt) {
-      return HttpResponse.json(
-        { message: "Prompt not found" },
-        { status: 404 }
+      return HttpResponse.json({}, { status: 204 });
+    }
+  ),
+  http.get<{ id: string }>(
+    "http://127.0.0.1:8000/prompts/:id/comments",
+    ({ params }) => {
+      const prompt = promptMocks.find((prompt) => prompt.id === params.id);
+      if (!prompt) {
+        return HttpResponse.json(
+          { message: "Prompt not found" },
+          { status: 404 }
+        );
+      }
+      const promptComments = comments.filter(
+        (comment) => comment.prompt_id === params.id
       );
+      return HttpResponse.json(promptComments);
     }
-    promptMocks.splice(promptMocks.indexOf(prompt), 1);
-
-    return HttpResponse.json({}, { status: 204 });
-  }),
+  ),
+  http.post<{ id: string }, PromptCommentCreateDTO>(
+    "http://127.0.0.1:8000/prompts/:id/comments",
+    async ({ params, request }) => {
+      const promptExists = promptMocks.some(
+        (prompt) => prompt.id === params.id
+      );
+      if (!promptExists) {
+        return HttpResponse.json(
+          { message: "Prompt not found" },
+          { status: 404 }
+        );
+      }
+      const body = await request.json();
+      comments.push({
+        id: "jkl-101112",
+        author: "johndoe",
+        prompt_id: params.id,
+        content: body.content,
+        pub_date: Date()
+      });
+      return HttpResponse.json({}, { status: 201 });
+    }
+  ),
 ];

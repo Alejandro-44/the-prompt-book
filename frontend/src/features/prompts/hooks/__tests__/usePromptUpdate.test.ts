@@ -18,7 +18,7 @@ describe("usePromptUpdate", () => {
     const mockPromptId = "abc-123";
     const { result } = renderHookWithClient(() => usePromptUpdate({ promptId: mockPromptId }));
 
-    result.current.mutate(mockPromptId);
+    result.current.mutate({ "title": "Updated title"});
     await waitFor(() => {
       expect(navigateMock).toHaveBeenCalledWith("/prompts/abc-123");
     })  

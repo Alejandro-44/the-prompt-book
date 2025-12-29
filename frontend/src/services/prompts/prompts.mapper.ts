@@ -1,5 +1,5 @@
-import type { PromptCreateDTO, PromptDTO, PromptSummaryDTO } from "./prompts.dto";
-import type { Prompt, PromptCreate, PromptSummary } from "./prompts.model";
+import type { PromptCommentDTO, PromptCreateDTO, PromptDTO, PromptSummaryDTO } from "./prompts.dto";
+import type { Prompt, PromptComment, PromptCreate, PromptSummary } from "./prompts.model";
 
 export const promptMapper = {
   toPrompt: (dto: PromptDTO): Prompt => ({
@@ -60,4 +60,14 @@ export const promptUpdateMapper = {
     }
     return dto;
   },
+}
+
+export const promptCommentMapper = {
+  toPromptComment: (dto: PromptCommentDTO): PromptComment => ({
+    id: dto.id,
+    content: dto.content,
+    promptId: dto.prompt_id,
+    author: dto.author,
+    pubDate: dto.pub_date
+  })
 }
