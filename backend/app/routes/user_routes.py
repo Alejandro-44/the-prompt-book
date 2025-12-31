@@ -49,9 +49,25 @@ async def get_user(user_id: str, service: ServicesDependency):
     return await service.user.get_by_id(user_id)
 
 
-@router.get("/{id}/prompts", response_model=list[PromptSummary], summary="Get user prompts")
-async def get_user_prompts(id: str, service: ServicesDependency):
+@router.get("/{id}/prompts", response_model=PaginatedResponse[PromptSummary], summary="Get user prompts")
+async def get_user_prompts(
+    id: str,
+    services: ServicesDependency,
+    page: int = Query(1, ge=1),
+    limit: int = Query(10, ge=1, le=100),
+    tags: list[str] | None = Query(None),
+    model: str | None = None):
     """
     Get prompts created by a specific user
     """
-    return await service.prompts.get_by_user(id)
+    filters = {
+        "tags": tags,
+        "model": model,
+        "user_id": id,
+    }
+
+    return await services.prompts.get_summary(
+        filters=filters,
+        page=page,
+        limit=limit
+    )
