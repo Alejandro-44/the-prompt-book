@@ -8,24 +8,31 @@ class PromptsRepository:
     def __init__(self, database):
         self.__collection: Collection[Prompt] = database["prompts"]
 
-    async def get_summary(self, filters: dict | None = None) -> list[Prompt]:
-        pipeline = []
-        if filters:
-            mongo_filters = {}
+    async def get_summary(
+        self, 
+        filters: dict,
+        skip: int,
+        limit: int
+    ) -> list[Prompt]:
+        mongo_filters = {}
 
-            if "user_id" in filters:
+        if filters:
+            if filters.get("user_id"):
                 mongo_filters["user_id"] = ObjectId(filters["user_id"])
 
-            if "tags" in filters:
-                mongo_filters["tags"] = { "$in": filters["tags"] }
+            if filters.get("tags"):
+                mongo_filters["tags"] = {"$in": filters["tags"]}
 
-            if "model" in filters:
+            if filters.get("model"):
                 mongo_filters["model"] = filters["model"]
 
-            pipeline.append({ "$match": mongo_filters })
+        total = await self.__collection.count_documents(mongo_filters)
 
-        
-        pipeline.extend([
+        pipeline = [
+            {"$match": mongo_filters},
+            {"$sort": {"pub_date": -1}},
+            {"$skip": skip},
+            {"$limit": limit},
             {
                 "$lookup": {
                     "from": "users",
@@ -34,7 +41,7 @@ class PromptsRepository:
                     "as": "author"
                 }
             },
-            { "$unwind": "$author" },
+            {"$unwind": "$author"},
             {
                 "$project": {
                     "_id": 1,
@@ -46,10 +53,12 @@ class PromptsRepository:
                     "author_name": "$author.username"
                 }
             }
-        ])
-
+        ]
+            
         cursor = await self.__collection.aggregate(pipeline)
-        return await cursor.to_list()
+        items = await cursor.to_list()
+
+        return items, total
 
     async def get_by_id(self, prompt_id: str) -> Prompt:
         pipeline = [

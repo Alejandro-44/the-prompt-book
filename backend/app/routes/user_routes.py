@@ -1,7 +1,7 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter, Query, status
 
 from app.dependencies import UserDependency, ServicesDependency
-from app.schemas import PromptSummary, User
+from app.schemas import PromptSummary, User, PaginatedResponse
 
 
 router = APIRouter(prefix="/users", tags=["Users"])
@@ -15,12 +15,28 @@ async def get_me(current_user: UserDependency):
     return current_user
 
 
-@router.get("/me/prompts", response_model=list[PromptSummary], summary="Get my prompts")
-async def get_my_prompts(current_user: UserDependency, service: ServicesDependency):
+@router.get("/me/prompts", response_model=PaginatedResponse[PromptSummary], summary="Get my prompts")
+async def get_my_prompts(
+    current_user: UserDependency,
+    services: ServicesDependency,
+    page: int = Query(1, ge=1),
+    limit: int = Query(10, ge=1, le=100),
+    tags: list[str] | None = Query(None),
+    model: str | None = None):
     """
     Get prompts created by the current user
     """
-    return await service.prompts.get_by_user(current_user.id)
+    filters = {
+        "tags": tags,
+        "model": model,
+        "user_id": current_user.id,
+    }
+
+    return await services.prompts.get_summary(
+        filters=filters,
+        page=page,
+        limit=limit
+    )
 
 
 @router.delete("/me", status_code=status.HTTP_204_NO_CONTENT)

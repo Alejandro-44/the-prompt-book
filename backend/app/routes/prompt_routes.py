@@ -1,16 +1,37 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, Query, status 
 
 from app.dependencies import ServicesDependency, UserDependency
-from app.schemas import Prompt, PromptCreate, PromptUpdate, PromptSummary, Comment, CommentCreate
+from app.schemas import Prompt, PromptCreate, PromptUpdate, PromptSummary, Comment, CommentCreate, PaginatedResponse
 from app.core.exceptions import PromptNotFoundError, DatabaseError, CommentNotFoundError
 
 
 router = APIRouter(prefix="/prompts", tags=["Prompts"])
 
 
-@router.get("/", response_model=list[PromptSummary], status_code=status.HTTP_200_OK)
-async def get_prompts(services: ServicesDependency):
-    return await services.prompts.get_summary()
+@router.get(
+    "/",
+    response_model=PaginatedResponse[PromptSummary],
+    status_code=status.HTTP_200_OK
+)
+async def get_prompts(
+    services: ServicesDependency,
+    page: int = Query(1, ge=1),
+    limit: int = Query(10, ge=1, le=100),
+    tags: list[str] | None = Query(None),
+    model: str | None = None,
+    user_id: str | None = None,
+):
+    filters = {
+        "tags": tags,
+        "model": model,
+        "user_id": user_id,
+    }
+
+    return await services.prompts.get_summary(
+        filters=filters,
+        page=page,
+        limit=limit
+    )
 
 
 @router.get("/{prompt_id}", response_model=Prompt, status_code=status.HTTP_200_OK)

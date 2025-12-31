@@ -1,3 +1,4 @@
+import math
 from datetime import datetime
 
 from bson import ObjectId
@@ -15,13 +16,21 @@ class PromptsService:
     def process_prompt_documents(self, prompt_documents) -> list[PromptSummary]:
         return [PromptSummary.from_document(document) for document in prompt_documents]
 
-    async def get_summary(self) -> list[PromptSummary]:
-        prompt_documents = await self.__prompts_repo.get_summary()
-        return self.process_prompt_documents(prompt_documents)
+    async def get_summary(self, filters: dict, page: int, limit: int) -> list[PromptSummary]:
+        skip = (page - 1) * limit
 
-    async def get_by_user(self, user_id: dict) -> list[PromptSummary]:
-        prompt_documents = await self.__prompts_repo.get_summary({ "user_id": ObjectId(user_id) })
-        return self.process_prompt_documents(prompt_documents)
+        items, total = await self.__prompts_repo.get_summary(
+            filters,
+            skip,
+            limit
+        )
+        return {
+            "items": self.process_prompt_documents(items),
+            "total": total,
+            "page": page,
+            "limit": limit,
+            "pages": math.ceil(total / limit) if total > 0 else 0
+        }
     
     async def get_by_id(self, prompt_id: str) -> Prompt | PromptNotFoundError:
         prompt_document = None
