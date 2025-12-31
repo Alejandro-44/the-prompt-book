@@ -1,15 +1,16 @@
 import { httpClient } from "../api/httpClient";
 import type {
+  GetPromptsResponse,
   PromptCommentDTO,
   PromptDTO,
-  PromptSummaryDTO,
 } from "./prompts.dto";
 import type {
+  GetPromptsParams,
+  PaginatedPrompts,
   Prompt,
   PromptCommentCreate,
   PromptCreate,
   PromptCreateResponse,
-  PromptSummary,
 } from "./prompts.model";
 import {
   promptCommentMapper,
@@ -18,21 +19,6 @@ import {
   promptSummaryMapper,
   promptUpdateMapper,
 } from "./prompts.mapper";
-import type { PaginatedResponse } from "../api/api.types";
-
-
-type GetPromptsResponse = PaginatedResponse<PromptSummaryDTO>
-type PaginatedPrompts = PaginatedResponse<PromptSummary>
-
-export type GetPromptsParams = {
-  page?: number
-  limit?: number
-  search?: string
-  tags?: string[]
-  model?: string
-  user_id?: string
-}
-
 
 export class PromptsService {
   static async getAllPrompts(params: GetPromptsParams): Promise<PaginatedPrompts> {
