@@ -3,8 +3,36 @@ import { comments, promptMocks, promptSummaryMocks } from "../data/mocks";
 import type { PromptCommentCreateDTO, PromptCreateDTO } from "@/services/prompts/prompts.dto";
 
 export const promptsHandlers = [
-  http.get("http://127.0.0.1:8000/prompts/", async () => {
-    return HttpResponse.json(promptSummaryMocks);
+  http.get("http://127.0.0.1:8000/prompts/", async ({ request }) => {
+    const url = new URL(request.url);
+ 
+    const page = parseInt(url.searchParams.get('page') || "1");
+    const limit = parseInt(url.searchParams.get('limit') || "10");
+    const model = url.searchParams.get('model');
+    const tags = url.searchParams.get('tags');
+
+    const skip = (page - 1) * limit
+    const total = promptSummaryMocks.length;
+    const pages = Math.ceil(total / limit)
+
+    const end = skip + limit > 18 ? 18: skip + limit;
+    const prompts = promptSummaryMocks.slice(skip, end).filter((prompt) => {
+      let isValid = true
+      if (model) {
+        isValid = prompt.model === model
+      }
+      if (tags) {
+        isValid = prompt.tags.some((promptTags) => tags.includes(promptTags));
+      }
+      return isValid;
+    })
+    return HttpResponse.json({
+      items: prompts,
+      total,
+      page,
+      limit,
+      pages
+    });
   }),
   http.get<{ id: string }>(
     "http://127.0.0.1:8000/prompts/:id",

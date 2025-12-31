@@ -18,11 +18,33 @@ import {
   promptSummaryMapper,
   promptUpdateMapper,
 } from "./prompts.mapper";
+import type { PaginatedResponse } from "../api/api.types";
+
+
+type GetPromptsResponse = PaginatedResponse<PromptSummaryDTO>
+type PaginatedPrompts = PaginatedResponse<PromptSummary>
+
+export type GetPromptsParams = {
+  page?: number
+  limit?: number
+  search?: string
+  tags?: string[]
+  model?: string
+  user_id?: string
+}
+
 
 export class PromptsService {
-  static async getAllPrompts(): Promise<PromptSummary[]> {
-    const data = await httpClient.get<PromptSummaryDTO[]>("/prompts/");
-    return data.map(promptSummaryMapper.toPromptSummary);
+  static async getAllPrompts(params: GetPromptsParams): Promise<PaginatedPrompts> {
+    const data = await httpClient.get<GetPromptsResponse>("/prompts/", { params });
+    const processedPrompts = data.items.map(promptSummaryMapper.toPromptSummary);
+    return {
+      items: processedPrompts,
+      total: data.total,
+      limit: data.limit,
+      page: data.page,
+      pages: data.pages
+    }
   }
 
   static async getPromptDetail(id: string): Promise<Prompt> {

@@ -17,7 +17,7 @@ describe("usePromptCreate", () => {
     const mockPrompt = {
       title: "Write a perfect essay",
       prompt: "Write a essay...",
-      result_example: "A prefect essay...",
+      resultExample: "A prefect essay...",
       model: "gpt-5",
       tags: ["ai", "poem"],
     };

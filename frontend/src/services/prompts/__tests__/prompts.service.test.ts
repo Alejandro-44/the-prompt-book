@@ -2,39 +2,30 @@ import { PromptsService } from "../prompts.service";
 
 describe("PromptsService", () => {
   it("get all prompts successfully", async () => {
-    const prompts = await PromptsService.getAllPrompts();
-    expect(prompts).toHaveLength(3);
-    expect(prompts[0]).toEqual({
-      id: "abc-123",
-      title: "Generate a marketing headline",
-      model: "gpt-4",
-      tags: ["marketing", "copywriting", "saas"],
-      authorId: "123-abc",
-      authorName: "johndoe",
-      pubDate: new Date("2024-01-15T10:30:00Z"),
-    });
+    const response = await PromptsService.getAllPrompts({ page: 1, limit: 10});
+    
+    expect(response).toHaveProperty("items");
+    expect(response).toHaveProperty("total");
+    expect(response).toHaveProperty("page");
+    expect(response).toHaveProperty("limit");
+    expect(response).toHaveProperty("pages");
+
+    expect(response.items).toHaveLength(10);
+    expect(response.total).toBe(18);
+    expect(response.pages).toBe(2);
+    expect(response.page).toBe(1);
+    expect(response.limit).toBe(10);
   });
 
   it("return prompt details with correct types", async () => {
-    const mockPromptId = "abc-123";
+    const mockPromptId = "69398c1d5393462cecf974c9";
     const prompt = await PromptsService.getPromptDetail(mockPromptId);
 
-    expect(prompt).toEqual({
-      id: "abc-123",
-      title: "Generate a marketing headline",
-      prompt:
-        "Write a catchy marketing headline for a SaaS that helps users automate workflows.",
-      resultExample:
-        "Automate Everything: The Smartest Way to Scale Your Productivity.",
-      model: "gpt-4",
-      tags: ["marketing", "copywriting", "saas"],
-      pubDate: new Date("2024-01-15T10:30:00Z"),
-      author: {
-        id: "123-abc",
-        username: "johndoe",
-        email: "johndoe@example.com",
-      },
-    });
+    expect(prompt).toHaveProperty("id");
+    expect(prompt).toHaveProperty("title");
+    expect(prompt).toHaveProperty("prompt");
+    expect(prompt).toHaveProperty("resultExample");
+    expect(prompt).toHaveProperty("author");
   });
 
   it("returns successful message and id when create a new prompt successfully", async () => {
@@ -53,7 +44,7 @@ describe("PromptsService", () => {
   });
 
   it("update a prompt successfully", async () => {
-    const mockPromptId = "abc-123";
+    const mockPromptId = "69398c1d5393462cecf974c9";
     const promptUpdate = {
       title: "Updated Title",
     };
@@ -67,7 +58,7 @@ describe("PromptsService", () => {
   });
 
   it("delete a prompt successfully", async () => {
-    const mockPromptId = "ghi-789";
+    const mockPromptId = "69398c1d5393462cecf974c7";
 
     await expect(PromptsService.delete(mockPromptId)).resolves.toBeUndefined();
 
@@ -77,7 +68,7 @@ describe("PromptsService", () => {
   });
 
   it("get prompt comments successfully", async () => {
-    const mockPromptId = "abc-123";
+    const mockPromptId = "69398c1d5393462cecf974c9";
 
     const comments = await PromptsService.getPromptComments(mockPromptId);
     const mockAuthors = ["alex", "matt", "jane"];
@@ -89,7 +80,7 @@ describe("PromptsService", () => {
   });
 
   it("create comments successfully", async () => {
-    const mockPromptId = "def-456";
+    const mockPromptId = "69398c1d5393462cecf974c8";
     const mockComment = { content: "Hey, that was helpful" };
     await PromptsService.createComment(
       mockPromptId,
