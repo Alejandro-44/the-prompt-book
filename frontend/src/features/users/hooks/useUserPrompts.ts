@@ -1,27 +1,29 @@
-import { UsersService } from "@/services";
+import { UsersService, type GetPromptsParams, type PaginatedPrompts } from "@/services";
 import { useQuery } from "@tanstack/react-query";
 
-type UseUserPromptsParams = {
+interface UseUserPromptsParams extends GetPromptsParams {
   mode: "me" | "public";
-  userId?: string;
+  userId?: GetPromptsParams["user_id"];
 };
 
-export function useUserPrompts({ mode, userId }: UseUserPromptsParams) {
+export function useUserPrompts({ mode, userId, page, limit, tags, model, search }: UseUserPromptsParams) {
   const isMe = mode === "me";
-
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error } = useQuery<PaginatedPrompts>({
     queryKey: isMe
-      ? ["users", "me", "prompts"]
-      : ["users", userId, "prompts"],
+      ? ["users", "me", "prompts", page, limit, tags]
+      : ["users", userId, "prompts", page, limit],
     queryFn: () =>
       isMe
-        ? UsersService.getMyPrompts()
-        : UsersService.getUserPrompts(userId!),
+        ?  UsersService.getMyPrompts({ page, tags, model, search })
+        : UsersService.getUserPrompts(userId!, { page, tags, model, search }),
     enabled: isMe || !!userId,
   });
 
   return {
-    prompts: data,
+    prompts: data?.items,
+    total: data?.total,
+    page: data?.page,
+    pages: data?.pages,
     isLoading,
     error,
   };

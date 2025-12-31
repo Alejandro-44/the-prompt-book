@@ -12,21 +12,24 @@ describe("useUserPrompts", () => {
       expect(result.current.isLoading).toBe(false);
     });
 
-    expect(result.current.prompts).toHaveLength(3);
-    expect(result.current.prompts?.[0].title).toBe("Generate a marketing headline");
+    expect(result.current.prompts).toHaveLength(4);
+    expect(result.current.total).toBe(4)
+    expect(result.current.page).toBe(1)
     expect(result.current.error).toBeNull();
   });
 
   it("fetches and returns user's prompts when mode is 'public' and userId is provided", async () => {
     const { result } = renderHookWithClient(() =>
-      useUserPrompts({ mode: "public", userId: "123-abc" })
+      useUserPrompts({ mode: "public", userId: "693987497f7a423bcb83fe0c" })
     );
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
     });
 
-    expect(result.current.prompts).toHaveLength(3);
+    expect(result.current.prompts).toHaveLength(4);
+    expect(result.current.total).toBe(4)
+    expect(result.current.page).toBe(1)
     expect(result.current.error).toBeNull();
   });
 

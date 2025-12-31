@@ -2,8 +2,8 @@ import { httpClient } from "../api/httpClient";
 import type { UserDTO } from "./users.dto";
 import type { User } from "./users.model";
 import { userMapper } from "./users.mapper";
-import type { PromptSummary } from "../prompts/prompts.model";
-import type { PromptSummaryDTO } from "../prompts/prompts.dto";
+import type { GetPromptsParams, PaginatedPrompts } from "../prompts/prompts.model";
+import type { GetPromptsResponse } from "../prompts/prompts.dto";
 import { promptSummaryMapper } from "../prompts/prompts.mapper";
 
 export class UsersService {
@@ -16,9 +16,16 @@ export class UsersService {
     await httpClient.delete("/users/me");
   }
 
-  static async getMyPrompts(): Promise<PromptSummary[]> {
-    const data = await httpClient.get<PromptSummaryDTO[]>("/users/me/prompts");
-    return data.map(promptSummaryMapper.toPromptSummary);
+  static async getMyPrompts(params: GetPromptsParams): Promise<PaginatedPrompts> {
+    const data = await httpClient.get<GetPromptsResponse>("/users/me/prompts/", { params });
+    const processedPrompts = data.items.map(promptSummaryMapper.toPromptSummary);
+    return {
+      items: processedPrompts,
+      total: data.total,
+      limit: data.limit,
+      page: data.page,
+      pages: data.pages
+    }
   }
 
   static async getUserById(userId: string): Promise<User> {
@@ -26,10 +33,15 @@ export class UsersService {
     return userMapper.toUser(data);
   }
 
-  static async getUserPrompts(userId: string): Promise<PromptSummary[]> {
-    const data = await httpClient.get<PromptSummaryDTO[]>(
-      `/users/${userId}/prompts`
-    );
-    return data.map(promptSummaryMapper.toPromptSummary);
+  static async getUserPrompts(userId: string, params: GetPromptsParams): Promise<PaginatedPrompts> {
+    const data = await httpClient.get<GetPromptsResponse>(`/users/${userId}/prompts/`, { params });
+    const processedPrompts = data.items.map(promptSummaryMapper.toPromptSummary);
+    return {
+      items: processedPrompts,
+      total: data.total,
+      limit: data.limit,
+      page: data.page,
+      pages: data.pages
+    }
   }
 }
