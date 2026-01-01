@@ -10,8 +10,8 @@ describe("useUser", () => {
 
   it("returns the authenticated user when mode is 'me'", () => {
     const mockUser = {
-      id: "123-abc",
-      username: "johndoe",
+      id: "6939872c7f7a423bcb83fe0b",
+      username: "alex",
       isActive: true,
     } as any;
 
@@ -36,7 +36,7 @@ describe("useUser", () => {
 
   it("fetches and returns public user when mode is 'public' and userId is provided", async () => {
     const { result } = renderHookWithClient(() =>
-      useUser({ mode: "public", userId: "123-abc" })
+      useUser({ mode: "public", userId: "6930faa5239be95b75ed3c5c" })
     );
 
     await waitFor(() => {
@@ -44,7 +44,7 @@ describe("useUser", () => {
     });
 
     expect(result.current.user?.username).toBe("johndoe");
-    expect(result.current.user?.id).toBe("123-abc");
+    expect(result.current.user?.id).toBe("6930faa5239be95b75ed3c5c");
     expect(result.current.isLoading).toBe(false);
     expect(result.current.error).toBeNull();
   });

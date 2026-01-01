@@ -28,7 +28,7 @@ describe("AuthService", () => {
   it("should login and return a token", async () => {
     const token = await AuthService.login({
       email: "johndoe@example.com",
-      password: "securepassword",
+      password: "password123",
     });
 
     expect(token).toEqual({

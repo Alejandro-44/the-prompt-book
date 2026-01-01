@@ -15,7 +15,7 @@ vi.mock("react-router", async () => {
 
 describe("usePromptDelete", () => {
   it("redirects to /users/me on success", async () => {
-    const mockPromptId = "abc-123";
+    const mockPromptId = "69398c1d5393462cecf974c9";
     const { result } = renderHookWithClient(() => usePromptDelete({ promptId: mockPromptId }));
 
     result.current.mutate();

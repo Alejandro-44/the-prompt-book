@@ -9,14 +9,14 @@ describe("usePrompts", () => {
       { initialProps: { page: 1 } }
     );
 
-    expect(result.current.prompts).toBeUndefined();
-    expect(result.current.page).toBe(2)
+    expect(result.current.prompts).toBeUndefined();    
 
     await waitFor(() => {
       expect(result.current.prompts).toBeDefined();
     });
 
     expect(result.current.prompts).toHaveLength(10);
+    expect(result.current.page).toBe(1);
 
     rerender({ page: 2 })
 
@@ -25,5 +25,6 @@ describe("usePrompts", () => {
     });
 
     expect(result.current.prompts).toHaveLength(8);
+    expect(result.current.page).toBe(2);
   });
 });

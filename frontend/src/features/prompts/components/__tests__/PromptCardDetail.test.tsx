@@ -4,7 +4,7 @@ import { renderWithProviders } from "@/tests/utils/renderWithProviders";
 
 describe("PromptCardDetail", () => {
   beforeEach(() => {
-    renderWithProviders(<PromptCardDetail promptId="abc-123" />);
+    renderWithProviders(<PromptCardDetail promptId="69398c1d5393462cecf974c9" />);
   });
 
   afterEach(() => {
@@ -14,15 +14,15 @@ describe("PromptCardDetail", () => {
   test("should render prompt details", async () => {
 
     await waitFor(() => {
-      expect(screen.getByText("gpt-4")).toBeDefined();
+      expect(screen.getByText("gpt-3.5")).toBeDefined();
     });
 
-    expect(screen.getByText("Generate a marketing headline")).toBeDefined();
-    expect(screen.getByText("johndoe")).toBeDefined();
-    expect(screen.getByText("Write a catchy marketing headline for a SaaS that helps users automate workflows.")).toBeDefined();
-    expect(screen.getByText("Automate Everything: The Smartest Way to Scale Your Productivity.")).toBeDefined();
+    expect(screen.getByText("TikTok script idea")).toBeDefined();
+    expect(screen.getByText("creative_io")).toBeDefined();
+    expect(screen.getByText("Write a short funny TikTok script about studying with AI.")).toBeDefined();
+    expect(screen.getByText("AI: 'I analyzed your habits... you need coffee.'")).toBeDefined();
 
-    const tags = ["marketing", "copywriting", "saas"];
+    const tags = ["tiktok", "script"];
     tags.forEach((tag) => {
       expect(screen.getByText(tag)).toBeDefined();
     });
