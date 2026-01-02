@@ -13,8 +13,8 @@ describe("useUserPrompts", () => {
     });
 
     expect(result.current.prompts).toHaveLength(4);
-    expect(result.current.total).toBe(4)
-    expect(result.current.page).toBe(1)
+    expect(result.current.total).toBe(4);
+    expect(result.current.page).toBe(1);
     expect(result.current.error).toBeNull();
   });
 
@@ -28,8 +28,8 @@ describe("useUserPrompts", () => {
     });
 
     expect(result.current.prompts).toHaveLength(4);
-    expect(result.current.total).toBe(4)
-    expect(result.current.page).toBe(1)
+    expect(result.current.total).toBe(4);
+    expect(result.current.page).toBe(1);
     expect(result.current.error).toBeNull();
   });
 

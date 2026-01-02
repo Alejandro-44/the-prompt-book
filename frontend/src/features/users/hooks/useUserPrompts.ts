@@ -1,12 +1,14 @@
 import { UsersService, type GetPromptsParams, type PaginatedPrompts } from "@/services";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
 interface UseUserPromptsParams extends GetPromptsParams {
   mode: "me" | "public";
   userId?: GetPromptsParams["user_id"];
 };
 
-export function useUserPrompts({ mode, userId, page, limit, tags, model, search }: UseUserPromptsParams) {
+export function useUserPrompts({ mode, userId, limit, tags, model, search }: UseUserPromptsParams) {
+  const [page, setPage] = useState(1)
   const isMe = mode === "me";
   const { data, isLoading, error } = useQuery<PaginatedPrompts>({
     queryKey: isMe
@@ -26,5 +28,6 @@ export function useUserPrompts({ mode, userId, page, limit, tags, model, search 
     pages: data?.pages,
     isLoading,
     error,
+    setPage,
   };
 }

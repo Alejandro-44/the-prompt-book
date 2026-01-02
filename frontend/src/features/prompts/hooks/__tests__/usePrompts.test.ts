@@ -1,30 +1,44 @@
 import { renderHookWithClient } from "@/tests/utils/renderHookWithClient";
 import { usePrompts } from "../usePrompts";
 import { waitFor } from "@testing-library/react";
+import { act } from "react";
 
 describe("usePrompts", () => {
-  it("should fetch and return prompts successfully in multiple pages", async () => {
-    const { result, rerender } = renderHookWithClient(
-      ({ page }) => usePrompts({ page }),
-      { initialProps: { page: 1 } }
-    );
+  it("fetches prompts and returns data", async () => {
+    const { result } = renderHookWithClient(() => usePrompts({ limit: 10 }));
 
-    expect(result.current.prompts).toBeUndefined();    
+    expect(result.current.isLoading).toBe(true);
 
     await waitFor(() => {
-      expect(result.current.prompts).toBeDefined();
+      expect(result.current.isLoading).toBe(false);
     });
 
     expect(result.current.prompts).toHaveLength(10);
     expect(result.current.page).toBe(1);
+    expect(result.current.pages).toBe(2);
+    expect(result.current.total).toBe(18);
+  });
 
-    rerender({ page: 2 })
+  it("fetches new data when page changes", async () => {
+    const { result } = renderHookWithClient(usePrompts);
 
     await waitFor(() => {
-      expect(result.current.prompts).toBeDefined();
+      expect(result.current.prompts).toHaveLength(10);
+    });
+
+    act(() => {
+      result.current.setPage(2);
+    });
+
+    expect(result.current.isLoading).toBe(true);
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
     });
 
     expect(result.current.prompts).toHaveLength(8);
     expect(result.current.page).toBe(2);
+    expect(result.current.pages).toBe(2);
+    expect(result.current.total).toBe(18);
   });
 });

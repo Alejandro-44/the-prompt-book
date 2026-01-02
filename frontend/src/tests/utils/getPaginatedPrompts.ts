@@ -21,8 +21,7 @@ export function getPaginatedPrompts(
   });
 
   const skip = (page - 1) * limit;
-  const end = skip + limit > 18 ? 18 : skip + limit;
-  const items = filtered.slice(skip, end);
+  const items = filtered.slice(skip, skip+limit) || [];
 
   return {
     items,
