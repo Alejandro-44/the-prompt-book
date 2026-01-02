@@ -1,15 +1,16 @@
 import { httpClient } from "../api/httpClient";
 import type {
+  GetPromptsResponse,
   PromptCommentDTO,
   PromptDTO,
-  PromptSummaryDTO,
 } from "./prompts.dto";
 import type {
+  GetPromptsParams,
+  PaginatedPrompts,
   Prompt,
   PromptCommentCreate,
   PromptCreate,
   PromptCreateResponse,
-  PromptSummary,
 } from "./prompts.model";
 import {
   promptCommentMapper,
@@ -20,9 +21,16 @@ import {
 } from "./prompts.mapper";
 
 export class PromptsService {
-  static async getAllPrompts(): Promise<PromptSummary[]> {
-    const data = await httpClient.get<PromptSummaryDTO[]>("/prompts/");
-    return data.map(promptSummaryMapper.toPromptSummary);
+  static async getAllPrompts(params: GetPromptsParams): Promise<PaginatedPrompts> {
+    const data = await httpClient.get<GetPromptsResponse>("/prompts/", { params });
+    const processedPrompts = data.items.map(promptSummaryMapper.toPromptSummary);
+    return {
+      items: processedPrompts,
+      total: data.total,
+      limit: data.limit,
+      page: data.page,
+      pages: data.pages
+    }
   }
 
   static async getPromptDetail(id: string): Promise<Prompt> {

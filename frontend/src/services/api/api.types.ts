@@ -6,3 +6,11 @@ export class ApiError extends Error {
     this.status = status;
   }
 }
+
+export interface PaginatedResponse<T> {
+  items: T[]
+  total: number
+  page: number
+  limit: number
+  pages: number
+}

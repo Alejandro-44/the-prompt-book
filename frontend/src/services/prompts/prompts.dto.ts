@@ -1,3 +1,5 @@
+import type { PaginatedResponse } from "../api/api.types";
+
 export type PromptDTO = {
   id: string;
   title: string;
@@ -44,3 +46,5 @@ export type PromptCommentDTO = {
 export type PromptCommentCreateDTO = {
   content: string;
 }
+
+export type GetPromptsResponse = PaginatedResponse<PromptSummaryDTO>

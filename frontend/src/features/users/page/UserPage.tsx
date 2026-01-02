@@ -1,4 +1,10 @@
-import { Container, Typography, CircularProgress } from "@mui/material";
+import {
+  Container,
+  Typography,
+  CircularProgress,
+  Pagination,
+  Grid,
+} from "@mui/material";
 import { UserCard } from "../components/UserCard";
 import { useUser, useUserPrompts } from "../hooks";
 import { PromptsGrid } from "@/features/prompts/components/PromptsGrid";
@@ -9,14 +15,13 @@ type UserPageProps = {
 };
 
 export function UserPage({ mode }: UserPageProps) {
-  const params = useParams();
-  const userId = mode === "public" ? params.userId : undefined;
+  const { userId } = useParams();
   const { user, isLoading, error } = useUser({ mode, userId });
-  const { prompts } = useUserPrompts({ mode, userId });
+  const { prompts, pages, setPage } = useUserPrompts({ mode, userId });
 
   if (isLoading) {
     return (
-      <Container sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
+      <Container sx={{ mt: 4, display: "flex", justifyContent: "center" }}>
         <CircularProgress />
       </Container>
     );
@@ -35,9 +40,7 @@ export function UserPage({ mode }: UserPageProps) {
   if (!user) {
     return (
       <Container sx={{ mt: 4 }}>
-        <Typography variant="h6">
-          User not found
-        </Typography>
+        <Typography variant="h6">User not found</Typography>
       </Container>
     );
   }
@@ -51,7 +54,22 @@ export function UserPage({ mode }: UserPageProps) {
         <Typography variant="h5" component="h2">
           {mode === "me" ? "My Prompts" : `${user.username}'s prompts`}
         </Typography>
-        <PromptsGrid prompts={prompts} editable={mode === "me"} />
+        <Grid justifyContent="center">
+          {prompts ? (
+            <>
+              <PromptsGrid prompts={prompts} editable={mode === "me"} />
+              <Pagination
+                sx={{ justifySelf: "center" }}
+                count={pages}
+                onChange={(_, page) => setPage(page)}
+                variant="outlined"
+                shape="rounded"
+              />
+            </>
+          ) : (
+            <Typography>Share your first prompt</Typography>
+          )}
+        </Grid>
       </Container>
     </>
   );

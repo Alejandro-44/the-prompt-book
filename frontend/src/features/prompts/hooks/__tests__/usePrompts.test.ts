@@ -1,46 +1,44 @@
 import { renderHookWithClient } from "@/tests/utils/renderHookWithClient";
 import { usePrompts } from "../usePrompts";
 import { waitFor } from "@testing-library/react";
+import { act } from "react";
 
 describe("usePrompts", () => {
-  it("should fetch and return prompts successfully", async () => {
-    const { result } = renderHookWithClient(() => usePrompts());
+  it("fetches prompts and returns data", async () => {
+    const { result } = renderHookWithClient(() => usePrompts({ limit: 10 }));
 
-    expect(result.current.prompts).toBeUndefined();
+    expect(result.current.isLoading).toBe(true);
 
     await waitFor(() => {
-      expect(result.current.prompts).toBeDefined();
+      expect(result.current.isLoading).toBe(false);
     });
 
-    // Assert the fetched data matches the mocked response
-    expect(result.current.prompts).toEqual([
-      {
-        id: "abc-123",
-        title: "Generate a marketing headline",
-        model: "gpt-4",
-        tags: ["marketing", "copywriting", "saas"],
-        authorId: "123-abc",
-        authorName: "johndoe",
-        pubDate: new Date("2024-01-15T10:30:00Z"),
-      },
-      {
-        id: "def-456",
-        title: "Refactor JavaScript Code",
-        model: "gpt-4o",
-        tags: ["javascript", "refactor", "programming"],
-        authorId: "123-abc",
-        authorName: "johndoe",
-        pubDate: new Date("2024-02-02T16:45:00Z"),
-      },
-      {
-        id: "ghi-789",
-        title: "Character backstory generator",
-        model: "gpt-3.5",
-        tags: ["storytelling", "writing", "fantasy"],
-        authorId: "123-abc",
-        authorName: "johndoe",
-        pubDate: new Date("2024-02-10T08:12:00Z"),
-      },
-    ]);
+    expect(result.current.prompts).toHaveLength(10);
+    expect(result.current.page).toBe(1);
+    expect(result.current.pages).toBe(2);
+    expect(result.current.total).toBe(18);
+  });
+
+  it("fetches new data when page changes", async () => {
+    const { result } = renderHookWithClient(usePrompts);
+
+    await waitFor(() => {
+      expect(result.current.prompts).toHaveLength(10);
+    });
+
+    act(() => {
+      result.current.setPage(2);
+    });
+
+    expect(result.current.isLoading).toBe(true);
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(result.current.prompts).toHaveLength(8);
+    expect(result.current.page).toBe(2);
+    expect(result.current.pages).toBe(2);
+    expect(result.current.total).toBe(18);
   });
 });

@@ -1,9 +1,8 @@
 import pytest
 
 from app.schemas.user_schema import User
-from tests.mocks.test_prompts_mock import prompt_create_mocks
+from tests.mocks.prompt_mocks import prompt_create_mocks
 
-PROMPT_MOCKS_FILE = "./tests/mocks/test_prompts_mock.json"
 
 @pytest.mark.asyncio
 async def test_register_user_and_access_its_own_info(e2e_client):
@@ -50,8 +49,8 @@ async def test_user_create_prompts_and_get_only_its_own_prompts(e2e_client):
 
     response = await e2e_client.get("/users/me/prompts")
     data = response.json()
-
-    assert len(data) == 3
+    prompts = data["items"]
+    assert len(prompts) == 3
 
     # Register user b
     await e2e_client.post(
@@ -75,8 +74,8 @@ async def test_user_create_prompts_and_get_only_its_own_prompts(e2e_client):
     response = await e2e_client.get("/users/me/prompts")
     assert response.status_code == 200
     data = response.json()
-
-    assert len(data) == 1
+    prompts = data["items"]
+    assert len(prompts) == 1
 
 
 @pytest.mark.asyncio

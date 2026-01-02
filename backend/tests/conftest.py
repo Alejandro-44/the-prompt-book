@@ -8,6 +8,9 @@ from app.services.services_manager import ServiceManager
 from app.dependencies.database_deps import get_services
 from app.main import app
 
+from tests.mocks.user_mocks import mock_users
+from tests.mocks.prompt_mocks import mock_prompts
+
 @pytest.fixture
 def mock_repo(mocker):
     return mocker.AsyncMock()
@@ -50,8 +53,46 @@ async def e2e_client(db):
     app.dependency_overrides.clear()
     app.dependency_overrides[get_services] = lambda: service_manager
 
-    # Crear cliente HTTP de prueba
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://test"
     ) as ac:
         yield ac
+
+
+@pytest.fixture
+async def seed_users(db):
+    await db.users.insert_many(mock_users)
+    return mock_users
+
+
+@pytest.fixture
+async def seed_prompts(db):
+    await db.prompts.insert_many(mock_prompts)
+    return mock_prompts
+
+
+@pytest.fixture
+async def seed_data(seed_users, seed_prompts):
+    return {
+        "users": seed_users,
+        "prompts": seed_prompts,
+    }
+
+
+@pytest.fixture
+def user_ids(seed_data):
+    return {
+        "johndoe": str(seed_data["users"][0]["_id"]),
+        "alex": str(seed_data["users"][1]["_id"]),
+        "matt": str(seed_data["users"][2]["_id"]),
+        "luna": str(seed_data["users"][3]["_id"]),
+    }
+
+
+@pytest.fixture
+def prompt_ids(seed_data):
+    return {
+        "matt_prompt": str(seed_data["prompts"][5]["_id"]),
+        "luna_prompt": str(seed_data["prompts"][8]["_id"]),
+        "not_owner_prompt": str(seed_data["prompts"][2]["_id"]),
+    }

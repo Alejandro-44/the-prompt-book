@@ -1,10 +1,27 @@
 import { delay, http, HttpResponse } from "msw";
 import { comments, promptMocks, promptSummaryMocks } from "../data/mocks";
-import type { PromptCommentCreateDTO, PromptCreateDTO } from "@/services/prompts/prompts.dto";
+import type {
+  PromptCommentCreateDTO,
+  PromptCreateDTO,
+} from "@/services/prompts/prompts.dto";
+import { getPaginatedPrompts } from "@/tests/utils/getPaginatedPrompts";
 
 export const promptsHandlers = [
-  http.get("http://127.0.0.1:8000/prompts/", async () => {
-    return HttpResponse.json(promptSummaryMocks);
+  http.get("http://127.0.0.1:8000/prompts/", async ({ request }) => {
+    const url = new URL(request.url);
+
+    const page = Number(url.searchParams.get("page") || 1);
+    const limit = Number(url.searchParams.get("limit") || 10);
+    const model = url.searchParams.get("model") ?? undefined;
+    let tags: string[] | undefined = url.searchParams.getAll("tags");
+    tags = tags.length > 0 ? tags : undefined;
+    const response = getPaginatedPrompts(promptSummaryMocks, {
+      page,
+      limit,
+      model,
+      tags,
+    });
+    return HttpResponse.json(response);
   }),
   http.get<{ id: string }>(
     "http://127.0.0.1:8000/prompts/:id",
@@ -118,7 +135,7 @@ export const promptsHandlers = [
         author: "johndoe",
         prompt_id: params.id,
         content: body.content,
-        pub_date: Date()
+        pub_date: Date(),
       });
       return HttpResponse.json({}, { status: 201 });
     }

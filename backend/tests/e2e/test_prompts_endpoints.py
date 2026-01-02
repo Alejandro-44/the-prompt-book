@@ -2,9 +2,8 @@ import pytest
 from bson import ObjectId
 
 from app.schemas.prompt_schema import Prompt, PromptSummary
-from tests.mocks.test_prompts_mock import prompt_create_mocks
+from tests.mocks.prompt_mocks import prompt_create_mocks
 
-PROMPT_MOCKS_FILE = "./tests/mocks/test_prompts_mock.json"
 MOCK_RANDOM_ID = str(ObjectId())
 
 
@@ -47,7 +46,6 @@ async def test_register_and_create_a_prompt(e2e_client):
 
 @pytest.mark.asyncio
 async def test_add_prompts_and_get_prompts(e2e_client):
-    # Register and login a new user to add prompts
     test_user = {"username": "john", "email": "john@example.com", "password": "1234"}
     await e2e_client.post(
         "/auth/register",
@@ -66,20 +64,19 @@ async def test_add_prompts_and_get_prompts(e2e_client):
         response = await e2e_client.post("/prompts/", json=mock_prompt)
         assert response.status_code == 201
 
-    # Get prompts from API
     response = await e2e_client.get("/prompts/")
     assert response.status_code == 200
 
     data = response.json()
+    prompts = data["items"]
 
-    assert len(data) == 3
+    assert len(prompts) == 3
 
-    for prompt in data:
+    for prompt in prompts:
         PromptSummary.model_validate(prompt)
 
 @pytest.mark.asyncio
 async def test_add_prompt_and_update(e2e_client):
-    # Register and login a new user to add prompts
     test_user = {"username": "john", "email": "john@example.com", "password": "1234"}
     await e2e_client.post(
         "/auth/register",
@@ -156,7 +153,8 @@ async def test_create_and_delete_prompt(e2e_client):
     response = await e2e_client.get("/prompts/")
     response.status_code == 200
     data = response.json()
-    assert len(data) == 0
+    prompts = data["items"]
+    assert len(prompts) == 0
 
 
 @pytest.mark.asyncio

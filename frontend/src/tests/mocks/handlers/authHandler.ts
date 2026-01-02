@@ -17,7 +17,7 @@ export const authHandlers = [
       id: "new-user-id",
       username: body.username,
       email: body.email,
-      password: body.password,
+      hashed_password: body.password,
       is_active: true,
     });
 
@@ -30,7 +30,7 @@ export const authHandlers = [
   http.post("http://127.0.0.1:8000/auth/login", async ({ request }) => {
     await delay(150);
     const body = (await request.json()) as UserLogin;
-    if (!users.some((user) => user.email === body.email && user.password === body.password)) {
+    if (!users.some((user) => user.email === body.email && user.hashed_password === body.password)) {
       return HttpResponse.json(
         { detail: "Invalid credentials" },
         { status: 401 }

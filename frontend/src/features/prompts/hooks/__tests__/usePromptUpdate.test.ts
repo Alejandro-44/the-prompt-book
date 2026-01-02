@@ -15,12 +15,12 @@ vi.mock("react-router", async () => {
 
 describe("usePromptUpdate", () => {
   it("redirects to /prompts/:promptId on success", async () => {
-    const mockPromptId = "abc-123";
+    const mockPromptId = "69398c1d5393462cecf974c9";
     const { result } = renderHookWithClient(() => usePromptUpdate({ promptId: mockPromptId }));
 
     result.current.mutate({ "title": "Updated title"});
     await waitFor(() => {
-      expect(navigateMock).toHaveBeenCalledWith("/prompts/abc-123");
+      expect(navigateMock).toHaveBeenCalledWith("/prompts/69398c1d5393462cecf974c9");
     })  
   });
 });

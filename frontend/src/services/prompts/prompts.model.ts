@@ -1,3 +1,5 @@
+import type { PaginatedResponse } from "../api/api.types";
+
 export type Prompt = {
   id: string;
   title: string;
@@ -49,3 +51,15 @@ export type PromptComment = {
 export type PromptCommentCreate = {
   content: string;
 }
+
+export type PaginatedPrompts = PaginatedResponse<PromptSummary>
+
+export type GetPromptsParams = {
+  page?: number
+  limit?: number
+  search?: string
+  tags?: string[]
+  model?: string
+  user_id?: string
+}
+

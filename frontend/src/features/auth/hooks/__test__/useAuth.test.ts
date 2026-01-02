@@ -22,7 +22,7 @@ describe("useAuth", () => {
       });
 
       expect(result.current.data).toBeDefined();
-      expect(result.current.data?.username).toBe("johndoe");
+      expect(result.current.data?.username).toBe("alex");
     });
   });
 
@@ -50,15 +50,15 @@ describe("useAuth", () => {
 
       await act(async () => {
         result.current.mutate({
-          email: "johndoe@example.com",
-          password: "securepassword",
+          email: "alex@example.com",
+          password: "password123",
         });
       });
 
       await waitFor(() => {
         const user = useUserStore.getState().user;
         expect(user).not.toBeNull();
-        expect(user?.username).toBe("johndoe");
+        expect(user?.username).toBe("alex");
       });
 
       expect(navigateMock).toHaveBeenCalledWith("/users/me");

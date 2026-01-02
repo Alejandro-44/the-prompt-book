@@ -4,7 +4,7 @@ import { act, waitFor } from "@testing-library/react";
 
 describe("useCreateComment", () => {
   it("creates a comment and invalidates comments query", async () => {
-    const promptId = "abc-123";
+    const promptId = "69398c1d5393462cecf974c9";
     const { result, queryClient } = renderHookWithClient(() =>
       useCreateComment({ promptId })
     );

@@ -30,7 +30,7 @@ describe("AuthProvider", () => {
     await waitFor(() => {
       const user = useUserStore.getState().user;
       expect(user).toBeDefined();
-      expect(user?.username).toBe("johndoe");
+      expect(user?.username).toBe("alex");
     });
   });
 
