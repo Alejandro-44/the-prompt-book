@@ -30,3 +30,4 @@ markers = [
 ]
 asyncio_mode = "auto"
 testpaths = "tests"
+filterwarnings = "ignore::DeprecationWarning:testcontainers.*"
