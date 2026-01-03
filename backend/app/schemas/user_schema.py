@@ -25,6 +25,7 @@ class User(BaseModel):
             is_active=document["is_active"]
         )
 
+
 class PrivateUser(User):
     email: EmailStr
 
@@ -36,6 +37,7 @@ class PrivateUser(User):
             email=document["email"],
             is_active=document["is_active"]
         )
+
 
 class UpdatePassword(BaseModel):
     old_password: str
