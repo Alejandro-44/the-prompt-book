@@ -11,6 +11,7 @@ from app.main import app
 from tests.mocks.user_mocks import mock_users
 from tests.mocks.prompt_mocks import mock_prompts
 
+
 @pytest.fixture
 def mock_repo(mocker):
     return mocker.AsyncMock()
@@ -25,38 +26,29 @@ def service_factory(mock_repo):
 
 @pytest.fixture(scope="session")
 def mongo_connection_url():
-    with MongoDbContainer("mongodb/mongodb-community-server:8.0-ubi8") as mongo:
+    with MongoDbContainer(
+        "mongodb/mongodb-community-server:8.2.3-ubi8"
+    ) as mongo:
         yield mongo.get_connection_url()
 
 
-@pytest.fixture()
-async def db(mongo_connection_url):
+@pytest.fixture(scope="session")
+async def mongo_client(mongo_connection_url):
     client = AsyncMongoClient(mongo_connection_url)
-    db = client.get_database("test_db")
-    yield db
-    collections = await db.list_collection_names()
-    for coll in collections:
-        await db[coll].delete_many({})
+    yield client
     await client.close()
+
+
+@pytest.fixture
+async def db(mongo_client):
+    db = mongo_client.get_database("test_db")
+    yield db
+    await mongo_client.drop_database("test_db")
 
 
 @pytest.fixture()
 def services(db):
     return ServiceManager(db)
-
-
-@pytest.fixture
-async def e2e_client(db):
-    service_manager = ServiceManager(db)
-    app.state.database = db
-
-    app.dependency_overrides.clear()
-    app.dependency_overrides[get_services] = lambda: service_manager
-
-    async with AsyncClient(
-        transport=ASGITransport(app=app), base_url="http://test"
-    ) as ac:
-        yield ac
 
 
 @pytest.fixture
@@ -96,3 +88,17 @@ def prompt_ids(seed_data):
         "luna_prompt": str(seed_data["prompts"][8]["_id"]),
         "not_owner_prompt": str(seed_data["prompts"][2]["_id"]),
     }
+
+
+@pytest.fixture
+async def e2e_client(db):
+    service_manager = ServiceManager(db)
+    app.state.database = db
+
+    app.dependency_overrides.clear()
+    app.dependency_overrides[get_services] = lambda: service_manager
+
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test"
+    ) as ac:
+        yield ac
