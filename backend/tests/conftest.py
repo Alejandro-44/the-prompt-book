@@ -8,8 +8,7 @@ from app.services.services_manager import ServiceManager
 from app.dependencies.database_deps import get_services
 from app.main import app
 
-from tests.mocks.user_mocks import mock_users
-from tests.mocks.prompt_mocks import mock_prompts
+from tests.mocks import mock_users, mock_prompts, mock_comments
 
 
 @pytest.fixture
@@ -32,7 +31,7 @@ def mongo_connection_url():
         yield mongo.get_connection_url()
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture()
 async def mongo_client(mongo_connection_url):
     client = AsyncMongoClient(mongo_connection_url)
     yield client
@@ -64,10 +63,17 @@ async def seed_prompts(db):
 
 
 @pytest.fixture
-async def seed_data(seed_users, seed_prompts):
+async def seed_comments(db):
+    await db.comments.insert_many(mock_comments)
+    return mock_comments
+
+
+@pytest.fixture
+async def seed_data(seed_users, seed_prompts, seed_comments):
     return {
         "users": seed_users,
         "prompts": seed_prompts,
+        "comments": seed_comments,
     }
 
 
@@ -87,6 +93,8 @@ def prompt_ids(seed_data):
         "matt_prompt": str(seed_data["prompts"][5]["_id"]),
         "luna_prompt": str(seed_data["prompts"][8]["_id"]),
         "not_owner_prompt": str(seed_data["prompts"][2]["_id"]),
+        "commented_prompt_1": str(seed_data["prompts"][0]["_id"]),
+        "commented_prompt_2": str(seed_data["prompts"][1]["_id"]),
     }
 
 
