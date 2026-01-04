@@ -18,7 +18,7 @@ mock_comments = [
     {
         "_id": ObjectId("69398c1d5393462cecf97603"),
         "content": "Another prompt comment",
-        "prompt_id": ObjectId("69398c1d5393462cecf974c0"),
+        "prompt_id": ObjectId("69398c1d5393462cecf974b9"),
         "user_id": ObjectId("693987497f7a423bcb83fe0c"),
         "pub_date": "2025-01-16T10:40:00.000Z",
     },

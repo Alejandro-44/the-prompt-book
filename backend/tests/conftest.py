@@ -84,6 +84,7 @@ def user_ids(seed_data):
         "alex": str(seed_data["users"][1]["_id"]),
         "matt": str(seed_data["users"][2]["_id"]),
         "luna": str(seed_data["users"][3]["_id"]),
+        "invalid": str(seed_data["users"][5]["_id"])
     }
 
 
@@ -97,6 +98,13 @@ def prompt_ids(seed_data):
         "commented_prompt_2": str(seed_data["prompts"][1]["_id"]),
     }
 
+@pytest.fixture
+def comments_ids(seed_data):
+    return {
+        "comment_1": str(seed_data["comments"][0]["_id"]),
+        "comment_2": str(seed_data["comments"][1]["_id"]),
+        "comment_3": str(seed_data["comments"][2]["_id"]),
+    }
 
 @pytest.fixture
 async def e2e_client(db):
