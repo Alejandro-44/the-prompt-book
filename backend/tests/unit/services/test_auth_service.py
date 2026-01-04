@@ -2,12 +2,7 @@ import pytest
 from bson import ObjectId
 
 from app.services.auth_service import AuthService
-from app.core.exceptions import (
-    UnauthorizedError,
-    WrongPasswordError,
-    UserNotFoundError,
-    EmailNotRegisteredError
-)
+from app.core.exceptions import UnauthorizedError, UserNotFoundError
 
 
 pytestmark = [pytest.mark.unit, pytest.mark.asyncio]
@@ -26,7 +21,7 @@ def auth_service(user_repo):
 async def test_login_user_email_not_found(auth_service, user_repo):
     user_repo.get_by_email.return_value = None
 
-    with pytest.raises(EmailNotRegisteredError):
+    with pytest.raises(UnauthorizedError):
         await auth_service.login("test@mail.com", "1234")
 
 

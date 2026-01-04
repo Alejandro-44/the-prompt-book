@@ -2,7 +2,7 @@ import pytest
 
 from bson import ObjectId
 
-from app.core.exceptions import EmailNotRegisteredError, UnauthorizedError, UserNotFoundError
+from app.core.exceptions import UnauthorizedError, UserNotFoundError
 
 pytestmark = [pytest.mark.integration, pytest.mark.asyncio]
 
@@ -15,7 +15,7 @@ async def test_login_success(services, seed_users):
 
 
 async def test_login_email_not_registered(services):
-    with pytest.raises(EmailNotRegisteredError):
+    with pytest.raises(UnauthorizedError):
         await services.auth.login("missing@test.com", "password")
 
 

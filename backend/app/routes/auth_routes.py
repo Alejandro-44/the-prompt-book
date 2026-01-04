@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException, status, Response
 
-from app.schemas import UserLogin, UserCreate, User, Token, UpdatePassword
+from app.schemas import User, UserLogin, UserCreate, UpdatePassword, Token
 from app.dependencies import UserDependency, ServicesDependency 
-from app.core.exceptions import UserAlreadyExistsError, DatabaseError, UserNotFoundError, WrongPasswordError, UnauthorizedError
+from app.core.exceptions import UserAlreadyExistsError, DatabaseError, UserNotFoundError, UnauthorizedError
 
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
@@ -44,7 +44,7 @@ async def login(
             key="access_token",
             value=token,
             httponly=True,
-            secure=True,      # Solo HTTPS en producción
+            secure=True,
             samesite="lax",
             path="/"
         )
@@ -80,15 +80,15 @@ async def change_password(
     """
     try:
         await services.auth.change_password(user.id, request.old_password, request.new_password)
+    except UnauthorizedError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Wrong password"
+        )
     except UserNotFoundError:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User not found"
-        )
-    except WrongPasswordError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Wrong password"
         )
     except DatabaseError:
         raise HTTPException(

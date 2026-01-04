@@ -10,12 +10,6 @@ class DatabaseError(Exception):
 class UnauthorizedError(Exception):
     """Raised when user fails in its authentication"""
 
-class EmailNotRegisteredError(Exception):
-    """Raised when trying to login an unregistered user"""
-
-class WrongPasswordError(Exception):
-    """Raised when put incorrect password to change it"""
-
 class PromptNotFoundError(Exception):
     """Raised when a prompt is not found in the database"""
 

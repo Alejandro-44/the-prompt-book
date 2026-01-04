@@ -1,30 +1,27 @@
 import pytest
 
 
-@pytest.mark.asyncio
+pytestmark = [pytest.mark.e2e, pytest.mark.asyncio]
+
+
 async def test_register_user_success(e2e_client):
     test_user = {"username": "alice", "email": "alice@example.com", "password": "1234"} 
     response = await e2e_client.post(
         "/auth/register",
         json=test_user
     )
-
     assert response.status_code == 201
     data = response.json()
-    assert "id" in data
-    assert "username" in data
+    assert isinstance(data["id"], str)
+    assert data["username"] == "alice"
 
 
-@pytest.mark.asyncio
-async def test_register_user_conflict(e2e_client):
-    test_user = {"username": "bob", "email": "bob@example.com", "password": "abcd"}
-    await e2e_client.post("/auth/register", json=test_user)
-
+async def test_register_user_conflict(e2e_client, seed_users):
+    test_user = {"username": "test", "email": "johndoe@example.com", "password": "abcd"}
     response = await e2e_client.post("/auth/register", json=test_user)
     assert response.status_code == 409
 
 
-@pytest.mark.asyncio
 async def test_login_flow_with_cookie(e2e_client):
     test_user = {
         "username": "test",
@@ -33,6 +30,7 @@ async def test_login_flow_with_cookie(e2e_client):
     }
 
     response = await e2e_client.post("/auth/register", json=test_user)
+    
     assert response.status_code == 201
 
     login_data = {
@@ -52,11 +50,12 @@ async def test_login_flow_with_cookie(e2e_client):
     assert response.status_code == 200
     data = response.json()
 
+    assert "id" in data
+    assert "username" in data
     assert data["username"] == test_user["username"]
 
 
-@pytest.mark.asyncio
-async def test_login_user_not_found(e2e_client):
+async def test_login_user_not_found(e2e_client, seed_users):
     test_user = {"email": "ghost@example.com", "password": "xxx"}
     response = await e2e_client.post(
         "/auth/login",
@@ -65,14 +64,8 @@ async def test_login_user_not_found(e2e_client):
     assert response.status_code == 401
 
 
-@pytest.mark.asyncio
-async def test_change_password_success(e2e_client):
-    test_user = {"username": "eva", "email": "eva@example.com", "password": "oldpass"}
-
-    await e2e_client.post(
-        "/auth/register",
-        json=test_user
-    )
+async def test_change_password_success(e2e_client, seed_users):
+    test_user = { "email": "alex@example.com", "password": "password12345"}
 
     response = await e2e_client.post(
         "/auth/login",
@@ -86,30 +79,40 @@ async def test_change_password_success(e2e_client):
 
     response = await cookie_client.post(
         "/auth/change-password",
-        json={"old_password": "oldpass", "new_password": "newpass"},
+        json={"old_password": "password12345", "new_password": "newpass12345"},
     )
 
     assert response.status_code == 204
 
-
-@pytest.mark.asyncio
-async def test_change_password_wrong_password(e2e_client):
-    await e2e_client.post(
-        "/auth/register",
-        json={"username": "frank", "email": "frank@example.com", "password": "rightpass"}
+    response = await e2e_client.post(
+    "/auth/login",
+        json={"email": test_user["email"], "password": "newpass12345"}
     )
+    assert response.status_code == 200
+
+
+async def test_change_password_wrong_password(e2e_client, seed_users):
+    test_user = { "email": "johndoe@example.com", "password": "qwerty12345" }
+
+    response = await e2e_client.post(
+        "/auth/login",
+        json={"email": test_user["email"], "password": test_user["password"]}
+    )
+
+    assert response.status_code == 200
+
+    cookie_client = e2e_client
+    cookie_client.cookies.set("access_token", response.cookies.get("access_token"))
 
     response = await e2e_client.post(
         "/auth/change-password",
         json={"old_password": "wrongpass", "new_password": "newpass"}
     )
-    assert response.status_code in (401, 400)
+    assert response.status_code == 401
 
-@pytest.mark.asyncio
-async def test_logout_user(e2e_client):
-    test_user = {"username": "gina", "email": "gina@example.com", "password": "logoutpass"}
 
-    await e2e_client.post("/auth/register", json=test_user)
+async def test_logout_user(e2e_client, seed_users):
+    test_user = { "email": "matt@example.com", "password": "password12345"}
 
     response = await e2e_client.post(
         "/auth/login",

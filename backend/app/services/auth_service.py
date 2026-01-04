@@ -1,6 +1,6 @@
 from app.repositories.user_repository import UserRepository
 from app.core.security import create_access_token, hash_password, verify_password
-from app.core.exceptions import UnauthorizedError, EmailNotRegisteredError, UserNotFoundError
+from app.core.exceptions import UnauthorizedError, UserNotFoundError
 
 class AuthService:
     def __init__(self, user_repo: UserRepository):
@@ -9,7 +9,7 @@ class AuthService:
     async def _get_user_by_email(self, email: str) -> dict:
         user = await self.__user_repo.get_by_email(email)
         if not user:
-            raise EmailNotRegisteredError()
+            raise UnauthorizedError()
         return user
 
     def _verify_user_password(self, password: str, hashed_password: str) -> None:
