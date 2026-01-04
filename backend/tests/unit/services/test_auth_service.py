@@ -1,9 +1,12 @@
 import pytest
+from bson import ObjectId
+
 from app.services.auth_service import AuthService
 from app.core.exceptions import (
     UnauthorizedError,
     WrongPasswordError,
     UserNotFoundError,
+    EmailNotRegisteredError
 )
 
 
@@ -11,88 +14,107 @@ pytestmark = [pytest.mark.unit, pytest.mark.asyncio]
 
 
 @pytest.fixture
-def service(service_factory):
-    return service_factory(AuthService)
+def user_repo(mocker):
+    return mocker.AsyncMock()
 
 
-async def test_authenticate_user_success(service, mock_repo, mocker):
-    mock_repo.get_by_email.return_value = {"hashed_password": "hashed123"}
-    mocker.patch("app.services.auth_service.verify_password", return_value=True)
-
-    user = await service.authenticate_user("test@example.com", "1234")
-
-    assert user == {"hashed_password": "hashed123"}
-    mock_repo.get_by_email.assert_awaited_once_with("test@example.com")
+@pytest.fixture
+def auth_service(user_repo):
+    return AuthService(user_repo)
 
 
-async def test_authenticate_user_fails_invalid_password(service, mock_repo, mocker):
-    mock_repo.get_by_email.return_value = {"hashed_password": "hashed123"}
-    mocker.patch("app.services.auth_service.verify_password", return_value=False)
+async def test_login_user_email_not_found(auth_service, user_repo):
+    user_repo.get_by_email.return_value = None
 
-    with pytest.raises(UnauthorizedError):
-        await service.authenticate_user("test@example.com", "wrongpass")
-
-
-async def test_authenticate_user_fails_user_not_found(service, mock_repo, mocker):
-    mock_repo.get_by_email.return_value = None
-    mocker.patch("app.services.auth_service.verify_password", return_value=True)
-
-    with pytest.raises(UnauthorizedError):
-        await service.authenticate_user("test@example.com", "1234")
+    with pytest.raises(EmailNotRegisteredError):
+        await auth_service.login("test@mail.com", "1234")
 
 
-async def test_login_success(service, mock_repo, mocker):
-    mock_repo.get_by_email.return_value = {
-        "_id": "123",
-        "email": "john@example.com",
-        "hashed_password": "hashed"
+async def test_login_user_wrong_password_returns_unauthorized_error(auth_service, user_repo, mocker):
+    user_repo.get_by_email.return_value = {
+        "_id": ObjectId(),
+        "email": "test@mail.com",
+        "hashed_password": "hashed",
     }
 
-    mocker.patch("app.services.auth_service.verify_password", return_value=True)
-    mocker.patch("app.services.auth_service.create_access_token", return_value="jwt.token.here")
-
-    token = await service.login("john@example.com", "1234")
-
-    assert token == "jwt.token.here"
-    mock_repo.get_by_email.assert_awaited_once_with("john@example.com")
-
-
-async def test_login_invalid_password_raises_error(service, mock_repo, mocker):
-    mock_repo.get_by_email.return_value = {
-        "_id": "123",
-        "email": "john@example.com",
-        "hashed_password": "hashed"
-    }
-
-    mocker.patch("app.services.auth_service.verify_password", return_value=False)
+    mocker.patch(
+        "app.services.auth_service.verify_password",
+        return_value=False
+    )
 
     with pytest.raises(UnauthorizedError):
-        await service.login("john@example.com", "wrongpass")
+        await auth_service.login("test@mail.com", "wrong")
+
+async def test_login_returns_token(auth_service, user_repo, mocker):
+    user = {
+        "_id": ObjectId(),
+        "email": "test@mail.com",
+        "hashed_password": "hashed",
+    }
+
+    user_repo.get_by_email.return_value = user
+
+    mocker.patch(
+        "app.services.auth_service.verify_password",
+        return_value=True
+    )
+
+    create_token = mocker.patch(
+        "app.services.auth_service.create_access_token",
+        return_value="fake-token"
+    )
+
+    token = await auth_service.login("test@mail.com", "password")
+
+    assert token == "fake-token"
+    create_token.assert_called_once()
 
 
-async def test_change_password_success(service, mock_repo, mocker):
-    mock_repo.get_by_id.return_value = {"_id": "123", "hashed_password": "old_hashed"}
-    mocker.patch("app.services.auth_service.verify_password", return_value=True)
-    mocker.patch("app.services.auth_service.hash_password", return_value="new_hashed")
-
-    mock_repo.update.return_value = True
-
-    result = await service.change_password("123", "old_pass", "new_pass")
-
-    assert result is True
-    mock_repo.update.assert_awaited_once_with("123", {"hashed_password": "new_hashed"})
-
-
-async def test_change_password_user_not_found(service, mock_repo):
-    mock_repo.get_by_id.return_value = None
+async def test_change_password_user_not_found(auth_service, user_repo):
+    user_repo.get_by_id.return_value = None
 
     with pytest.raises(UserNotFoundError):
-        await service.change_password("123", "old", "new")
+        await auth_service.change_password("user-id", "old", "new")
 
 
-async def test_change_password_wrong_password(service, mock_repo, mocker):
-    mock_repo.get_by_id.return_value = {"_id": "123", "hashed_password": "old_hashed"}
-    mocker.patch("app.services.auth_service.verify_password", return_value=False)
+async def test_change_password_wrong_password(auth_service, user_repo, mocker):
+    user_repo.get_by_id.return_value = {
+        "_id": ObjectId(),
+        "hashed_password": "hashed-old",
+    }
 
-    with pytest.raises(WrongPasswordError):
-        await service.change_password("123", "wrong_pass", "new_pass")
+    mocker.patch(
+        "app.services.auth_service.verify_password",
+        return_value=False
+    )
+
+    with pytest.raises(UnauthorizedError):
+        await auth_service.change_password("id", "old", "new")
+
+
+async def test_change_password_success(auth_service, user_repo, mocker):
+    user_repo.get_by_id.return_value = {
+        "_id": ObjectId(),
+        "hashed_password": "hashed-old",
+    }
+
+    mocker.patch(
+        "app.services.auth_service.verify_password",
+        return_value=True
+    )
+
+    mock_hash = mocker.patch(
+        "app.services.auth_service.hash_password",
+        return_value="hashed-new"
+    )
+
+    user_repo.update.return_value = True
+
+    result = await auth_service.change_password("id", "old", "new")
+
+    mock_hash.assert_called_once_with("new")
+    user_repo.update.assert_called_once_with(
+        "id", {"hashed_password": "hashed-new"}
+    )
+
+    assert result is True
