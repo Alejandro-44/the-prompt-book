@@ -1,34 +1,50 @@
 from app.repositories.user_repository import UserRepository
 from app.core.security import create_access_token, hash_password, verify_password
-from app.core.exceptions import UnauthorizedError, EmailNotRegisteredError, WrongPasswordError, UserNotFoundError
-from app.schemas.user_schema import User
+from app.core.exceptions import UnauthorizedError, EmailNotRegisteredError, UserNotFoundError
 
 class AuthService:
     def __init__(self, user_repo: UserRepository):
         self.__user_repo = user_repo
 
-    async def authenticate_user(self, email: str, password: str) -> User | Exception:
+    async def _get_user_by_email(self, email: str) -> dict:
         user = await self.__user_repo.get_by_email(email)
-        if not user or not verify_password(password, user["hashed_password"]):
-            raise UnauthorizedError()
-        return user
-
-    async def login(self, email: str, password: str) -> str | Exception:
-        user =  await self.authenticate_user(email, password)
         if not user:
             raise EmailNotRegisteredError()
+        return user
 
-        return create_access_token({"sub": str(user['_id']), "email": user["email"]})
+    def _verify_user_password(self, password: str, hashed_password: str) -> None:
+        if not verify_password(password, hashed_password):
+            raise UnauthorizedError()
 
-    async def change_password(self, user_id: str, old_password: str, new_password: str) -> None | Exception:
+    async def login(self, email: str, password: str) -> str:
+        user = await self._get_user_by_email(email)
+        self._verify_user_password(password, user["hashed_password"])
+
+        return create_access_token({
+            "sub": str(user["_id"]),
+            "email": user["email"],
+        })
+
+    async def change_password(
+        self,
+        user_id: str,
+        old_password: str,
+        new_password: str,
+    ) -> None:
         user = await self.__user_repo.get_by_id(user_id)
         if not user:
             raise UserNotFoundError()
 
-        if not verify_password(old_password, user["hashed_password"]):
-            raise WrongPasswordError()
+        self._verify_user_password(old_password, user["hashed_password"])
 
         new_hashed_password = hash_password(new_password)
 
-        return await self.__user_repo.update(user_id, { "hashed_password": new_hashed_password})
+        updated = await self.__user_repo.update(
+            user_id,
+            {"hashed_password": new_hashed_password},
+        )
+
+        if not updated:
+            raise UserNotFoundError()
         
+        return True

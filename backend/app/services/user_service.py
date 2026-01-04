@@ -57,7 +57,6 @@ class UserService:
         return User(
             id=new_user_id,
             username=new_user["username"],
-            email=new_user["email"],
             is_active=new_user["is_active"]
         )
     
