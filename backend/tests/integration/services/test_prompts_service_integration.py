@@ -3,7 +3,9 @@ from bson import ObjectId
 from app.schemas.prompt_schema import PromptCreate, PromptUpdate, Prompt, PromptSummary
 from app.core.exceptions import PromptNotFoundError
 
-@pytest.mark.asyncio
+pytestmark = [pytest.mark.integration, pytest.mark.asyncio]
+
+
 async def test_create_prompt_success(services, seed_data, user_ids):
     prompt_in = PromptCreate(
         title="Test prompt",
@@ -27,7 +29,7 @@ async def test_create_prompt_success(services, seed_data, user_ids):
     assert prompt.model == "ChatGPT"
 
 
-@pytest.mark.asyncio
+
 async def test_get_by_user_id_returns_only_user_prompts(
     services, seed_data, user_ids
 ):
@@ -46,7 +48,7 @@ async def test_get_by_user_id_returns_only_user_prompts(
     assert result["pages"] == 1
 
 
-@pytest.mark.asyncio
+
 async def test_get_by_id_not_found_or_bad_id_raises_error(
     services, seed_prompts
 ):
@@ -57,7 +59,7 @@ async def test_get_by_id_not_found_or_bad_id_raises_error(
         await services.prompts.get_by_id(str(ObjectId()))
 
 
-@pytest.mark.asyncio
+
 async def test_update_prompt_success(
     services, seed_data, user_ids, prompt_ids
 ):
@@ -79,7 +81,7 @@ async def test_update_prompt_success(
     assert updated_prompt.model == "Claude"
 
 
-@pytest.mark.asyncio
+
 async def test_update_prompt_not_found_raises_error(
     services, seed_prompts
 ):
@@ -91,7 +93,7 @@ async def test_update_prompt_not_found_raises_error(
         )
 
 
-@pytest.mark.asyncio
+
 async def test_update_prompt_do_not_owner_raises_error(
     services, seed_data, user_ids, prompt_ids
 ):
@@ -103,7 +105,7 @@ async def test_update_prompt_do_not_owner_raises_error(
         )
 
 
-@pytest.mark.asyncio
+
 async def test_delete_prompt_success(
     services, seed_data, user_ids, prompt_ids
 ):
@@ -118,7 +120,7 @@ async def test_delete_prompt_success(
         await services.prompts.get_by_id(prompt_ids["luna_prompt"])
 
 
-@pytest.mark.asyncio
+
 async def test_delete_prompt_do_not_owner_raises_error(
     services, seed_data, user_ids, prompt_ids
 ):

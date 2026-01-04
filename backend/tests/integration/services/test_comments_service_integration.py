@@ -1,129 +1,81 @@
 import pytest
 from bson import ObjectId
-from app.schemas import Comment, CommentCreate, CommentUpdate, UserCreate
-from app.core.exceptions import CommentNotFoundError
-
-MOCK_USER_ID = str(ObjectId())
-MOCK_PROMPT_ID = str(ObjectId())
-MOCK_RANDOM_ID = str(ObjectId())
+from app.schemas import Comment, CommentCreate, CommentUpdate
+from app.core.exceptions import CommentNotFoundError, DatabaseError, PromptNotFoundError
 
 
-@pytest.mark.asyncio
-async def test_create_comment_success(services):
-    test_user = UserCreate(
-        username="testuser",
-        email="testuser@example.com",
-        password="securepassword"
-    )
+pytestmark = [pytest.mark.integration, pytest.mark.asyncio]
 
-    await services.user.register_user(test_user)
 
-    test_user = await services.user.get_by_email(test_user.email)
-    user_id = test_user.id
-
+async def test_create_comment_success(services, seed_data, user_ids, prompt_ids):
+    user_id = user_ids["johndoe"]
     mock_comment = CommentCreate(content="Awesome!")
-    comment_id = await services.comments.create(MOCK_PROMPT_ID, user_id, mock_comment)
+    prompt_id = prompt_ids["commented_prompt_1"]
+    comment_id = await services.comments.create(prompt_id, user_id, mock_comment)
     assert isinstance(comment_id, str)
 
 
-@pytest.mark.asyncio
-async def test_create_comments_and_get(services):
-    test_user_a = UserCreate(
-        username="johndoe",
-        email="johndoe@example.com",
-        password="securepassword"
-    )
-
-    test_user_b = UserCreate(
-        username="janedoe",
-        email="janedoe@example.com",
-        password="securepassword"
-    )
-
-    await services.user.register_user(test_user_a)
-    await services.user.register_user(test_user_b)
-
-    test_user_a = await services.user.get_by_email(test_user_a.email)
-    test_user_b = await services.user.get_by_email(test_user_b.email)
-    user_id_a = test_user_a.id
-    user_id_b = test_user_b.id
-
-    mock_comment_a = CommentCreate(content="Hey! It's useful")
-    mock_comment_b = CommentCreate(content="Awesome!")
-    
-    await services.comments.create(MOCK_PROMPT_ID, user_id_a, mock_comment_a)
-    await services.comments.create(MOCK_PROMPT_ID, user_id_b, mock_comment_b)
-
-    comments = await services.comments.get_prompt_comments(MOCK_PROMPT_ID)
-
-    assert len(comments) == 2
-    for comment in comments:
-        Comment.model_validate(comment)
-
-
-@pytest.mark.asyncio
-async def test_update_comment_success(services):
-    test_user = UserCreate(
-        username="testuser",
-        email="testuser@example.com",
-        password="securepassword"
-    )
-
-    await services.user.register_user(test_user)
-
-    test_user = await services.user.get_by_email(test_user.email)
-    user_id = test_user.id
-
-    mock_comment = CommentCreate(
-        content="Awesome!"
-    )
-
-    comment_id = await services.comments.create(MOCK_PROMPT_ID, user_id, mock_comment)
-
-    update_data = CommentUpdate(
-        content="WOW!"
-    )
-
-    result = await services.comments.update(comment_id, user_id, update_data)
-
-    assert result is True
-
-    comments = await services.comments.get_prompt_comments(MOCK_PROMPT_ID)
-
-    assert comments[0].content == "WOW!"
-
-
-@pytest.mark.asyncio
-async def test_update_comment_not_found_raises_error(services):
-    with pytest.raises(CommentNotFoundError):
-        await services.comments.update(
-            MOCK_RANDOM_ID, MOCK_USER_ID, CommentCreate(content="Test")
+async def test_create_comment_invalid_prompt_id_raises(services, user_ids):
+    with pytest.raises(DatabaseError):
+        await services.comments.create(
+            "invalid-id",
+            user_ids["johndoe"],
+            CommentCreate(content="Test"),
         )
 
 
-@pytest.mark.asyncio
-async def test_delete_comment_success(services):
-    test_user = UserCreate(
-        username="testuser",
-        email="testuser@example.com",
-        password="securepassword"
-    )
+async def test_create_comment_invalid_user_id_raises(services, prompt_ids):
+    with pytest.raises(DatabaseError):
+        await services.comments.create(
+            prompt_ids["commented_prompt_1"],
+            "invalid-id",
+            CommentCreate(content="Test"),
+        )
 
-    await services.user.register_user(test_user)
 
-    test_user = await services.user.get_by_email(test_user.email)
-    user_id = test_user.id
+async def test_get_comments_are_ordered_by_date_desc(services, seed_data, prompt_ids):
+    prompt_id = prompt_ids["commented_prompt_1"]
+    comments = await services.comments.get_prompt_comments(prompt_id)
+    assert len(comments) == 2
+    for comment in comments:
+        Comment.model_validate(comment)
+    assert comments[0].pub_date >= comments[1].pub_date
 
-    mock_comment = CommentCreate(
-        content="Awesome!"
-    )
-    comment_id = await services.comments.create(MOCK_PROMPT_ID, user_id, mock_comment)
 
-    comments = await services.comments.get_prompt_comments(MOCK_PROMPT_ID)
-    assert len(comments) == 1
+async def test_get_comments_invalid_prompt_id_raises(services):
+    with pytest.raises(PromptNotFoundError):
+        await services.comments.get_prompt_comments("invalid-id")
+
+
+async def test_update_comment_success(services, seed_data, user_ids, prompt_ids, comments_ids):
+    user_id = user_ids["matt"]
+    prompt_id = prompt_ids["commented_prompt_2"]
+    comment_id = comments_ids["comment_3"]
+    update_data = CommentUpdate(content="WOW!")
+    result = await services.comments.update(comment_id, user_id, update_data)
+    assert result is True
+    comments = await services.comments.get_prompt_comments(prompt_id)
+    assert len(comments) > 0
+    assert comments[0].content == "WOW!"
+
+
+async def test_update_comment_not_found_raises_error(services):
+    with pytest.raises(CommentNotFoundError):
+        await services.comments.update(
+            str(ObjectId()), str(ObjectId()), CommentCreate(content="Test")
+        )
+
+
+async def test_delete_comment_success(services, seed_data, user_ids, prompt_ids, comments_ids):
+    user_id = user_ids["johndoe"]
+    prompt_id = prompt_ids["commented_prompt_1"]
+    comment_id = comments_ids["comment_2"]
+
+    comments = await services.comments.get_prompt_comments(prompt_id)
+    assert len(comments) == 2
 
     result = await services.comments.delete(comment_id, user_id)
     assert result is True
 
-    comments = await services.comments.get_prompt_comments(MOCK_PROMPT_ID)
-    assert len(comments) == 0
+    comments = await services.comments.get_prompt_comments(prompt_id)
+    assert len(comments) == 1

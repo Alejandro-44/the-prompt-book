@@ -1,45 +1,57 @@
 import pytest
 
-from app.schemas.user_schema import UserCreate
-from app.core.exceptions import UserAlreadyExistsError
-from app.core.exceptions import UserNotFoundError
+from bson import ObjectId
+from bson.errors import InvalidId
 
-@pytest.mark.asyncio
-async def test_register_and_get_user(services):
+from app.schemas.user_schema import UserCreate
+from app.core.exceptions import UserAlreadyExistsError, UserNotFoundError, DatabaseError
+
+
+pytestmark = [pytest.mark.integration, pytest.mark.asyncio]
+
+
+async def test_register_new_user_succesfully(services):
     user_in = UserCreate(username="Alice", email="alice@example.com", password="1234")
 
     user = await services.user.register_user(user_in)
     assert user.username == "Alice"
 
-    found = await services.user.get_by_id(user.id)
-    assert found.username == "Alice"
-    assert found.is_active is True
+    saved = await services.user.get_by_id(user.id)
+    assert saved.username == "Alice"
+    assert saved.is_active is True
 
 
-@pytest.mark.asyncio
-async def test_register_duplicate_user_raises_error(services):
-    user_in = UserCreate(username="Bob", email="bob@example.com", password="abcd")
-
-    await services.user.register_user(user_in)
+async def test_register_duplicate_user_raises_error(services, seed_data):
+    user_in = UserCreate(username="alex", email="alex@example.com", password="abcdefghi")
 
     with pytest.raises(UserAlreadyExistsError):
         await services.user.register_user(user_in)
 
 
-@pytest.mark.asyncio
-async def test_deactivate_user_changes_status(services):
-    user_in = UserCreate(username="Eve", email="eve@example.com", password="xyz")
-    user = await services.user.register_user(user_in)
-
-    result = await services.user.deactivate(user.id)
-    assert result is True
-
-    found = await services.user.get_by_id(user.id)
-    assert found.username == "deleted user"
-    assert not found.is_active
+async def test_get_by_email_returns_user(services, seed_data):
+    user = await services.user.get_by_email("alex@example.com")
+    assert user.username == "alex"
 
 
-@pytest.mark.asyncio
-async def test_get_nonexistent_user_raises(services):
+async def test_get_by_email_returns_none_if_not_found(services):
+    user = await services.user.get_by_email("missing@test.com")
+    assert user is None
+
+
+async def test_get_by_id_returns_deleted_user_if_inactive(services, seed_users, user_ids):
+    user_id = user_ids["invalid"]
+
+    result = await services.user.get_by_id(str(user_id))
+
+    assert result.username == "deleted user"
+    assert result.is_active is False
+
+
+async def test_get_by_id_invalid_id_raises(services):
     with pytest.raises(UserNotFoundError):
-        await services.user.get_by_id("66fda4b20f00000000000000")
+        await services.user.get_by_id("invalid-id")
+
+
+async def test_deactivate_nonexistent_user_raises(services):
+    with pytest.raises(DatabaseError):
+        await services.user.deactivate(str(ObjectId()))
