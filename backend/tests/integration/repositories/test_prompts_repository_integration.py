@@ -15,7 +15,7 @@ def prompts_repo(db):
     return PromptsRepository(db)
 
 async def test_get_summary_returns_paginated_prompts(
-    prompts_repo, seed_prompts
+    prompts_repo, seed_data
 ):
     items, total = await prompts_repo.get_summary(
         filters={},
@@ -23,7 +23,7 @@ async def test_get_summary_returns_paginated_prompts(
         limit=5,
     )
 
-    assert total == len(seed_prompts)
+    assert total == len(seed_data["prompts"])
     assert len(items) == 5
 
     dates = [p["pub_date"] for p in items]

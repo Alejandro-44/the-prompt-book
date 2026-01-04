@@ -80,7 +80,6 @@ async def test_update_updates_user(
     )
 
     assert updated is True
-    print(user_id)
     saved = await user_repo._UserRepository__collection.find_one(
         {"_id": ObjectId(user_id) }
     )
