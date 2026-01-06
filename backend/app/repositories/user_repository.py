@@ -1,9 +1,7 @@
-from typing import Optional
 from bson import ObjectId
 from pymongo.collection import Collection
 
 from app.schemas.user_schema import User
-from app.core.types import PyObjectId
 
 class UserRepository:
     def __init__(self, database):
@@ -27,7 +25,7 @@ class UserRepository:
         
         return await self.__collection.find_one(mongo_filters)
 
-    async def update(self, user_id: PyObjectId, update_data: dict) -> bool:
+    async def update(self, user_id: ObjectId, update_data: dict) -> bool:
         result = await self.__collection.update_one(
             {"_id": user_id},
             {"$set": update_data},

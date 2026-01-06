@@ -3,6 +3,7 @@ from typing import Annotated
 from fastapi import HTTPException, Request, status
 from fastapi.params import Depends
 from jwt import ExpiredSignatureError, PyJWTError, InvalidTokenError
+from bson import ObjectId
 
 from app.dependencies import ServicesDependency
 from app.core.security import decode_access_token
@@ -55,14 +56,11 @@ async def get_current_user(
         )
 
     try:
-        user = await services.user.get_by_id(user_id)
+        user = await services.user.get_one({ 
+            "id": ObjectId(user_id),
+            "is_active": True 
+        })
     except UserNotFoundError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid credentials",
-        )
-
-    if not user.is_active:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid credentials",

@@ -1,9 +1,10 @@
 from fastapi import APIRouter, HTTPException, Query, status 
+from bson import ObjectId
+from bson.errors import InvalidId
 
 from app.dependencies import ServicesDependency, UserDependency
 from app.schemas import Prompt, PromptCreate, PromptUpdate, PromptSummary, Comment, CommentCreate, PaginatedResponse
 from app.core.exceptions import PromptNotFoundError, DatabaseError, CommentNotFoundError, PromptOwnershipError
-from app.core.types import PyObjectId
 
 
 router = APIRouter(prefix="/prompts", tags=["Prompts"])
@@ -40,9 +41,14 @@ async def get_prompts(
     response_model=Prompt,
     status_code=status.HTTP_200_OK
 )
-async def get_prompt(prompt_id: PyObjectId, services: ServicesDependency):
+async def get_prompt(prompt_id: str, services: ServicesDependency):
     try:
-        return await services.prompts.get_one(prompt_id)
+        return await services.prompts.get_one(ObjectId(prompt_id))
+    except InvalidId:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid prompt id"
+        )
     except PromptNotFoundError:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -54,9 +60,12 @@ async def get_prompt(prompt_id: PyObjectId, services: ServicesDependency):
     "/",
     status_code=status.HTTP_201_CREATED
 )
-async def create_prompt(prompt: PromptCreate, user: UserDependency, services: ServicesDependency):
+async def create_prompt(
+    prompt: PromptCreate,
+    user: UserDependency,
+    services: ServicesDependency):
     try:
-        prompt_id = await services.prompts.create(user.id, prompt)
+        prompt_id = await services.prompts.create(ObjectId(user.id), prompt)
         return { "message": "New prompt created", "id": prompt_id}
     except DatabaseError:
         raise HTTPException(
@@ -76,7 +85,12 @@ async def update_prompt(
     services: ServicesDependency
     ):
     try:
-        await services.prompts.update(prompt_id, user.id, prompt_update)
+        await services.prompts.update(ObjectId(prompt_id), ObjectId(user.id), prompt_update)
+    except InvalidId:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid prompt id"
+        )
     except PromptOwnershipError:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -98,9 +112,18 @@ async def update_prompt(
     "/{prompt_id}", 
     status_code=status.HTTP_204_NO_CONTENT
 )
-async def delete_prompt(prompt_id: PyObjectId, user: UserDependency, services: ServicesDependency):
+async def delete_prompt(
+    prompt_id: str,
+    user: UserDependency,
+    services: ServicesDependency
+):
     try:
-        await services.prompts.delete(prompt_id, user.id)
+        await services.prompts.delete(ObjectId(prompt_id), user.id)
+    except InvalidId:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid prompt id"
+        )
     except PromptOwnershipError:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -123,9 +146,17 @@ async def delete_prompt(prompt_id: PyObjectId, user: UserDependency, services: S
     response_model=list[Comment],
     status_code=status.HTTP_200_OK
 )
-async def get_comments(prompt_id: PyObjectId, services: ServicesDependency):
+async def get_comments(
+    prompt_id: str,
+    services: ServicesDependency
+):
     try:
-        return await services.comments.get_prompt_comments(prompt_id)
+        return await services.comments.get_prompt_comments(ObjectId(prompt_id))
+    except InvalidId:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid prompt id"
+        )
     except PromptNotFoundError:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -138,22 +169,41 @@ async def get_comments(prompt_id: PyObjectId, services: ServicesDependency):
     status_code=status.HTTP_201_CREATED
 )
 async def create_comment(
-    comment: CommentCreate,
     prompt_id: str,
+    comment: CommentCreate,
     user: UserDependency,
     services: ServicesDependency
 ):
-    comment_id = await services.comments.create(prompt_id, user.id, comment) 
-    return { "message": "New comment created", "id": comment_id}
+    try:
+        comment_id = await services.comments.create(
+            ObjectId(prompt_id),
+            ObjectId(user.id),
+            comment
+        )
+        return { "message": "New comment created", "id": comment_id}
+    except InvalidId:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid prompt id"
+        )
 
 
 @router.delete(
     "/comments/{comment_id}",
     status_code=status.HTTP_204_NO_CONTENT
 )
-async def delete_comment(comment_id: PyObjectId, user: UserDependency, services: ServicesDependency):
+async def delete_comment(
+    comment_id: str,
+    user: UserDependency,
+    services: ServicesDependency
+):
     try:
-        await services.comments.delete(comment_id, user.id)
+        await services.comments.delete(ObjectId(comment_id), ObjectId(user.id))
+    except InvalidId:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid prompt id"
+        )
     except CommentNotFoundError:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

@@ -1,3 +1,5 @@
+from bson import ObjectId
+
 from app.schemas.user_schema import UserCreate, User
 from app.core.security import hash_password
 from app.repositories.user_repository import UserRepository
@@ -6,7 +8,6 @@ from app.core.exceptions import (
     UserAlreadyExistsError,
     DatabaseError,
 )
-from app.core.types import PyObjectId
 
 class UserService:
     def __init__(self, user_repo: UserRepository):
@@ -52,7 +53,7 @@ class UserService:
                 is_active=new_user["is_active"]
             )
     
-    async def deactivate(self, user_id: PyObjectId) -> bool:
+    async def deactivate(self, user_id: ObjectId) -> bool:
         deactivated = await self.__user_repo.update(user_id, { "is_active": False })
         if not deactivated:
             raise DatabaseError("Failed to deactivate user")

@@ -34,6 +34,7 @@ async def test_register_and_create_a_prompt(e2e_client):
     assert "id" in data
 
     response = await e2e_client.get(f'/prompts/{data["id"]}')
+    assert response.status_code == 200
     data = response.json()
     Prompt.model_validate(data)
 
@@ -64,7 +65,7 @@ async def test_get_paginated_prompts(e2e_client, seed_data):
 
 async def test_update_prompt(e2e_client, seed_data, prompt_ids):
     test_user = { "email": "matt@example.com", "password": "password12345"}
-    prompt_id = prompt_ids["matt_prompt"]
+    prompt_id = str(prompt_ids["matt_prompt"])
 
     response = await e2e_client.post("/auth/login", json=test_user)
     assert response.status_code == 200 
@@ -100,7 +101,7 @@ async def test_trying_to_modify_a_prompt_when_user_is_not_owner_returns_forbidde
         prompt_ids
     ):
     test_user = {"email": "johndoe@example.com", "password": "qwerty12345"}
-    prompt_id = prompt_ids["matt_prompt"]
+    prompt_id = str(prompt_ids["matt_prompt"])
     
     response = await e2e_client.post("/auth/login", json=test_user)
     assert response.status_code == 200
@@ -114,7 +115,7 @@ async def test_trying_to_modify_a_prompt_when_user_is_not_owner_returns_forbidde
 
 async def test_delete_prompt(e2e_client, seed_data, prompt_ids):
     test_user = { "email": "matt@example.com", "password": "password12345"}
-    prompt_id = prompt_ids["matt_prompt"]
+    prompt_id = str(prompt_ids["matt_prompt"])
 
     response = await e2e_client.post("/auth/login", json=test_user)
     e2e_client.cookies.set("access_token", response.cookies.get("access_token"))
@@ -138,7 +139,7 @@ async def test_trying_to_delete_a_prompt_that_does_not_exist_returns_not_found(e
 
 
 async def test_get_comments_from_a_prompt(e2e_client, seed_data, prompt_ids):
-    prompt_id = prompt_ids["commented_prompt_1"]
+    prompt_id = str(prompt_ids["commented_prompt_1"])
     response = await e2e_client.get(f"/prompts/{prompt_id}/comments")
     assert response.status_code == 200
     comments = response.json()

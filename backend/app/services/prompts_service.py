@@ -1,10 +1,11 @@
 import math
 from datetime import datetime
 
+from bson import ObjectId
+
 from app.repositories.prompts_repository import PromptsRepository
 from app.schemas.prompt_schema import PromptCreate, PromptUpdate, Prompt, PromptSummary
 from app.core.exceptions import PromptNotFoundError, DatabaseError, PromptOwnershipError
-from app.core.types import PyObjectId
 
 class PromptsService:
     def __init__(self, prompts_repo: PromptsRepository):
@@ -38,7 +39,7 @@ class PromptsService:
             "pages": math.ceil(total / limit) if total > 0 else 0
         }
     
-    async def get_one(self, prompt_id: PyObjectId) -> Prompt:
+    async def get_one(self, prompt_id: ObjectId) -> Prompt:
         prompt_document = await self.__prompts_repo.get_one(prompt_id)
 
         if not prompt_document:
@@ -46,7 +47,7 @@ class PromptsService:
 
         return Prompt.from_document(prompt_document)
 
-    async def create(self, user_id: PyObjectId, prompt_in: PromptCreate):
+    async def create(self, user_id: ObjectId, prompt_in: PromptCreate):
         prompt_data = prompt_in.model_dump()
         prompt_data.update({
             "user_id": user_id,
@@ -60,7 +61,7 @@ class PromptsService:
 
         return inserted_id
 
-    async def update(self, prompt_id: PyObjectId, user_id: PyObjectId, update_data: PromptUpdate):
+    async def update(self, prompt_id: ObjectId, user_id: ObjectId, update_data: PromptUpdate):
         await self._validate_prompt_ownership(prompt_id, user_id)
 
         new_data = update_data.model_dump(exclude_unset=True)
@@ -71,7 +72,7 @@ class PromptsService:
         
         return True
 
-    async def delete(self, prompt_id: PyObjectId, user_id: PyObjectId):
+    async def delete(self, prompt_id: ObjectId, user_id: ObjectId):
         await self._validate_prompt_ownership(prompt_id, user_id)
 
         try:
