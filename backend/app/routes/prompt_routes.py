@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Query, status
 
 from app.dependencies import ServicesDependency, UserDependency
 from app.schemas import Prompt, PromptCreate, PromptUpdate, PromptSummary, Comment, CommentCreate, PaginatedResponse
-from app.core.exceptions import PromptNotFoundError, DatabaseError, CommentNotFoundError
+from app.core.exceptions import PromptNotFoundError, DatabaseError, CommentNotFoundError, PromptOwnershipError
 
 
 router = APIRouter(prefix="/prompts", tags=["Prompts"])
@@ -37,7 +37,7 @@ async def get_prompts(
 @router.get("/{prompt_id}", response_model=Prompt, status_code=status.HTTP_200_OK)
 async def get_prompt(prompt_id: str, services: ServicesDependency):
     try:
-        return await services.prompts.get_by_id(prompt_id)
+        return await services.prompts.get_one(prompt_id)
     except PromptNotFoundError:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -66,6 +66,11 @@ async def update_prompt(
     ):
     try:
         await services.prompts.update(prompt_id, user.id, prompt_update)
+    except PromptOwnershipError:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You do not have permission to perform this action"
+        )
     except PromptNotFoundError:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -82,6 +87,11 @@ async def update_prompt(
 async def delete_prompt(prompt_id: str, user: UserDependency, services: ServicesDependency):
     try:
         await services.prompts.delete(prompt_id, user.id)
+    except PromptOwnershipError:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You do not have permission to perform this action"
+        )
     except PromptNotFoundError:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -103,6 +113,7 @@ async def get_comments(prompt_id: str, services: ServicesDependency):
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Prompt not found"
         )
+
 
 @router.post("/{prompt_id}/comments", status_code=status.HTTP_201_CREATED)
 async def create_comment(

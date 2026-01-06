@@ -17,7 +17,7 @@ class CommentsService:
         try:
             comment_documents = await self.__comments_repo.get_by_prompt(prompt_id)
         except InvalidId:
-            raise PromptNotFoundError()
+            raise DatabaseError
         return [Comment.from_document(document) for document in comment_documents]
 
     async def create(self, prompt_id: str, user_id: str, comment_in: CommentCreate) -> str:

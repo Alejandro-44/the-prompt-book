@@ -4,8 +4,8 @@ from bson.errors import InvalidId
 from datetime import datetime
 
 from app.services.comments_service import CommentsService
-from app.core.exceptions import CommentNotFoundError, PromptNotFoundError
-from app.schemas.comment_schema import CommentCreate, CommentUpdate, Comment
+from app.core.exceptions import CommentNotFoundError, DatabaseError
+from app.schemas import CommentCreate, CommentUpdate, Comment
 
 pytestmark = [pytest.mark.unit, pytest.mark.asyncio]
 
@@ -44,7 +44,7 @@ async def test_get_prompt_comments_invalid_prompt_id_raises_error(
 ):
     mock_repo.get_by_prompt.side_effect = InvalidId()
 
-    with pytest.raises(PromptNotFoundError):
+    with pytest.raises(DatabaseError):
         await service.get_prompt_comments("bad-id")
 
 

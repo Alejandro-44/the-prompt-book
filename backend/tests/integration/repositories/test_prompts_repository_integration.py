@@ -14,6 +14,7 @@ pytestmark = [pytest.mark.integration, pytest.mark.asyncio]
 def prompts_repo(db):
     return PromptsRepository(db)
 
+
 async def test_get_summary_returns_paginated_prompts(
     prompts_repo, seed_data
 ):
@@ -97,38 +98,33 @@ async def test_get_summary_with_no_matches_returns_empty(
     assert total == 0
 
 
-async def test_get_by_id_returns_prompt_with_author(
+async def test_get_by_one_returns_prompt_with_author(
+    prompts_repo, seed_users, seed_prompts, prompt_ids
+):
+    prompt_id = prompt_ids["matt_prompt"]
+
+    result = await prompts_repo.get_one(prompt_id)
+
+    assert str(result["_id"]) == prompt_id
+    assert "author" in result
+    assert result["author"]["username"] == "matt_coder"
+
+
+async def test_get_one_returns_none_for_unknown_id(
     prompts_repo, seed_users, seed_prompts
 ):
-    prompt = seed_prompts[0]
-
-    result = await prompts_repo.get_by_id(
-        str(prompt["_id"])
-    )
-
-    assert len(result) == 1
-
-    doc = result[0]
-    assert doc["_id"] == prompt["_id"]
-    assert "author" in doc
-    assert doc["author"]["username"]
-
-
-async def test_get_by_id_returns_empty_list_for_unknown_id(
-    prompts_repo, seed_users, seed_prompts
-):
-    result = await prompts_repo.get_by_id(
+    result = await prompts_repo.get_one(
         str(ObjectId())
     )
 
-    assert result == []
+    assert result == None
 
 
-async def test_get_by_id_invalid_id_raises_error(
+async def test_get_one_invalid_id_raises_error(
     prompts_repo
 ):
     with pytest.raises(InvalidId):
-        await prompts_repo.get_by_id("invalid-id")
+        await prompts_repo.get_one("invalid-id")
 
 
 async def test_create_inserts_prompt_and_returns_id(
@@ -157,15 +153,13 @@ async def test_create_inserts_prompt_and_returns_id(
     assert saved["title"] == "New prompt"
 
 
-async def test_update_updates_prompt_if_owner(
-    prompts_repo, seed_users, seed_prompts
+async def test_update_prompt(
+    prompts_repo, seed_prompts
 ):
     prompt = seed_prompts[0]
-    user_id = str(prompt["user_id"])
 
     updated = await prompts_repo.update(
         str(prompt["_id"]),
-        user_id,
         {"title": "Updated title"},
     )
 
@@ -174,34 +168,16 @@ async def test_update_updates_prompt_if_owner(
     saved = await prompts_repo._PromptsRepository__collection.find_one(
         {"_id": prompt["_id"]}
     )
-
     assert saved["title"] == "Updated title"
 
 
-async def test_update_returns_false_if_not_owner(
+async def test_delete_prompt(
     prompts_repo, seed_users, seed_prompts
 ):
     prompt = seed_prompts[0]
-    other_user_id = str(ObjectId())
-
-    updated = await prompts_repo.update(
-        str(prompt["_id"]),
-        other_user_id,
-        {"title": "Hacked"},
-    )
-
-    assert updated is False
-
-
-async def test_delete_deletes_prompt_if_owner(
-    prompts_repo, seed_users, seed_prompts
-):
-    prompt = seed_prompts[0]
-    user_id = str(prompt["user_id"])
 
     deleted = await prompts_repo.delete(
         str(prompt["_id"]),
-        user_id,
     )
 
     assert deleted is True
@@ -212,16 +188,3 @@ async def test_delete_deletes_prompt_if_owner(
 
     assert found is None
 
-
-async def test_delete_returns_false_if_not_owner(
-    prompts_repo, seed_users, seed_prompts
-):
-    prompt = seed_prompts[0]
-    other_user_id = str(ObjectId())
-
-    deleted = await prompts_repo.delete(
-        str(prompt["_id"]),
-        other_user_id,
-    )
-
-    assert deleted is False

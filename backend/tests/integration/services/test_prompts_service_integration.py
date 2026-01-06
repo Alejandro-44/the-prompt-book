@@ -1,7 +1,7 @@
 import pytest
 from bson import ObjectId
 from app.schemas.prompt_schema import PromptCreate, PromptUpdate, Prompt, PromptSummary
-from app.core.exceptions import PromptNotFoundError
+from app.core.exceptions import PromptNotFoundError, PromptOwnershipError
 
 pytestmark = [pytest.mark.integration, pytest.mark.asyncio]
 
@@ -21,7 +21,7 @@ async def test_create_prompt_success(services, seed_data, user_ids):
 
     assert isinstance(prompt_id, str)
 
-    prompt = await services.prompts.get_by_id(prompt_id)
+    prompt = await services.prompts.get_one(prompt_id)
     Prompt.model_validate(prompt)
 
     assert prompt.title == "Test prompt"
@@ -48,16 +48,24 @@ async def test_get_by_user_id_returns_only_user_prompts(
     assert result["pages"] == 1
 
 
+async def test_get_one_returns_prompt_sucessfully(services, seed_data, prompt_ids):
+    prompt_id = prompt_ids["matt_prompt"]
 
-async def test_get_by_id_not_found_or_bad_id_raises_error(
-    services, seed_prompts
+    prompt = await services.prompts.get_one(prompt_id)
+
+    prompt = Prompt.model_validate(prompt)
+    assert prompt.id == prompt_id
+    assert prompt.author.username == "matt_coder"
+
+
+async def test_get_one_not_found_or_bad_id_raises_error(
+    services, seed_data
 ):
     with pytest.raises(PromptNotFoundError):
-        await services.prompts.get_by_id("")
+        await services.prompts.get_one("")
 
     with pytest.raises(PromptNotFoundError):
-        await services.prompts.get_by_id(str(ObjectId()))
-
+        await services.prompts.get_one(str(ObjectId()))
 
 
 async def test_update_prompt_success(
@@ -73,7 +81,7 @@ async def test_update_prompt_success(
 
     assert result is True
 
-    updated_prompt = await services.prompts.get_by_id(
+    updated_prompt = await services.prompts.get_one(
         prompt_ids["matt_prompt"]
     )
 
@@ -81,9 +89,8 @@ async def test_update_prompt_success(
     assert updated_prompt.model == "Claude"
 
 
-
 async def test_update_prompt_not_found_raises_error(
-    services, seed_prompts
+    services, seed_data
 ):
     with pytest.raises(PromptNotFoundError):
         await services.prompts.update(
@@ -97,13 +104,12 @@ async def test_update_prompt_not_found_raises_error(
 async def test_update_prompt_do_not_owner_raises_error(
     services, seed_data, user_ids, prompt_ids
 ):
-    with pytest.raises(PromptNotFoundError):
+    with pytest.raises(PromptOwnershipError):
         await services.prompts.update(
             prompt_ids["not_owner_prompt"],
             user_ids["matt"],
             PromptUpdate(title="Test"),
         )
-
 
 
 async def test_delete_prompt_success(
@@ -117,14 +123,14 @@ async def test_delete_prompt_success(
     assert result is True
 
     with pytest.raises(PromptNotFoundError):
-        await services.prompts.get_by_id(prompt_ids["luna_prompt"])
+        await services.prompts.get_one(prompt_ids["luna_prompt"])
 
 
 
 async def test_delete_prompt_do_not_owner_raises_error(
     services, seed_data, user_ids, prompt_ids
 ):
-    with pytest.raises(PromptNotFoundError):
+    with pytest.raises(PromptOwnershipError):
         await services.prompts.delete(
             prompt_ids["not_owner_prompt"],
             user_ids["luna"],

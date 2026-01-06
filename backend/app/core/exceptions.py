@@ -10,6 +10,9 @@ class DatabaseError(Exception):
 class UnauthorizedError(Exception):
     """Raised when user fails in its authentication"""
 
+class PromptOwnershipError(Exception):
+    """Raised when a user tries to perform an action on a prompt they do not own"""
+
 class PromptNotFoundError(Exception):
     """Raised when a prompt is not found in the database"""
 

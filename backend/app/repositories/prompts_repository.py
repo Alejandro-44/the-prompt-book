@@ -60,7 +60,7 @@ class PromptsRepository:
 
         return items, total
 
-    async def get_by_id(self, prompt_id: str) -> Prompt:
+    async def get_one(self, prompt_id: str) -> Prompt | None:
         pipeline = [
             {
                 "$match": {
@@ -75,21 +75,24 @@ class PromptsRepository:
                     "as": "author"
                 }
             },
-            { "$unwind": "$author" },
+            {"$unwind": "$author"},
+            {"$limit": 1}
         ]
 
         cursor = await self.__collection.aggregate(pipeline)
-        return await cursor.to_list()
+        results = await cursor.to_list()
+
+        return results[0] if results else None
 
     async def create(self, prompt_data: dict) -> str:
         result = await self.__collection.insert_one(prompt_data)
         return str(result.inserted_id)
 
-    async def update(self, prompt_id: str, user_id: str, update_data: dict) -> bool:
-        result = await self.__collection.update_one({ "_id": ObjectId(prompt_id), "user_id": ObjectId(user_id) }, { "$set": update_data  })
+    async def update(self, prompt_id: str, update_data: dict) -> bool:
+        result = await self.__collection.update_one({ "_id": ObjectId(prompt_id) }, { "$set": update_data  })
         return result.modified_count > 0
 
-    async def delete(self, prompt_id: str, user_id: str) -> bool:
-        result = await self.__collection.delete_one({ "_id": ObjectId(prompt_id), "user_id": ObjectId(user_id) })
+    async def delete(self, prompt_id: str) -> bool:
+        result = await self.__collection.delete_one({ "_id": ObjectId(prompt_id) })
         return result.deleted_count > 0
  

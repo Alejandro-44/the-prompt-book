@@ -1,7 +1,7 @@
 import pytest
 from bson import ObjectId
 from app.schemas import Comment, CommentCreate, CommentUpdate
-from app.core.exceptions import CommentNotFoundError, DatabaseError, PromptNotFoundError
+from app.core.exceptions import CommentNotFoundError, DatabaseError
 
 
 pytestmark = [pytest.mark.integration, pytest.mark.asyncio]
@@ -43,7 +43,7 @@ async def test_get_comments_are_ordered_by_date_desc(services, seed_data, prompt
 
 
 async def test_get_comments_invalid_prompt_id_raises(services):
-    with pytest.raises(PromptNotFoundError):
+    with pytest.raises(DatabaseError):
         await services.comments.get_prompt_comments("invalid-id")
 
 
