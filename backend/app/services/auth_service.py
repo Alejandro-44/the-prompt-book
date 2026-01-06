@@ -7,7 +7,7 @@ class AuthService:
         self.__user_repo = user_repo
 
     async def _get_user_by_email(self, email: str) -> dict:
-        user = await self.__user_repo.get_by_email(email)
+        user = await self.__user_repo.get_one({ "email": email, "is_active": True })
         if not user:
             raise UnauthorizedError()
         return user
@@ -31,7 +31,7 @@ class AuthService:
         old_password: str,
         new_password: str,
     ) -> None:
-        user = await self.__user_repo.get_by_id(user_id)
+        user = await self.__user_repo.get_one({ "id": user_id })
         if not user:
             raise UserNotFoundError()
 

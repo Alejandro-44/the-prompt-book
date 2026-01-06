@@ -2,6 +2,7 @@ from fastapi import APIRouter, Query, status
 
 from app.dependencies import UserDependency, ServicesDependency
 from app.schemas import PromptSummary, User, PaginatedResponse
+from app.core.types import PyObjectId
 
 
 router = APIRouter(prefix="/users", tags=["Users"])
@@ -45,13 +46,13 @@ async def delete_me(user: UserDependency, service: ServicesDependency):
 
 
 @router.get("/{user_id}")
-async def get_user(user_id: str, service: ServicesDependency):
+async def get_user(user_id: PyObjectId, service: ServicesDependency):
     return await service.user.get_by_id(user_id)
 
 
-@router.get("/{id}/prompts", response_model=PaginatedResponse[PromptSummary], summary="Get user prompts")
+@router.get("/{user_id}/prompts", response_model=PaginatedResponse[PromptSummary], summary="Get user prompts")
 async def get_user_prompts(
-    id: str,
+    user_id: PyObjectId,
     services: ServicesDependency,
     page: int = Query(1, ge=1),
     limit: int = Query(10, ge=1, le=100),
@@ -63,7 +64,7 @@ async def get_user_prompts(
     filters = {
         "tags": tags,
         "model": model,
-        "user_id": id,
+        "user_id": user_id,
     }
 
     return await services.prompts.get_summary(

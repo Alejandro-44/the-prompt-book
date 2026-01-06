@@ -3,6 +3,7 @@ from fastapi import APIRouter, HTTPException, Query, status
 from app.dependencies import ServicesDependency, UserDependency
 from app.schemas import Prompt, PromptCreate, PromptUpdate, PromptSummary, Comment, CommentCreate, PaginatedResponse
 from app.core.exceptions import PromptNotFoundError, DatabaseError, CommentNotFoundError, PromptOwnershipError
+from app.core.types import PyObjectId
 
 
 router = APIRouter(prefix="/prompts", tags=["Prompts"])
@@ -34,8 +35,12 @@ async def get_prompts(
     )
 
 
-@router.get("/{prompt_id}", response_model=Prompt, status_code=status.HTTP_200_OK)
-async def get_prompt(prompt_id: str, services: ServicesDependency):
+@router.get(
+    "/{prompt_id}",
+    response_model=Prompt,
+    status_code=status.HTTP_200_OK
+)
+async def get_prompt(prompt_id: PyObjectId, services: ServicesDependency):
     try:
         return await services.prompts.get_one(prompt_id)
     except PromptNotFoundError:
@@ -45,7 +50,10 @@ async def get_prompt(prompt_id: str, services: ServicesDependency):
         )
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/",
+    status_code=status.HTTP_201_CREATED
+)
 async def create_prompt(prompt: PromptCreate, user: UserDependency, services: ServicesDependency):
     try:
         prompt_id = await services.prompts.create(user.id, prompt)
@@ -57,7 +65,10 @@ async def create_prompt(prompt: PromptCreate, user: UserDependency, services: Se
         )
 
 
-@router.patch("/{prompt_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.patch(
+    "/{prompt_id}",
+    status_code=status.HTTP_204_NO_CONTENT
+)
 async def update_prompt(
     prompt_id: str,
     prompt_update: PromptUpdate,
@@ -83,8 +94,11 @@ async def update_prompt(
         )
 
 
-@router.delete("/{prompt_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_prompt(prompt_id: str, user: UserDependency, services: ServicesDependency):
+@router.delete(
+    "/{prompt_id}", 
+    status_code=status.HTTP_204_NO_CONTENT
+)
+async def delete_prompt(prompt_id: PyObjectId, user: UserDependency, services: ServicesDependency):
     try:
         await services.prompts.delete(prompt_id, user.id)
     except PromptOwnershipError:
@@ -104,8 +118,12 @@ async def delete_prompt(prompt_id: str, user: UserDependency, services: Services
         )
 
 
-@router.get("/{prompt_id}/comments", response_model=list[Comment], status_code=status.HTTP_200_OK)
-async def get_comments(prompt_id: str, services: ServicesDependency):
+@router.get(
+    "/{prompt_id}/comments",
+    response_model=list[Comment],
+    status_code=status.HTTP_200_OK
+)
+async def get_comments(prompt_id: PyObjectId, services: ServicesDependency):
     try:
         return await services.comments.get_prompt_comments(prompt_id)
     except PromptNotFoundError:
@@ -115,19 +133,25 @@ async def get_comments(prompt_id: str, services: ServicesDependency):
         )
 
 
-@router.post("/{prompt_id}/comments", status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/{prompt_id}/comments",
+    status_code=status.HTTP_201_CREATED
+)
 async def create_comment(
     comment: CommentCreate,
     prompt_id: str,
     user: UserDependency,
     services: ServicesDependency
-    ):
+):
     comment_id = await services.comments.create(prompt_id, user.id, comment) 
     return { "message": "New comment created", "id": comment_id}
 
 
-@router.delete("/comments/{comment_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_comment(comment_id: str, user: UserDependency, services: ServicesDependency):
+@router.delete(
+    "/comments/{comment_id}",
+    status_code=status.HTTP_204_NO_CONTENT
+)
+async def delete_comment(comment_id: PyObjectId, user: UserDependency, services: ServicesDependency):
     try:
         await services.comments.delete(comment_id, user.id)
     except CommentNotFoundError:
