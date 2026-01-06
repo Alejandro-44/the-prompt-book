@@ -80,30 +80,30 @@ async def seed_data(seed_users, seed_prompts, seed_comments):
 @pytest.fixture
 def user_ids(seed_data):
     return {
-        "johndoe": str(seed_data["users"][0]["_id"]),
-        "alex": str(seed_data["users"][1]["_id"]),
-        "matt": str(seed_data["users"][2]["_id"]),
-        "luna": str(seed_data["users"][3]["_id"]),
-        "invalid": str(seed_data["users"][5]["_id"])
+        "johndoe": seed_data["users"][0]["_id"],
+        "alex": seed_data["users"][1]["_id"],
+        "matt": seed_data["users"][2]["_id"],
+        "luna": seed_data["users"][3]["_id"],
+        "invalid": seed_data["users"][5]["_id"]
     }
 
 
 @pytest.fixture
 def prompt_ids(seed_data):
     return {
-        "matt_prompt": str(seed_data["prompts"][5]["_id"]),
-        "luna_prompt": str(seed_data["prompts"][8]["_id"]),
-        "not_owner_prompt": str(seed_data["prompts"][2]["_id"]),
-        "commented_prompt_1": str(seed_data["prompts"][0]["_id"]),
-        "commented_prompt_2": str(seed_data["prompts"][1]["_id"]),
+        "matt_prompt": seed_data["prompts"][5]["_id"],
+        "luna_prompt": seed_data["prompts"][8]["_id"],
+        "not_owner_prompt": seed_data["prompts"][2]["_id"],
+        "commented_prompt_1": seed_data["prompts"][0]["_id"],
+        "commented_prompt_2": seed_data["prompts"][1]["_id"],
     }
 
 @pytest.fixture
 def comments_ids(seed_data):
     return {
-        "comment_1": str(seed_data["comments"][0]["_id"]),
-        "comment_2": str(seed_data["comments"][1]["_id"]),
-        "comment_3": str(seed_data["comments"][2]["_id"]),
+        "comment_1": seed_data["comments"][0]["_id"],
+        "comment_2": seed_data["comments"][1]["_id"],
+        "comment_3": seed_data["comments"][2]["_id"],
     }
 
 @pytest.fixture

@@ -1,7 +1,6 @@
 import pytest
 from bson import ObjectId
-from bson.errors import InvalidId
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 
 from app.repositories.comments_repository import CommentsRepository
 
@@ -12,6 +11,7 @@ pytestmark = [pytest.mark.integration, pytest.mark.asyncio]
 @pytest.fixture
 def comments_repo(db):
     return CommentsRepository(db)
+
 
 async def test_get_by_prompt_returns_comments_with_author(
     comments_repo, seed_comments, prompt_ids
@@ -33,12 +33,8 @@ async def test_get_by_prompt_returns_comments_with_author(
 async def test_get_by_prompt_returns_empty_list_for_unknown_prompt(
     comments_repo, seed_comments
 ):
-    result = await comments_repo.get_by_prompt(str(ObjectId()))
+    result = await comments_repo.get_by_prompt(ObjectId())
     assert result == []
-
-async def test_get_by_prompt_invalid_id_raises_error(comments_repo, seed_comments):
-    with pytest.raises(InvalidId):
-        await comments_repo.get_by_prompt("invalid-id")
 
 
 async def test_create_inserts_comment_and_returns_id(
@@ -56,8 +52,6 @@ async def test_create_inserts_comment_and_returns_id(
 
     comment_id = await comments_repo.create(comment_data)
 
-    assert ObjectId.is_valid(comment_id)
-
     saved = await comments_repo._CommentsRepository__collection.find_one(
         {"_id": ObjectId(comment_id)}
     )
@@ -72,7 +66,7 @@ async def test_update_updates_comment_if_owner(
     user_id = user_ids["johndoe"]
 
     updated = await comments_repo.update(
-        str(comment["_id"]),
+        comment["_id"],
         user_id,
         {"content": "Updated"},
     )
@@ -93,8 +87,8 @@ async def test_update_returns_false_if_not_owner(
     other_user_id = ObjectId()
 
     updated = await comments_repo.update(
-        str(comment["_id"]),
-        str(other_user_id),
+        comment["_id"],
+        other_user_id,
         {"content": "Hacked"},
     )
 
@@ -108,7 +102,7 @@ async def test_delete_deletes_comment_if_owner(
     user_id = user_ids["johndoe"]
 
     deleted = await comments_repo.delete(
-        str(comment["_id"]),
+        comment["_id"],
         user_id,
     )
 
@@ -128,8 +122,8 @@ async def test_delete_returns_false_if_not_owner(
     other_user_id = ObjectId()
 
     deleted = await comments_repo.delete(
-        str(comment["_id"]),
-        str(other_user_id),
+        comment["_id"],
+        other_user_id,
     )
 
     assert deleted is False

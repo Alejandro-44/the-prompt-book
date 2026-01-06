@@ -1,10 +1,9 @@
 import pytest
 from bson import ObjectId
-from bson.errors import InvalidId
 from datetime import datetime
 
 from app.services.comments_service import CommentsService
-from app.core.exceptions import CommentNotFoundError, DatabaseError
+from app.core.exceptions import CommentNotFoundError
 from app.schemas import CommentCreate, CommentUpdate, Comment
 
 pytestmark = [pytest.mark.unit, pytest.mark.asyncio]
@@ -16,7 +15,7 @@ MOCK_COMMENT_ID = "507f1f77bcf86cd799439013"
 
 
 @pytest.fixture
-def service(service_factory):
+def service(service_factory) -> CommentsService:
     return service_factory(CommentsService)
 
 
@@ -32,20 +31,11 @@ async def test_get_prompt_comments_returns_comment_models(service, mock_repo):
         }
     ]
 
-    result = await service.get_prompt_comments(MOCK_PROMPT_ID)
+    result = await service.get_prompt_comments(ObjectId(MOCK_PROMPT_ID))
 
-    mock_repo.get_by_prompt.assert_awaited_once_with(MOCK_PROMPT_ID)
+    mock_repo.get_by_prompt.assert_awaited_once_with(ObjectId(MOCK_PROMPT_ID))
     assert len(result) == 1
     assert isinstance(result[0], Comment)
-
-
-async def test_get_prompt_comments_invalid_prompt_id_raises_error(
-    service, mock_repo
-):
-    mock_repo.get_by_prompt.side_effect = InvalidId()
-
-    with pytest.raises(DatabaseError):
-        await service.get_prompt_comments("bad-id")
 
 
 async def test_create_comment_adds_required_fields(service, mock_repo):
@@ -53,8 +43,8 @@ async def test_create_comment_adds_required_fields(service, mock_repo):
     mock_repo.create.return_value = MOCK_COMMENT_ID
 
     result = await service.create(
-        MOCK_PROMPT_ID,
-        MOCK_USER_ID,
+        ObjectId(MOCK_PROMPT_ID),
+        ObjectId(MOCK_USER_ID),
         comment_in,
     )
 
@@ -75,14 +65,14 @@ async def test_update_comment_success(service, mock_repo):
     update_data = CommentUpdate(content="Updated")
 
     result = await service.update(
-        MOCK_COMMENT_ID,
-        MOCK_USER_ID,
+        ObjectId(MOCK_COMMENT_ID),
+        ObjectId(MOCK_USER_ID),
         update_data,
     )
 
     mock_repo.update.assert_awaited_once_with(
-        MOCK_COMMENT_ID,
-        MOCK_USER_ID,
+        ObjectId(MOCK_COMMENT_ID),
+        ObjectId(MOCK_USER_ID),
         {"content": "Updated"},
     )
 
@@ -96,8 +86,8 @@ async def test_update_comment_not_found_raises_error(
 
     with pytest.raises(CommentNotFoundError):
         await service.update(
-            MOCK_COMMENT_ID,
-            MOCK_USER_ID,
+            ObjectId(MOCK_COMMENT_ID),
+            ObjectId(MOCK_USER_ID),
             CommentUpdate(content="Test"),
         )
 
@@ -106,13 +96,13 @@ async def test_delete_comment_success(service, mock_repo):
     mock_repo.delete.return_value = True
 
     result = await service.delete(
-        MOCK_COMMENT_ID,
-        MOCK_USER_ID,
+        ObjectId(MOCK_COMMENT_ID),
+        ObjectId(MOCK_USER_ID),
     )
 
     mock_repo.delete.assert_awaited_once_with(
-        MOCK_COMMENT_ID,
-        MOCK_USER_ID,
+        ObjectId(MOCK_COMMENT_ID),
+        ObjectId(MOCK_USER_ID),
     )
 
     assert result is True

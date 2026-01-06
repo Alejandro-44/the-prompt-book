@@ -3,6 +3,7 @@ from bson.objectid import ObjectId
 
 from app.schemas.prompt_schema import Prompt
 
+
 class PromptsRepository:
 
     def __init__(self, database):
@@ -60,11 +61,11 @@ class PromptsRepository:
 
         return items, total
 
-    async def get_one(self, prompt_id: str) -> Prompt | None:
+    async def get_one(self, prompt_id: ObjectId) -> Prompt | None:
         pipeline = [
             {
                 "$match": {
-                    "_id": ObjectId(prompt_id)
+                    "_id": prompt_id
                 }
             },
             {
@@ -88,11 +89,11 @@ class PromptsRepository:
         result = await self.__collection.insert_one(prompt_data)
         return str(result.inserted_id)
 
-    async def update(self, prompt_id: str, update_data: dict) -> bool:
-        result = await self.__collection.update_one({ "_id": ObjectId(prompt_id) }, { "$set": update_data  })
+    async def update(self, prompt_id: ObjectId, update_data: dict) -> bool:
+        result = await self.__collection.update_one({ "_id": prompt_id }, { "$set": update_data  })
         return result.modified_count > 0
 
-    async def delete(self, prompt_id: str) -> bool:
-        result = await self.__collection.delete_one({ "_id": ObjectId(prompt_id) })
+    async def delete(self, prompt_id: ObjectId) -> bool:
+        result = await self.__collection.delete_one({ "_id": prompt_id })
         return result.deleted_count > 0
  

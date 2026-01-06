@@ -2,7 +2,6 @@ from datetime import datetime, timezone
 
 import pytest
 from bson import ObjectId
-from bson.errors import InvalidId
 
 from app.repositories.prompts_repository import PromptsRepository
 
@@ -98,14 +97,14 @@ async def test_get_summary_with_no_matches_returns_empty(
     assert total == 0
 
 
-async def test_get_by_one_returns_prompt_with_author(
+async def test_get_one_returns_prompt_with_author(
     prompts_repo, seed_users, seed_prompts, prompt_ids
 ):
     prompt_id = prompt_ids["matt_prompt"]
 
     result = await prompts_repo.get_one(prompt_id)
 
-    assert str(result["_id"]) == prompt_id
+    assert result["_id"] == prompt_id
     assert "author" in result
     assert result["author"]["username"] == "matt_coder"
 
@@ -118,13 +117,6 @@ async def test_get_one_returns_none_for_unknown_id(
     )
 
     assert result == None
-
-
-async def test_get_one_invalid_id_raises_error(
-    prompts_repo
-):
-    with pytest.raises(InvalidId):
-        await prompts_repo.get_one("invalid-id")
 
 
 async def test_create_inserts_prompt_and_returns_id(
@@ -159,7 +151,7 @@ async def test_update_prompt(
     prompt = seed_prompts[0]
 
     updated = await prompts_repo.update(
-        str(prompt["_id"]),
+        prompt["_id"],
         {"title": "Updated title"},
     )
 
@@ -177,7 +169,7 @@ async def test_delete_prompt(
     prompt = seed_prompts[0]
 
     deleted = await prompts_repo.delete(
-        str(prompt["_id"]),
+        prompt["_id"],
     )
 
     assert deleted is True
