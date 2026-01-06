@@ -21,13 +21,12 @@ async def test_create_prompt_success(services, seed_data, user_ids):
 
     assert isinstance(prompt_id, str)
 
-    prompt = await services.prompts.get_one(prompt_id)
+    prompt = await services.prompts.get_one(ObjectId(prompt_id))
     Prompt.model_validate(prompt)
 
     assert prompt.title == "Test prompt"
-    assert prompt.author.id == user_ids["johndoe"]
+    assert prompt.author.id == str(user_ids["johndoe"])
     assert prompt.model == "ChatGPT"
-
 
 
 async def test_get_by_user_id_returns_only_user_prompts(
@@ -54,18 +53,15 @@ async def test_get_one_returns_prompt_sucessfully(services, seed_data, prompt_id
     prompt = await services.prompts.get_one(prompt_id)
 
     prompt = Prompt.model_validate(prompt)
-    assert prompt.id == prompt_id
+    assert prompt.id == str(prompt_id)
     assert prompt.author.username == "matt_coder"
 
 
-async def test_get_one_not_found_or_bad_id_raises_error(
+async def test_get_one_not_found_raises_error(
     services, seed_data
 ):
     with pytest.raises(PromptNotFoundError):
-        await services.prompts.get_one("")
-
-    with pytest.raises(PromptNotFoundError):
-        await services.prompts.get_one(str(ObjectId()))
+        await services.prompts.get_one(ObjectId())
 
 
 async def test_update_prompt_success(
@@ -100,7 +96,6 @@ async def test_update_prompt_not_found_raises_error(
         )
 
 
-
 async def test_update_prompt_do_not_owner_raises_error(
     services, seed_data, user_ids, prompt_ids
 ):
@@ -124,7 +119,6 @@ async def test_delete_prompt_success(
 
     with pytest.raises(PromptNotFoundError):
         await services.prompts.get_one(prompt_ids["luna_prompt"])
-
 
 
 async def test_delete_prompt_do_not_owner_raises_error(

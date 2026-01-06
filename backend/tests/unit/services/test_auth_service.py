@@ -14,19 +14,19 @@ def user_repo(mocker):
 
 
 @pytest.fixture
-def auth_service(user_repo):
+def auth_service(user_repo) -> AuthService:
     return AuthService(user_repo)
 
 
 async def test_login_user_email_not_found(auth_service, user_repo):
-    user_repo.get_by_email.return_value = None
+    user_repo.get_one.return_value = None
 
     with pytest.raises(UnauthorizedError):
         await auth_service.login("test@mail.com", "1234")
 
 
 async def test_login_user_wrong_password_returns_unauthorized_error(auth_service, user_repo, mocker):
-    user_repo.get_by_email.return_value = {
+    user_repo.get_one.return_value = {
         "_id": ObjectId(),
         "email": "test@mail.com",
         "hashed_password": "hashed",
@@ -40,6 +40,7 @@ async def test_login_user_wrong_password_returns_unauthorized_error(auth_service
     with pytest.raises(UnauthorizedError):
         await auth_service.login("test@mail.com", "wrong")
 
+
 async def test_login_returns_token(auth_service, user_repo, mocker):
     user = {
         "_id": ObjectId(),
@@ -47,7 +48,7 @@ async def test_login_returns_token(auth_service, user_repo, mocker):
         "hashed_password": "hashed",
     }
 
-    user_repo.get_by_email.return_value = user
+    user_repo.get_one.return_value = user
 
     mocker.patch(
         "app.services.auth_service.verify_password",
@@ -66,14 +67,14 @@ async def test_login_returns_token(auth_service, user_repo, mocker):
 
 
 async def test_change_password_user_not_found(auth_service, user_repo):
-    user_repo.get_by_id.return_value = None
+    user_repo.get_one.return_value = None
 
     with pytest.raises(UserNotFoundError):
         await auth_service.change_password("user-id", "old", "new")
 
 
 async def test_change_password_wrong_password(auth_service, user_repo, mocker):
-    user_repo.get_by_id.return_value = {
+    user_repo.get_one.return_value = {
         "_id": ObjectId(),
         "hashed_password": "hashed-old",
     }
