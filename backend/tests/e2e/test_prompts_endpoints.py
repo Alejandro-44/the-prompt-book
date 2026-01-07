@@ -63,6 +63,16 @@ async def test_get_paginated_prompts(e2e_client, seed_data):
     assert data["pages"] == 2
 
 
+async def test_get_an_unexistent_prompt_returns_not_found(e2e_client, seed_data):
+    response = await e2e_client.get(f"/prompts/{MOCK_RANDOM_ID}")
+    assert response.status_code == 404
+
+
+async def test_trying_to_get_a_prompt_with_bad_id_get_bad_request(e2e_client, seed_data):
+    response = await e2e_client.get("/prompts/abcf")
+    assert response.status_code == 400
+
+
 async def test_update_prompt(e2e_client, seed_data, prompt_ids):
     test_user = { "email": "matt@example.com", "password": "password12345"}
     prompt_id = str(prompt_ids["matt_prompt"])
@@ -80,6 +90,19 @@ async def test_update_prompt(e2e_client, seed_data, prompt_ids):
     data = response.json()
 
     assert data["model"] == "Claude"
+
+
+async def test_trying_to_modify_a_prompt_with_a_bad_id_returns_bad_request(e2e_client, seed_data):
+    test_user = {"email": "johndoe@example.com", "password": "qwerty12345"}
+
+    response = await e2e_client.post("/auth/login", json=test_user)
+    assert response.status_code == 200
+    e2e_client.cookies.set("access_token", response.cookies.get("access_token"))
+
+    update_data = { "model": "Claude" }
+
+    response = await e2e_client.patch(f'/prompts/abcdef', json=update_data)
+    assert response.status_code == 400
 
 
 async def test_trying_to_modify_a_prompt_that_does_not_exist_returns_not_found(e2e_client, seed_data):
@@ -127,8 +150,19 @@ async def test_delete_prompt(e2e_client, seed_data, prompt_ids):
     response.status_code == 404
 
 
-async def test_trying_to_delete_a_prompt_that_does_not_exist_returns_not_found(e2e_client, seed_data):
+async def test_trying_to_delete_a_prompt_with_a_bad_id_returns_bad_request(e2e_client, seed_data):
     test_user = {"email": "johndoe@example.com", "password": "qwerty12345"}
+
+    response = await e2e_client.post("/auth/login", json=test_user)
+    assert response.status_code == 200
+    e2e_client.cookies.set("access_token", response.cookies.get("access_token"))
+
+    response = await e2e_client.delete(f'/prompts/abcdef')
+    assert response.status_code == 400
+
+
+async def test_trying_to_delete_a_prompt_that_does_not_exist_returns_not_found(e2e_client, seed_data):
+    test_user = {"email": "alex@example.com", "password": "password12345"}
 
     response = await e2e_client.post("/auth/login", json=test_user)
     assert response.status_code == 200
@@ -136,6 +170,19 @@ async def test_trying_to_delete_a_prompt_that_does_not_exist_returns_not_found(e
 
     response = await e2e_client.delete(f'/prompts/{MOCK_RANDOM_ID}')
     assert response.status_code == 404
+
+
+async def test_trying_to_delete_a_prompt_when_user_is_not_owner_returns_forbidden(e2e_client, seed_data, prompt_ids):
+    test_user = {"email": "johndoe@example.com", "password": "qwerty12345"}
+    prompt_id = str(prompt_ids["matt_prompt"])
+
+    response = await e2e_client.post("/auth/login", json=test_user)
+    assert response.status_code == 200
+    e2e_client.cookies.set("access_token", response.cookies.get("access_token"))
+
+    response = await e2e_client.delete(f'/prompts/{prompt_id}')
+    assert response.status_code == 403
+
 
 
 async def test_get_comments_from_a_prompt(e2e_client, seed_data, prompt_ids):

@@ -1,9 +1,14 @@
 import pytest
 
+from bson import ObjectId
+
 from app.schemas import User, PromptSummary
 
 
 pytestmark = [pytest.mark.e2e, pytest.mark.asyncio]
+
+
+MOCK_RANDOM_ID = str(ObjectId())
 
 
 async def test_register_user_and_access_its_own_info(e2e_client):
@@ -26,6 +31,22 @@ async def test_register_user_and_access_its_own_info(e2e_client):
     User.model_validate(data)
     assert data["username"] == "testuser"
 
+async def test_get_my_prompts_with_filters(e2e_client, seed_data, user_ids):
+    login_data = {"email": "alex@example.com", "password": "password12345"}
+    auth_response = await e2e_client.post("/auth/login", json=login_data)
+    e2e_client.cookies.set("access_token", auth_response.cookies.get("access_token"))
+
+    params = {"model": "gpt-4", "tags": ["coding"]} 
+    response = await e2e_client.get("/users/me/prompts", params=params)
+
+    assert response.status_code == 200
+    data = response.json()
+
+    assert "items" in data
+    assert "total" in data
+    if data["total"] > 0:
+        assert "coding" in data["items"][0]["tags"]
+
 
 async def test_user_prompts_get_only_its_own_prompts_paginated(e2e_client, seed_data, user_ids):
     user_id = str(user_ids["alex"])
@@ -42,15 +63,24 @@ async def test_user_prompts_get_only_its_own_prompts_paginated(e2e_client, seed_
 
     for prompt in prompts:
         PromptSummary.model_validate(prompt)
-    
 
 
 async def test_get_public_user_info(e2e_client, seed_data, user_ids):
     user_id = str(user_ids["alex"])
-    response = await e2e_client.get(f"users/{user_id}")
+    response = await e2e_client.get(f"/users/{user_id}")
     assert response.status_code == 200
     data = response.json()
-    User.model_validate(data)    
+    User.model_validate(data)
+
+
+async def test_trying_to_get_a_user_with_invalid_id_returns_bad_request(e2e_client, seed_data, user_ids):
+    response = await e2e_client.get(f"/users/aaabbbcccddd")
+    assert response.status_code == 400
+
+
+async def test_trying_to_get_a_user_that_does_not_exist_return_not_found(e2e_client, seed_data, user_ids):
+    response = await e2e_client.get(f"users/{MOCK_RANDOM_ID}")
+    assert response.status_code == 404
 
 
 async def test_deactivate_user(e2e_client, seed_data, user_ids):

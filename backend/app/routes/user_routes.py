@@ -4,6 +4,7 @@ from bson.errors import InvalidId
 
 from app.dependencies import UserDependency, ServicesDependency
 from app.schemas import PromptSummary, User, PaginatedResponse
+from app.core.exceptions import UserNotFoundError
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -52,6 +53,11 @@ async def get_user(user_id: str, service: ServicesDependency):
     except InvalidId:
         raise HTTPException(
             status_code=400,
+            detail="Invalid user id"
+        )
+    except UserNotFoundError:
+        raise HTTPException(
+            status_code=404,
             detail="Invalid user id"
         )
 
