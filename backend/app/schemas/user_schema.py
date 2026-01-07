@@ -15,6 +15,7 @@ class UserLogin(BaseModel):
 class User(BaseModel):
     id: str
     username: str
+    handle: str
     is_active: bool
 
     @staticmethod
@@ -22,7 +23,8 @@ class User(BaseModel):
         return User(
             id=str(document["_id"]),
             username=document["username"],
-            is_active=document["is_active"]
+            handle=document["handle"],
+            is_active=document["is_active"],
         )
 
 
@@ -34,6 +36,7 @@ class PrivateUser(User):
         return PrivateUser(
             id=str(document["_id"]),
             username=document["username"],
+            handle=document["handle"],
             email=document["email"],
             is_active=document["is_active"]
         )

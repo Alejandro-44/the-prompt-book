@@ -1,46 +1,65 @@
 from bson.objectid import ObjectId
+from datetime import datetime
 
 mock_users = [
     {
         "_id": ObjectId("6930faa5239be95b75ed3c5c"),
-        "username": "johndoe",
+        "username": "john doe",
         "email": "johndoe@example.com",
+        "handle": "john_doe",
+        "handle_locked": True,
         "hashed_password": "$argon2id$v=19$m=65536,t=3,p=4$kJyTStK6VL+0CQqsjIaefQ$ZICjyHmI44FG0IbhgSZuO+Aw+dGdM/uRb2tfaUyrWNU",
-        "is_active": True
+        "is_active": True,
+        "created_at": datetime(2024, 1, 10),
     },
     {
         "_id": ObjectId("6939872c7f7a423bcb83fe0b"),
         "username": "alex",
         "email": "alex@example.com",
+        "handle": "alex",
+        "handle_locked": True,
         "hashed_password": "$argon2id$v=19$m=65536,t=3,p=4$vPNCQ/X+Zx7pGoLIfVGcGA$tEDmDukrnxPytyC4oe6Kwzmk6v9fUBwSA958u+PPyfg",
-        "is_active": True
+        "is_active": True,
+        "created_at": datetime(2024, 2, 3),
     },
     {
         "_id": ObjectId("693987497f7a423bcb83fe0c"),
-        "username": "matt_coder",
+        "username": "matt coder",
         "email": "matt@example.com",
+        "handle": "matt_coder",
+        "handle_locked": True,
         "hashed_password": "$argon2id$v=19$m=65536,t=3,p=4$aKXzzzxUiSfoQluiyIGvzQ$DpPc+GGVDYOXfpdG3+CajciWJIlZXF8b8aLVCnfTOhc",
-        "is_active": True
+        "is_active": True,
+        "created_at": datetime(2024, 3, 12),
     },
     {
         "_id": ObjectId("6939875e7f7a423bcb83fe0d"),
-        "username": "luna_writer",
+        "username": "luna writer",
         "email": "lune@example.com",
+        "handle": "luna_writer",
+        "handle_locked": True,
         "hashed_password": "$argon2id$v=19$m=65536,t=3,p=4$wCXuEJNJYA9C87WcjTVq1w$9hcBZcnhR7rSpp64F89lZiZ73Fj7MR6rNyT4uxkpEcE",
-        "is_active": True
+        "is_active": True,
+        "created_at": datetime(2024, 4, 1),
     },
     {
         "_id": ObjectId("6939876c7f7a423bcb83fe0e"),
-        "username": "creative_io",
+        "username": "creative io",
         "email": "creative@example.com",
+        "handle": "creative_io",
+        "handle_locked": False,  
         "hashed_password": "$argon2id$v=19$m=65536,t=3,p=4$S0Hhi4c9fO5ZXfl3VG9O2A$llVE/2jCDDi9dPj4ZYBWXg92GaTqtJUAQtH+bGUNbP4",
-        "is_active": True
+        "is_active": True,
+        "created_at": datetime(2024, 5, 20),
     },
     {
         "_id": ObjectId("6939876c7f7a423bcb83fe0f"),
-        "username": "invalid_user",
+        "username": "invalid user",
         "email": "invalid_user@example.com",
+        "handle": "invalid_user",
+        "handle_locked": True,
         "hashed_password": "invalid",
-        "is_active": False
+        "is_active": False,
+        "created_at": datetime(2023, 12, 1),
     }
 ]

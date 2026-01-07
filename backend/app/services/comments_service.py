@@ -7,9 +7,8 @@ from app.repositories.comments_repository import CommentsRepository
 from app.core.exceptions import CommentNotFoundError, DatabaseError
 
 class CommentsService:
-    def __init__(self, comments_repo: CommentsRepository, clock=datetime.now(timezone.utc)):
+    def __init__(self, comments_repo: CommentsRepository):
         self.__comments_repo = comments_repo
-        self.__clock = clock
 
     async def get_prompt_comments(self, prompt_id: ObjectId) -> list[Comment]:
         comment_documents = None
@@ -23,7 +22,7 @@ class CommentsService:
         comment_data = comment_in.model_dump()
         try:
             comment_data.update({
-                "pub_date": self.__clock,
+                "pub_date": datetime.now(timezone.utc),
                 "prompt_id": prompt_id,
                 "user_id": user_id
             })
