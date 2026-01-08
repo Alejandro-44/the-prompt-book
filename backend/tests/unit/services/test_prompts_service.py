@@ -27,10 +27,11 @@ def mock_prompt():
     return {
         "_id": ObjectId(MOCK_PROMPT_ID),
         "title": "Test Prompt",
+        "description": "this is a test prompt",
         "prompt": "Do something",
         "result_example": "Example",
         "model": "gpt-4",
-        "tags": ["tag1"],
+        "hashtags": ["tag1"],
         "pub_date": "2024-01-01T00:00:00Z",
         "author_id": ObjectId(MOCK_USER_ID),
         "author_name": "user",
@@ -42,7 +43,8 @@ async def test_get_summary_returns_metadata_query(service, mock_repo):
     mock_repo.get_summary.return_value = ([{
         "_id": ObjectId(),
         "title": "Test Prompt",
-        "tags": ["tag1"],
+        "description": "Test description",
+        "hashtags": ["tag1"],
         "model": "gpt-4",
         "pub_date": "2024-01-01T00:00:00Z",
         "author_id": ObjectId(),
@@ -52,7 +54,8 @@ async def test_get_summary_returns_metadata_query(service, mock_repo):
     {
         "_id": ObjectId(),
         "title": "Test Prompt 2",
-        "tags": ["tag2"],
+        "description": "Test description",
+        "hashtags": ["tag2"],
         "model": "gpt-3.5",
         "pub_date": "2024-01-02T00:00:00Z",
         "author_id": ObjectId(),
@@ -93,10 +96,10 @@ async def test_get_by_id_empty_response_raise_not_found(service, mock_repo):
 async def test_create_adds_user_id_pub_date_and_author_data(service, mock_repo):
     prompt_in = PromptCreate(
         title="Title",
-        prompt="Do something",
-        result_example="Example",
+        description="This is a test #ai #nlp",
+        prompt="Test prompt",
+        result_example="something incredible",
         model="gpt-4",
-        tags=["tag1"],
     )
 
     user = User(
@@ -117,8 +120,7 @@ async def test_create_adds_user_id_pub_date_and_author_data(service, mock_repo):
 
     assert payload["title"] == "Title"
     assert payload["model"] == "gpt-4"
-    assert payload["tags"] == ["tag1"]
-    assert "pub_date" in payload
+    assert payload["hashtags"] == ["ai", "nlp"]
     assert isinstance(payload["pub_date"], datetime)
     assert payload["author_id"] == ObjectId(user.id)
     assert payload["author_name"] == user.username
@@ -128,10 +130,10 @@ async def test_create_adds_user_id_pub_date_and_author_data(service, mock_repo):
 async def test_create_prompt_database_error(service, mock_repo):
     prompt_in = PromptCreate(
         title="Title",
+        description="This is a test prompt #test",
         prompt="Do something",
         result_example="Example",
         model="gpt-4",
-        tags=["tag1"]
     )
 
     user = User(

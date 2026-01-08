@@ -6,13 +6,13 @@ from app.core.exceptions import PromptNotFoundError, PromptOwnershipError
 pytestmark = [pytest.mark.integration, pytest.mark.asyncio]
 
 
-async def test_create_prompt_success(services, seed_data, user_ids):
+async def test_create_prompt_success(services, seed_data):
     prompt_in = PromptCreate(
         title="Test prompt",
+        description="This is a test #ai #nlp",
         prompt="Test prompt",
         result_example="something incredible",
         model="ChatGPT",
-        tags=["ai", "nlp"],
     )
 
     test_user_data = seed_data["users"][0]
@@ -33,9 +33,11 @@ async def test_create_prompt_success(services, seed_data, user_ids):
     Prompt.model_validate(prompt)
 
     assert prompt.title == "Test prompt"
+    assert prompt.hashtags == ["ai", "nlp"]
     assert prompt.author_name == test_user.username
     assert prompt.author_handle == test_user.handle
     assert prompt.model == "ChatGPT"
+
 
 async def test_get_summary_returns_paginated_prompts(
     services, seed_data

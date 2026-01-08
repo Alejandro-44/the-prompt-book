@@ -71,18 +71,18 @@ async def test_get_summary_filters_by_author_handle(
     )
 
 
-async def test_get_summary_filters_by_tags(
+async def test_get_summary_filters_by_hashtags(
     prompts_repo, seed_users, seed_prompts
 ):
     items, total = await prompts_repo.get_summary(
-        filters={"tags": ["marketing"]},
+        filters={"hashtags": ["marketing"]},
         skip=0,
         limit=20,
     )
 
     assert total > 0
     assert all(
-        "marketing" in item["tags"]
+        "marketing" in item["hashtags"]
         for item in items
     )
 
@@ -149,7 +149,7 @@ async def test_create_inserts_prompt_and_returns_id(
         "prompt": "Do something",
         "result_example": "Example",
         "model": "gpt-4",
-        "tags": ["test"],
+        "hashtags": ["test"],
         "auhtor_id": user["_id"],
         "auhtor_name": user["username"],
         "auhtor_handle": user["handle"],

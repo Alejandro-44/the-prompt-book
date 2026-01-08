@@ -19,7 +19,7 @@ class PromptCreate(PromptBase):
 
 class Prompt(PromptBase):
     id: str
-    tags: List[str]
+    hashtags: List[str]
     pub_date: datetime
     author_id: str
     author_name: str
@@ -34,7 +34,7 @@ class Prompt(PromptBase):
             prompt=document["prompt"],
             result_example=document["result_example"],
             model=document["model"],
-            tags=document.get("tags", []),
+            hashtags=document.get("hashtags", []),
             pub_date=document["pub_date"],
             author_id=str(document["author_id"]),
             author_name=document["author_name"],
@@ -47,12 +47,13 @@ class PromptUpdate(BaseModel):
     prompt: Optional[str] = None
     result_example: Optional[str] = None
     model: Optional[str] = None
-    tags: Optional[List[str]] = None
+    hashtags: Optional[List[str]] = None
 
 class PromptSummary(BaseModel):
     id: str
     title: str
-    tags: List[str]
+    description: str
+    hashtags: List[str]
     model: str
     pub_date: datetime
     author_name: str
@@ -63,7 +64,8 @@ class PromptSummary(BaseModel):
         return PromptSummary(
             id=str(document["_id"]),
             title=document["title"],
-            tags=document.get("tags", []),
+            description=document["description"],
+            hashtags=document.get("hashtags", []),
             model=document["model"],
             pub_date=document["pub_date"],
             author_name=document["author_name"],

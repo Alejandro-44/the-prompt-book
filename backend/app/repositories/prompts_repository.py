@@ -24,8 +24,8 @@ class PromptsRepository:
             if filters.get("author_handle"):
                 mongo_filters["author_handle"] = filters["author_handle"]
 
-            if filters.get("tags"):
-                mongo_filters["tags"] = {"$in": filters["tags"]}
+            if filters.get("hashtags"):
+                mongo_filters["hashtags"] = {"$in": filters["hashtags"]}
 
             if filters.get("model"):
                 mongo_filters["model"] = filters["model"]
@@ -41,7 +41,8 @@ class PromptsRepository:
                 "$project": {
                     "_id": 1,
                     "title": 1,
-                    "tags": 1,
+                    "description": 1,
+                    "hashtags": 1,
                     "model": 1,
                     "pub_date": 1,
                     "author_name": 1,

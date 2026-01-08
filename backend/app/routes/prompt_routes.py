@@ -19,12 +19,12 @@ async def get_prompts(
     services: ServicesDependency,
     page: int = Query(1, ge=1),
     limit: int = Query(10, ge=1, le=100),
-    tags: list[str] | None = Query(None),
+    hashtags: list[str] | None = Query(None),
     model: str | None = None,
     author_handle: str | None = Query(None, max_length=30),
 ):
     filters = {
-        "tags": tags,
+        "hashtags": hashtags,
         "model": model,
         "author_handle": author_handle,
     }

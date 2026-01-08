@@ -37,7 +37,7 @@ async def test_get_my_prompts_with_filters(e2e_client, seed_data):
     auth_response = await e2e_client.post("/auth/login", json=login_data)
     e2e_client.cookies.set("access_token", auth_response.cookies.get("access_token"))
 
-    params = {"model": "gpt-4", "tags": ["coding"]} 
+    params = {"model": "gpt-4", "tags": ["marketing"]} 
     response = await e2e_client.get("/users/me/prompts", params=params)
 
     assert response.status_code == 200
@@ -46,7 +46,7 @@ async def test_get_my_prompts_with_filters(e2e_client, seed_data):
     assert "items" in data
     assert "total" in data
     if data["total"] > 0:
-        assert "coding" in data["items"][0]["tags"]
+        assert "marketing" in data["items"][0]["hashtags"]
 
 
 async def test_user_prompts_get_only_its_own_prompts_paginated(e2e_client, seed_data, user_handles):

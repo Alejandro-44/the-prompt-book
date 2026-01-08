@@ -6,6 +6,8 @@ from bson import ObjectId
 from app.repositories.prompts_repository import PromptsRepository
 from app.schemas import PromptCreate, PromptUpdate, Prompt, PromptSummary, User
 from app.core.exceptions import PromptNotFoundError, DatabaseError, PromptOwnershipError
+from app.utils import extract_hashtags
+
 
 class PromptsService:
     def __init__(self, prompts_repo: PromptsRepository):
@@ -48,10 +50,12 @@ class PromptsService:
 
     async def create(self, user: User, prompt: PromptCreate):
         prompt_data = prompt.model_dump()
+        hashtags = extract_hashtags(prompt.description)
         prompt_data.update({
             "author_id": ObjectId(user.id),
             "author_name": user.username,
             "author_handle": user.handle,
+            "hashtags": hashtags,
             "pub_date": datetime.now(timezone.utc)
         })
 
