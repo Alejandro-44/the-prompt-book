@@ -13,8 +13,9 @@ def test_comment_from_document_maps_fields_correctly():
         "_id": ObjectId("507f1f77bcf86cd799439011"),
         "content": "Nice prompt",
         "prompt_id": ObjectId("507f1f77bcf86cd799439012"),
-        "user_id": ObjectId("507f1f77bcf86cd799439013"),
-        "author": "john",
+        "author_id": ObjectId("507f1f77bcf86cd799439013"),
+        "author_name": "john doe",
+        "author_handle": "john_doe",
         "pub_date": now,
     }
 
@@ -23,8 +24,9 @@ def test_comment_from_document_maps_fields_correctly():
     assert comment.id == "507f1f77bcf86cd799439011"
     assert comment.content == "Nice prompt"
     assert comment.prompt_id == "507f1f77bcf86cd799439012"
-    assert comment.user_id == "507f1f77bcf86cd799439013"
-    assert comment.author == "john"
+    assert comment.author_id == "507f1f77bcf86cd799439013"
+    assert comment.author_name == "john doe"
+    assert comment.author_handle == "john_doe"
     assert comment.pub_date == now
 
 

@@ -9,6 +9,7 @@ pytestmark = [pytest.mark.e2e, pytest.mark.asyncio]
 
 MOCK_RANDOM_ID = str(ObjectId())
 
+
 async def test_register_and_create_a_prompt(e2e_client):
     test_user = {"username": "testsuser", "email": "testsuser@example.com", "password": "123456"} 
     await e2e_client.post(

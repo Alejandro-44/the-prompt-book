@@ -1,17 +1,24 @@
 import pytest
 from bson import ObjectId
-from app.schemas import Comment, CommentCreate, CommentUpdate
+from app.schemas import Comment, CommentCreate, CommentUpdate, User
 from app.core.exceptions import CommentNotFoundError, DatabaseError
 
 
 pytestmark = [pytest.mark.integration, pytest.mark.asyncio]
 
 
-async def test_create_comment_success(services, seed_data, user_ids, prompt_ids):
-    user_id = user_ids["johndoe"]
+async def test_create_comment_success(services, seed_data, prompt_ids):
+    test_user_data = seed_data["users"][0]
+    test_user = User(
+        id=str(test_user_data["_id"]),
+        username=test_user_data["username"],
+        handle=test_user_data["handle"],
+        is_active=test_user_data["is_active"]
+    )
+
     mock_comment = CommentCreate(content="Awesome!")
     prompt_id = prompt_ids["commented_prompt_1"]
-    comment_id = await services.comments.create(prompt_id, user_id, mock_comment)
+    comment_id = await services.comments.create(prompt_id, test_user, mock_comment)
     assert isinstance(comment_id, str)
 
 

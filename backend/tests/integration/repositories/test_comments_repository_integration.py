@@ -25,9 +25,11 @@ async def test_get_by_prompt_returns_comments_with_author(
     assert result[0]["content"] == "Second comment"
     assert result[1]["content"] == "First comment"
 
-    for comment in result:
-        assert "author" in comment
-        assert comment["author"] == "johndoe"
+    assert all(
+        (comment["author_name"] == "john doe" and
+        comment["author_handle"] == "john_doe")
+        for comment in result
+    )
 
 
 async def test_get_by_prompt_returns_empty_list_for_unknown_prompt(
@@ -40,13 +42,13 @@ async def test_get_by_prompt_returns_empty_list_for_unknown_prompt(
 async def test_create_inserts_comment_and_returns_id(
     comments_repo, seed_comments, user_ids
 ):
-    user_id = user_ids["johndoe"]
-    prompt_id = ObjectId()
 
     comment_data = {
         "content": "New comment",
-        "prompt_id": prompt_id,
-        "user_id": user_id,
+        "prompt_id": ObjectId(),
+        "author_id": ObjectId(),
+        "author_name": "john doe",
+        "author_handle": "john_doe",
         "pub_date": datetime.now(timezone.utc),
     }
 
@@ -60,13 +62,13 @@ async def test_create_inserts_comment_and_returns_id(
 
 
 async def test_update_updates_comment_if_owner(
-    comments_repo, seed_comments, user_ids
+    comments_repo, seed_comments, user_ids, comments_ids
 ):
-    comment = seed_comments[0]
+    comment_id = comments_ids["comment_1"]
     user_id = user_ids["johndoe"]
 
     updated = await comments_repo.update(
-        comment["_id"],
+        comment_id,
         user_id,
         {"content": "Updated"},
     )
@@ -74,7 +76,7 @@ async def test_update_updates_comment_if_owner(
     assert updated is True
 
     saved = await comments_repo._CommentsRepository__collection.find_one(
-        {"_id": comment["_id"]}
+        {"_id": comment_id}
     )
 
     assert saved["content"] == "Updated"

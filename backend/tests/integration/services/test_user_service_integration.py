@@ -17,6 +17,7 @@ async def test_register_new_user_succesfully(services):
 
     saved = await services.user.get_one({ "id": ObjectId(user.id) })
     assert saved.username == "Alice"
+    assert saved.handle == "alice"
     assert saved.is_active is True
 
 
@@ -30,6 +31,7 @@ async def test_register_duplicate_user_raises_error(services, seed_data):
 async def test_get_one_by_email_returns_user(services, seed_data):
     user = await services.user.get_one({ "email": "alex@example.com" })
     assert user.username == "alex"
+    assert user.handle == "alex"
     assert user.is_active is True
 
 
@@ -41,7 +43,8 @@ async def test_get_one_by_email_raise_if_not_found(services):
 async def test_get_one_by_id_returns_user_sucessfully(services, seed_users, user_ids):
     user_id = user_ids["johndoe"]
     user = await services.user.get_one({ "id": user_id })
-    assert user.username == "johndoe"
+    assert user.username == "john doe"
+    assert user.handle == "john_doe"
     assert user.is_active is True
 
 
@@ -51,7 +54,16 @@ async def test_get_one_by_id_returns_deleted_user_if_inactive(services, seed_use
     result = await services.user.get_one({ "id": user_id })
 
     assert result.username == "deleted user"
+    assert result.handle == "deleted"
     assert result.is_active is False
+
+
+async def test_get_one_by_handle_returns_user_sucessfully(services, seed_users, user_handles):
+    user_handle = user_handles["johndoe"]
+    user = await services.user.get_one({ "handle": user_handle })
+    assert user.username == "john doe"
+    assert user.handle == "john_doe"
+    assert user.is_active is True
 
 
 async def test_deactivate_user_successfully(services, seed_users, user_ids):

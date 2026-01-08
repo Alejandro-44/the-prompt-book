@@ -4,7 +4,7 @@ from datetime import datetime
 
 from app.services.comments_service import CommentsService
 from app.core.exceptions import CommentNotFoundError
-from app.schemas import CommentCreate, CommentUpdate, Comment
+from app.schemas import CommentCreate, CommentUpdate, Comment, User
 
 pytestmark = [pytest.mark.unit, pytest.mark.asyncio]
 
@@ -26,8 +26,9 @@ async def test_get_prompt_comments_returns_comment_models(service, mock_repo):
             "content": "Nice prompt",
             "pub_date": datetime.now(),
             "prompt_id": ObjectId(MOCK_PROMPT_ID),
-            "user_id": ObjectId(MOCK_USER_ID),
-            "author": "johndoe"
+            "author_id": ObjectId(MOCK_USER_ID),
+            "author_name": "john doe",
+            "author_handle": "john_doe",
         }
     ]
 
@@ -40,11 +41,18 @@ async def test_get_prompt_comments_returns_comment_models(service, mock_repo):
 
 async def test_create_comment_adds_required_fields(service, mock_repo):
     comment_in = CommentCreate(content="Hello world")
+    user = User(
+        id=MOCK_USER_ID,
+        username="john doe",
+        handle="john_doe",
+        is_active=True
+    )
+    
     mock_repo.create.return_value = MOCK_COMMENT_ID
 
     result = await service.create(
         ObjectId(MOCK_PROMPT_ID),
-        ObjectId(MOCK_USER_ID),
+        user,
         comment_in,
     )
 
@@ -55,13 +63,15 @@ async def test_create_comment_adds_required_fields(service, mock_repo):
 
     assert payload["content"] == "Hello world"
     assert payload["prompt_id"] == ObjectId(MOCK_PROMPT_ID)
-    assert payload["user_id"] == ObjectId(MOCK_USER_ID)
+    assert payload["author_id"] == ObjectId(user.id)
+    assert payload["author_name"] == user.username
+    assert payload["author_handle"] == user.handle
     assert isinstance(payload["pub_date"], datetime)
 
 
 async def test_update_comment_success(service, mock_repo):
     mock_repo.update.return_value = True
-
+    
     update_data = CommentUpdate(content="Updated")
 
     result = await service.update(

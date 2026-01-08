@@ -11,10 +11,11 @@ class CommentCreate(CommentBase):
 
 class Comment(CommentBase):
     id: str
-    user_id: str
     prompt_id: str
     pub_date: datetime
-    author: str
+    author_id: str
+    author_name: str
+    author_handle: str
 
     @staticmethod
     def from_document(document):
@@ -22,8 +23,9 @@ class Comment(CommentBase):
             id=str(document["_id"]),
             content=document["content"],
             prompt_id=str(document["prompt_id"]),
-            user_id=str(document["user_id"]),
-            author=str(document["author"]),
+            author_id=str(document["author_id"]),
+            author_name=document["author_name"],
+            author_handle=document["author_handle"],
             pub_date=document["pub_date"],
         )
 

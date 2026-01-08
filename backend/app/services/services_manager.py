@@ -8,11 +8,11 @@ from .comments_service import CommentsService
 
 class ServiceManager:
     def __init__(self, db):
-        self.db = db
+        self.__db = db
         # Repositories
-        self.__user_repo = UserRepository(self.db)
-        self.__prompts_repo = PromptsRepository(self.db)
-        self.__comments_repo = CommentsRepository(self.db)
+        self.__user_repo = UserRepository(self.__db)
+        self.__prompts_repo = PromptsRepository(self.__db)
+        self.__comments_repo = CommentsRepository(self.__db)
         # Services
         self.__user_service = UserService(self.__user_repo)
         self.__auth_service = AuthService(self.__user_repo)

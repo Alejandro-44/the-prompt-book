@@ -1,6 +1,6 @@
 import pytest
 from bson import ObjectId
-from app.schemas.prompt_schema import PromptCreate, PromptUpdate, Prompt, PromptSummary
+from app.schemas import PromptCreate, PromptUpdate, Prompt, PromptSummary, User
 from app.core.exceptions import PromptNotFoundError, PromptOwnershipError
 
 pytestmark = [pytest.mark.integration, pytest.mark.asyncio]
@@ -15,8 +15,16 @@ async def test_create_prompt_success(services, seed_data, user_ids):
         tags=["ai", "nlp"],
     )
 
+    test_user_data = seed_data["users"][0]
+    test_user = User(
+        id=str(test_user_data["_id"]),
+        username=test_user_data["username"],
+        handle=test_user_data["handle"],
+        is_active=test_user_data["is_active"]
+    )
+
     prompt_id = await services.prompts.create(
-        user_ids["johndoe"], prompt_in
+        test_user, prompt_in
     )
 
     assert isinstance(prompt_id, str)
@@ -25,15 +33,33 @@ async def test_create_prompt_success(services, seed_data, user_ids):
     Prompt.model_validate(prompt)
 
     assert prompt.title == "Test prompt"
-    assert prompt.author.id == str(user_ids["johndoe"])
+    assert prompt.author_name == test_user.username
+    assert prompt.author_handle == test_user.handle
     assert prompt.model == "ChatGPT"
+
+async def test_get_summary_returns_paginated_prompts(
+    services, seed_data
+):
+    result = await services.prompts.get_summary(
+        {}, page=1, limit=10
+    )
+
+    prompts = result["items"]
+
+    for prompt in prompts:
+        PromptSummary.model_validate(prompt)
+
+    assert len(prompts) == 10
+    assert result["page"] == 1
+    assert result["total"] == 18
+    assert result["pages"] == 2
 
 
 async def test_get_by_user_id_returns_only_user_prompts(
     services, seed_data, user_ids
 ):
     result = await services.prompts.get_summary(
-        {"user_id": user_ids["alex"]}, page=1, limit=10
+        {"author_id": user_ids["alex"]}, page=1, limit=10
     )
 
     prompts = result["items"]
@@ -54,7 +80,8 @@ async def test_get_one_returns_prompt_sucessfully(services, seed_data, prompt_id
 
     prompt = Prompt.model_validate(prompt)
     assert prompt.id == str(prompt_id)
-    assert prompt.author.username == "matt_coder"
+    assert prompt.author_name == "matt_coder"
+    assert prompt.author_handle == "matt_coder"
 
 
 async def test_get_one_not_found_raises_error(

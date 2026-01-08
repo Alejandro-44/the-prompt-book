@@ -6,7 +6,7 @@ from bson import ObjectId
 
 from app.services.prompts_service import PromptsService
 from app.core.exceptions import PromptNotFoundError, DatabaseError, PromptOwnershipError
-from app.schemas.prompt_schema import PromptCreate, PromptUpdate, PromptSummary, Prompt
+from app.schemas import PromptCreate, PromptUpdate, PromptSummary, Prompt, User
 
 
 pytestmark = [pytest.mark.unit, pytest.mark.asyncio]
@@ -32,12 +32,9 @@ def mock_prompt():
         "model": "gpt-4",
         "tags": ["tag1"],
         "pub_date": "2024-01-01T00:00:00Z",
-        "author": {
-            "_id": ObjectId(MOCK_USER_ID),
-            "username": "user",
-            "email": "user@example.com",
-            "is_active": True
-        }
+        "author_id": ObjectId(MOCK_USER_ID),
+        "author_name": "user",
+        "author_handle": "user"
     }
 
 
@@ -49,7 +46,8 @@ async def test_get_summary_returns_metadata_query(service, mock_repo):
         "model": "gpt-4",
         "pub_date": "2024-01-01T00:00:00Z",
         "author_id": ObjectId(),
-        "author_name": "user1"
+        "author_name": "user1",
+        "author_handle": "user1",
     },
     {
         "_id": ObjectId(),
@@ -58,7 +56,8 @@ async def test_get_summary_returns_metadata_query(service, mock_repo):
         "model": "gpt-3.5",
         "pub_date": "2024-01-02T00:00:00Z",
         "author_id": ObjectId(),
-        "author_name": "user2"
+        "author_name": "user2",
+        "author_handle": "user2",
     }], 2 )
 
     result = await service.get_summary(filters={}, page=2, limit=2)
@@ -76,24 +75,11 @@ async def test_get_summary_returns_metadata_query(service, mock_repo):
         PromptSummary.model_validate(prompt)
 
 
-async def test_get_one(service, mock_repo):
-    mock_repo.get_one.return_value = {
-        "_id": ObjectId(MOCK_PROMPT_ID),
-        "title": "Test Prompt",
-        "prompt": "Do something",
-        "result_example": "Example",
-        "model": "gpt-4",
-        "tags": ["tag1"],
-        "pub_date": "2024-01-01T00:00:00Z",
-        "author": {
-            "_id": ObjectId(MOCK_USER_ID),
-            "username": "user",
-            "email": "user@example.com",
-            "is_active": True
-        }
-    }
+async def test_get_one(service, mock_repo, mock_prompt):
+    mock_repo.get_one.return_value = mock_prompt
 
     result = await service.get_one(ObjectId(MOCK_PROMPT_ID))
+    mock_repo.get_one.assert_awaited_once_with(ObjectId(MOCK_PROMPT_ID))
     Prompt.model_validate(result)
 
 
@@ -104,7 +90,7 @@ async def test_get_by_id_empty_response_raise_not_found(service, mock_repo):
         await service.get_one(ObjectId(MOCK_PROMPT_ID))
 
 
-async def test_create_adds_user_id_and_pub_date(service, mock_repo):
+async def test_create_adds_user_id_pub_date_and_author_data(service, mock_repo):
     prompt_in = PromptCreate(
         title="Title",
         prompt="Do something",
@@ -113,9 +99,16 @@ async def test_create_adds_user_id_and_pub_date(service, mock_repo):
         tags=["tag1"],
     )
 
+    user = User(
+        id=MOCK_USER_ID,
+        username="john doe",
+        handle="john_doe",
+        is_active=True
+    )
+
     mock_repo.create.return_value = "some-id"
 
-    result = await service.create(ObjectId(MOCK_USER_ID), prompt_in)
+    result = await service.create(user, prompt_in)
 
     assert result == "some-id"
     mock_repo.create.assert_awaited_once()
@@ -125,9 +118,11 @@ async def test_create_adds_user_id_and_pub_date(service, mock_repo):
     assert payload["title"] == "Title"
     assert payload["model"] == "gpt-4"
     assert payload["tags"] == ["tag1"]
-    assert payload["user_id"] == ObjectId(MOCK_USER_ID)
     assert "pub_date" in payload
     assert isinstance(payload["pub_date"], datetime)
+    assert payload["author_id"] == ObjectId(user.id)
+    assert payload["author_name"] == user.username
+    assert payload["author_handle"] == user.handle
 
 
 async def test_create_prompt_database_error(service, mock_repo):
@@ -138,10 +133,19 @@ async def test_create_prompt_database_error(service, mock_repo):
         model="gpt-4",
         tags=["tag1"]
     )
+
+    user = User(
+        id=MOCK_USER_ID,
+        username="john doe",
+        handle="john_doe",
+        is_active=True
+    )
+
+
     mock_repo.create.side_effect = Exception("DB failure")
 
     with pytest.raises(DatabaseError):
-        await service.create(ObjectId(MOCK_USER_ID), prompt_in)
+        await service.create(user, prompt_in)
 
 
 async def test_update_prompt_success(service, mock_repo, mock_prompt):
@@ -151,13 +155,13 @@ async def test_update_prompt_success(service, mock_repo, mock_prompt):
     update_data = PromptUpdate(title="New Title")
     result = await service.update(ObjectId(MOCK_PROMPT_ID), ObjectId(MOCK_USER_ID), update_data)
 
-    mock_repo.get_one.assert_awaited_once()
+    mock_repo.get_one.assert_awaited_once_with(ObjectId(MOCK_PROMPT_ID))
     mock_repo.update.assert_awaited_once()
     assert result is True
 
+
 async def test_update_prompt_with_not_owner_user_unauthorized(service, mock_repo, mock_prompt):
     mock_repo.get_one.return_value = mock_prompt
-    mock_repo.update.return_value = True
 
     update_data = PromptUpdate(title="New Title")
     with pytest.raises(PromptOwnershipError):
@@ -195,3 +199,11 @@ async def test_delete_prompt_not_found(service, mock_repo):
 
     with pytest.raises(PromptNotFoundError):
         await service.delete(ObjectId(MOCK_RANDOM_ID), ObjectId(MOCK_USER_ID))
+
+
+async def test_delete_prompt_with_not_owner_user_unauthorized(service, mock_repo, mock_prompt):
+    mock_repo.get_one.return_value = mock_prompt
+
+    update_data = PromptUpdate(title="New Title")
+    with pytest.raises(PromptOwnershipError):
+        await service.update(ObjectId(MOCK_PROMPT_ID), ObjectId(MOCK_RANDOM_ID), update_data)

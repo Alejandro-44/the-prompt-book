@@ -22,6 +22,9 @@ class UserRepository:
 
             if filters.get("is_active"):
                 mongo_filters["is_active"] = filters["is_active"]
+
+            if filters.get("handle"):
+                mongo_filters["handle"] = filters["handle"]
         
         return await self.__collection.find_one(mongo_filters)
 

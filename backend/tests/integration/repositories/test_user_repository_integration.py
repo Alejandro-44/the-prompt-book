@@ -41,7 +41,7 @@ async def test_get_one_by_email_returns_user(
 
     assert user is not None
     assert user["email"] == email
-    assert user["username"] == "johndoe"
+    assert user["username"] == "john doe"
 
 
 async def test_get_one_by_email_returns_none_if_not_found(
@@ -60,7 +60,7 @@ async def test_get_one_by_id_returns_user(
 
     assert user is not None
     assert user["_id"] == user_id
-    assert user["username"] == "johndoe"
+    assert user["username"] == "john doe"
 
 
 async def test_get_one_by_id_returns_none_if_not_found(
@@ -68,6 +68,22 @@ async def test_get_one_by_id_returns_none_if_not_found(
 ):
     user = await user_repo.get_one({ "id": ObjectId() })
     assert user is None
+
+
+async def test_get_one_by_handle_returns_user(
+    user_repo, seed_users
+):
+    handle = seed_users[0]["handle"]
+    filters = {
+        "handle": handle
+    }
+
+    user = await user_repo.get_one(filters)
+
+    assert user is not None
+    assert user["username"] == "john doe"
+    assert user["email"] == "johndoe@example.com"
+    assert user["handle"] == handle
 
 
 async def test_update_updates_user(

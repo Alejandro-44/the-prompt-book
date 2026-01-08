@@ -19,11 +19,9 @@ def test_prompt_from_document_maps_fields_and_author():
         "model": "gpt-4",
         "tags": ["ai", "nlp"],
         "pub_date": now,
-        "author": {
-            "_id": ObjectId("507f1f77bcf86cd799439022"),
-            "username": "johndoe",
-            "is_active": True,
-        },
+        "author_id": ObjectId("507f1f77bcf86cd799439022"),
+        "author_name": "john doe",
+        "author_handle": "john_doe"
     }
 
     prompt = Prompt.from_document(document)
@@ -35,11 +33,9 @@ def test_prompt_from_document_maps_fields_and_author():
     assert prompt.model == "gpt-4"
     assert prompt.tags == ["ai", "nlp"]
     assert prompt.pub_date == now
-
-    assert isinstance(prompt.author, User)
-    assert prompt.author.id == "507f1f77bcf86cd799439022"
-    assert prompt.author.username == "johndoe"
-    assert prompt.author.is_active is True
+    assert prompt.author_id == "507f1f77bcf86cd799439022"
+    assert prompt.author_name == "john doe"
+    assert prompt.author_handle == "john_doe"
 
 
 def test_prompt_from_document_sets_empty_tags_when_missing():
@@ -50,11 +46,9 @@ def test_prompt_from_document_sets_empty_tags_when_missing():
         "result_example": "Example",
         "model": "gpt-4",
         "pub_date": datetime.now(timezone.utc),
-        "author": {
-            "_id": ObjectId(),
-            "username": "johndoe",
-            "is_active": True,
-        },
+        "author_id": ObjectId("507f1f77bcf86cd799439022"),
+        "author_name": "john doe",
+        "author_handle": "john_doe"
     }
 
     prompt = Prompt.from_document(document)
@@ -70,9 +64,7 @@ def test_prompt_from_document_invalid_author_raises_error():
         "result_example": "Example",
         "model": "gpt-4",
         "pub_date": datetime.now(timezone.utc),
-        "author": {
-            "username": "johndoe",
-        },
+        "author_id": ObjectId("507f1f77bcf86cd799439022"),
     }
 
     with pytest.raises(KeyError):

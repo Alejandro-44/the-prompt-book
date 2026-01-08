@@ -1,10 +1,10 @@
 import math
-from datetime import datetime
+from datetime import datetime, timezone
 
 from bson import ObjectId
 
 from app.repositories.prompts_repository import PromptsRepository
-from app.schemas.prompt_schema import PromptCreate, PromptUpdate, Prompt, PromptSummary
+from app.schemas import PromptCreate, PromptUpdate, Prompt, PromptSummary, User
 from app.core.exceptions import PromptNotFoundError, DatabaseError, PromptOwnershipError
 
 class PromptsService:
@@ -17,7 +17,7 @@ class PromptsService:
         user_id: str
     ) -> None:
         prompt = await self.get_one(prompt_id)
-        if prompt.author.id != str(user_id):
+        if prompt.author_id != str(user_id):
             raise PromptOwnershipError()
 
     def process_prompt_documents(self, prompt_documents) -> list[PromptSummary]:
@@ -25,7 +25,6 @@ class PromptsService:
 
     async def get_summary(self, filters: dict, page: int, limit: int) -> list[PromptSummary]:
         skip = (page - 1) * limit
-
         items, total = await self.__prompts_repo.get_summary(
             filters,
             skip,
@@ -47,11 +46,13 @@ class PromptsService:
 
         return Prompt.from_document(prompt_document)
 
-    async def create(self, user_id: ObjectId, prompt_in: PromptCreate):
-        prompt_data = prompt_in.model_dump()
+    async def create(self, user: User, prompt: PromptCreate):
+        prompt_data = prompt.model_dump()
         prompt_data.update({
-            "user_id": user_id,
-            "pub_date": datetime.now()
+            "author_id": ObjectId(user.id),
+            "author_name": user.username,
+            "author_handle": user.handle,
+            "pub_date": datetime.now(timezone.utc)
         })
 
         try:
