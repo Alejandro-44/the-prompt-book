@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Query, HTTPException, status
+from typing import Annotated
+
+from fastapi import APIRouter, Path, Query, HTTPException, status
 from bson import ObjectId
 from bson.errors import InvalidId
 
@@ -31,7 +33,7 @@ async def get_my_prompts(
     filters = {
         "tags": tags,
         "model": model,
-        "user_id": ObjectId(current_user.id),
+        "author_id": ObjectId(current_user.id),
     }
 
     return await services.prompts.get_summary(
@@ -46,15 +48,12 @@ async def delete_me(user: UserDependency, service: ServicesDependency):
     await service.user.deactivate(ObjectId(user.id))
 
 
-@router.get("/{user_id}")
-async def get_user(user_id: str, service: ServicesDependency):
+@router.get("/{user_handle}")
+async def get_user(
+    user_handle: Annotated[str, Path(title="The handle of a user", max_length=30)],
+    service: ServicesDependency):
     try:
-        return await service.user.get_one({ "id": ObjectId(user_id) })
-    except InvalidId:
-        raise HTTPException(
-            status_code=400,
-            detail="Invalid user id"
-        )
+        return await service.user.get_one({ "handle": user_handle })
     except UserNotFoundError:
         raise HTTPException(
             status_code=404,
@@ -62,9 +61,9 @@ async def get_user(user_id: str, service: ServicesDependency):
         )
 
 
-@router.get("/{user_id}/prompts", response_model=PaginatedResponse[PromptSummary], summary="Get user prompts")
+@router.get("/{user_handle}/prompts", response_model=PaginatedResponse[PromptSummary], summary="Get user prompts")
 async def get_user_prompts(
-    user_id: str,
+    user_handle: Annotated[str, Path(title="The handle of a user", max_length=30)],
     services: ServicesDependency,
     page: int = Query(1, ge=1),
     limit: int = Query(10, ge=1, le=100),
@@ -77,7 +76,7 @@ async def get_user_prompts(
         filters = {
             "tags": tags,
             "model": model,
-            "user_id": ObjectId(user_id),
+            "author_handle": user_handle
         }
 
         return await services.prompts.get_summary(

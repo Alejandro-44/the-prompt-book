@@ -25,7 +25,6 @@ class PromptsService:
 
     async def get_summary(self, filters: dict, page: int, limit: int) -> list[PromptSummary]:
         skip = (page - 1) * limit
-
         items, total = await self.__prompts_repo.get_summary(
             filters,
             skip,

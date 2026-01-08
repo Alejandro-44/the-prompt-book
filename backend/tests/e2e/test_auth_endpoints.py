@@ -14,6 +14,7 @@ async def test_register_user_success(e2e_client):
     data = response.json()
     assert isinstance(data["id"], str)
     assert data["username"] == "alice"
+    assert data["handle"] == "alice"
 
 
 async def test_register_user_conflict(e2e_client, seed_users):
@@ -24,8 +25,8 @@ async def test_register_user_conflict(e2e_client, seed_users):
 
 async def test_login_flow_with_cookie(e2e_client):
     test_user = {
-        "username": "test",
-        "email": "test@example.com",
+        "username": "alice doe",
+        "email": "alice@example.com",
         "password": "examplePass123",
     }
 
@@ -53,6 +54,7 @@ async def test_login_flow_with_cookie(e2e_client):
     assert "id" in data
     assert "username" in data
     assert data["username"] == test_user["username"]
+    assert data["handle"] == "alice_doe"
 
 
 async def test_login_user_not_found(e2e_client, seed_users):

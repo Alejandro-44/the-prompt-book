@@ -58,6 +58,14 @@ async def test_get_one_by_id_returns_deleted_user_if_inactive(services, seed_use
     assert result.is_active is False
 
 
+async def test_get_one_by_handle_returns_user_sucessfully(services, seed_users, user_handles):
+    user_handle = user_handles["johndoe"]
+    user = await services.user.get_one({ "handle": user_handle })
+    assert user.username == "john doe"
+    assert user.handle == "john_doe"
+    assert user.is_active is True
+
+
 async def test_deactivate_user_successfully(services, seed_users, user_ids):
     user_id = user_ids["matt"]
     result = await services.user.deactivate(user_id)

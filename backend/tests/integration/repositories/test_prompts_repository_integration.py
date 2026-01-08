@@ -30,6 +30,7 @@ async def test_get_summary_returns_paginated_prompts(
     assert dates == sorted(dates, reverse=True)
 
     for item in items:
+        assert "title" in item
         assert "author_name" in item
         assert "author_handle" in item
 

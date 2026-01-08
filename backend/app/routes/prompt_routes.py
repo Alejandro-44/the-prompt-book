@@ -21,14 +21,12 @@ async def get_prompts(
     limit: int = Query(10, ge=1, le=100),
     tags: list[str] | None = Query(None),
     model: str | None = None,
-    handle: str | None = None,
-    author_id: str | None = None,
+    author_handle: str | None = Query(None, max_length=30),
 ):
     filters = {
         "tags": tags,
         "model": model,
-        "handle": handle,
-        "author_id": ObjectId(author_id)
+        "author_handle": author_handle,
     }
 
     return await services.prompts.get_summary(
@@ -179,7 +177,7 @@ async def create_comment(
     try:
         comment_id = await services.comments.create(
             ObjectId(prompt_id),
-            ObjectId(user.id),
+            user,
             comment
         )
         return { "message": "New comment created", "id": comment_id}
@@ -188,6 +186,12 @@ async def create_comment(
             status_code=400,
             detail="Invalid prompt id"
         )
+    except DatabaseError:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Failed to create new comment"
+        )
+        
 
 
 @router.delete(

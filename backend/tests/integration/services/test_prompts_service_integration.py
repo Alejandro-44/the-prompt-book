@@ -37,6 +37,23 @@ async def test_create_prompt_success(services, seed_data, user_ids):
     assert prompt.author_handle == test_user.handle
     assert prompt.model == "ChatGPT"
 
+async def test_get_summary_returns_paginated_prompts(
+    services, seed_data
+):
+    result = await services.prompts.get_summary(
+        {}, page=1, limit=10
+    )
+
+    prompts = result["items"]
+
+    for prompt in prompts:
+        PromptSummary.model_validate(prompt)
+
+    assert len(prompts) == 10
+    assert result["page"] == 1
+    assert result["total"] == 18
+    assert result["pages"] == 2
+
 
 async def test_get_by_user_id_returns_only_user_prompts(
     services, seed_data, user_ids

@@ -87,6 +87,15 @@ def user_ids(seed_data):
         "invalid": seed_data["users"][5]["_id"]
     }
 
+@pytest.fixture
+def user_handles(seed_data):
+    return {
+        "johndoe": seed_data["users"][0]["handle"],
+        "alex": seed_data["users"][1]["handle"],
+        "matt": seed_data["users"][2]["handle"],
+        "luna": seed_data["users"][3]["handle"],
+        "invalid": seed_data["users"][5]["handle"]
+    }
 
 @pytest.fixture
 def prompt_ids(seed_data):
