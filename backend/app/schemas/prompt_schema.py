@@ -7,10 +7,10 @@ from .user_schema import User
 
 class PromptBase(BaseModel):
     title: str
+    description: str
     prompt: str
     result_example: str
     model: str
-    tags: List[str]
 
 
 class PromptCreate(PromptBase):
@@ -19,6 +19,7 @@ class PromptCreate(PromptBase):
 
 class Prompt(PromptBase):
     id: str
+    tags: List[str]
     pub_date: datetime
     author_id: str
     author_name: str
@@ -29,6 +30,7 @@ class Prompt(PromptBase):
         return Prompt(
             id=str(document["_id"]),
             title=document["title"],
+            description=document["description"],
             prompt=document["prompt"],
             result_example=document["result_example"],
             model=document["model"],
