@@ -20,7 +20,9 @@ class PromptCreate(PromptBase):
 class Prompt(PromptBase):
     id: str
     pub_date: datetime
-    author: User
+    author_id: str
+    author_name: str
+    author_handle: str 
 
     @staticmethod
     def from_document(document):
@@ -32,7 +34,9 @@ class Prompt(PromptBase):
             model=document["model"],
             tags=document.get("tags", []),
             pub_date=document["pub_date"],
-            author=User.from_document(document["author"])
+            author_id=str(document["author_id"]),
+            author_name=document["author_name"],
+            author_handle=document["author_handle"],
         )
 
 
@@ -49,8 +53,8 @@ class PromptSummary(BaseModel):
     tags: List[str]
     model: str
     pub_date: datetime
-    author_id: str
     author_name: str
+    author_handle: str 
 
     @staticmethod
     def from_document(document):
@@ -60,6 +64,6 @@ class PromptSummary(BaseModel):
             tags=document.get("tags", []),
             model=document["model"],
             pub_date=document["pub_date"],
-            author_id=str(document["author_id"]),
-            author_name=document["author_name"]
+            author_name=document["author_name"],
+            author_handle=document["author_handle"],
         )

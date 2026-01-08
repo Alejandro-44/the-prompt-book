@@ -18,8 +18,11 @@ class PromptsRepository:
         mongo_filters = {}
 
         if filters:
-            if filters.get("user_id"):
-                mongo_filters["user_id"] = ObjectId(filters["user_id"])
+            if filters.get("author_id"):
+                mongo_filters["author_id"] = filters["author_id"]
+
+            if filters.get("author_handle"):
+                mongo_filters["author_handle"] = filters["author_handle"]
 
             if filters.get("tags"):
                 mongo_filters["tags"] = {"$in": filters["tags"]}
@@ -35,23 +38,14 @@ class PromptsRepository:
             {"$skip": skip},
             {"$limit": limit},
             {
-                "$lookup": {
-                    "from": "users",
-                    "localField": "user_id",
-                    "foreignField": "_id",
-                    "as": "author"
-                }
-            },
-            {"$unwind": "$author"},
-            {
                 "$project": {
                     "_id": 1,
                     "title": 1,
                     "tags": 1,
                     "model": 1,
                     "pub_date": 1,
-                    "author_id": "$author._id",
-                    "author_name": "$author.username"
+                    "author_name": 1,
+                    "author_handle": 1,
                 }
             }
         ]
@@ -62,28 +56,7 @@ class PromptsRepository:
         return items, total
 
     async def get_one(self, prompt_id: ObjectId) -> Prompt | None:
-        pipeline = [
-            {
-                "$match": {
-                    "_id": prompt_id
-                }
-            },
-            {
-                "$lookup": {
-                    "from": "users",
-                    "localField": "user_id",
-                    "foreignField": "_id",
-                    "as": "author"
-                }
-            },
-            {"$unwind": "$author"},
-            {"$limit": 1}
-        ]
-
-        cursor = await self.__collection.aggregate(pipeline)
-        results = await cursor.to_list()
-
-        return results[0] if results else None
+        return await self.__collection.find_one({"_id": prompt_id})
 
     async def create(self, prompt_data: dict) -> str:
         result = await self.__collection.insert_one(prompt_data)

@@ -31,23 +31,41 @@ async def test_get_summary_returns_paginated_prompts(
 
     for item in items:
         assert "author_name" in item
-        assert "author_id" in item
+        assert "author_handle" in item
 
 
-async def test_get_summary_filters_by_user_id(
+async def test_get_summary_filters_by_author_id(
     prompts_repo, seed_prompts, user_ids
 ):
-    user_id = str(user_ids["alex"])
+    user_id = user_ids["alex"]
 
     items, total = await prompts_repo.get_summary(
-        filters={"user_id": user_id},
+        filters={"author_id": user_id},
         skip=0,
         limit=20,
     )
 
     assert total == 4
     assert all(
-        str(item["author_id"]) == user_id
+        item["author_name"] == "alex"
+        for item in items
+    )
+
+
+async def test_get_summary_filters_by_author_handle(
+    prompts_repo, seed_prompts, user_ids
+):
+    user_handle = "creative_io"
+
+    items, total = await prompts_repo.get_summary(
+        filters={ "author_handle": user_handle },
+        skip=0,
+        limit=20,
+    )
+
+    assert total == 5
+    assert all(
+        item["author_handle"] == "creative_io"
         for item in items
     )
 
@@ -105,15 +123,16 @@ async def test_get_one_returns_prompt_with_author(
     result = await prompts_repo.get_one(prompt_id)
 
     assert result["_id"] == prompt_id
-    assert "author" in result
-    assert result["author"]["username"] == "matt_coder"
+    assert "author_name" in result
+    assert result["author_name"] == "matt_coder"
+    assert result["author_handle"] == "matt_coder"
 
 
 async def test_get_one_returns_none_for_unknown_id(
     prompts_repo, seed_users, seed_prompts
 ):
     result = await prompts_repo.get_one(
-        str(ObjectId())
+        ObjectId()
     )
 
     assert result == None
@@ -130,7 +149,9 @@ async def test_create_inserts_prompt_and_returns_id(
         "result_example": "Example",
         "model": "gpt-4",
         "tags": ["test"],
-        "user_id": user["_id"],
+        "auhtor_id": user["_id"],
+        "auhtor_name": user["username"],
+        "auhtor_handle": user["handle"],
         "pub_date": datetime.now(timezone.utc),
     }
 
