@@ -56,7 +56,7 @@ async def generate_handle(
         return base
 
     for _ in range(10):
-        suffix = _random_suffix(3)
+        suffix = _random_suffix(5)
         candidate = f"{base}_{suffix}"[:max_length]
 
         if HANDLE_REGEX.match(candidate) and not await exists_fn(candidate):
