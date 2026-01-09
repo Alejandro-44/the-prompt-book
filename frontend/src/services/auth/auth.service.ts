@@ -13,21 +13,23 @@ import type { User } from "../users/users.model";
 import type { Token } from "./auth.model";
 
 export class AuthService {
-  static async register(data: UserCreateDTO): Promise<User> {
+  static async register(data: UserCreateDTO): Promise<{ user: User, status: number }> {
     const response = await httpClient.post<UserDTO>("/auth/register", data);
-    return userMapper.toUser(response);
+    return { user: userMapper.toUser(response.data), status: response.status };
   }
 
-  static async login(data: UserLoginDTO): Promise<Token> {
+  static async login(data: UserLoginDTO): Promise<{ token: Token, status: number }> {
     const response = await httpClient.post<TokenDTO>("/auth/login", data);
-    return authMapper.toToken(response);
+    return { token: authMapper.toToken(response.data), status: response.status };
   }
 
-  static async logout(): Promise<void> {
-    await httpClient.post<void>("/auth/logout");
+  static async logout(): Promise<{ status: number }> {
+    const response = await httpClient.post<void>("/auth/logout");
+    return { status: response.status };
   }
 
-  static async changePassword(data: UpdatePasswordDTO): Promise<void> {
-    await httpClient.post<void>("/auth/change-password", data);
+  static async changePassword(data: UpdatePasswordDTO): Promise<{ status: number }> {
+    const response = await httpClient.post<void>("/auth/change-password", data);
+    return { status: response.status };
   }
 }

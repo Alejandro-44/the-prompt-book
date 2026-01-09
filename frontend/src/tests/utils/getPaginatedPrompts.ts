@@ -3,18 +3,18 @@ import type { PromptSummaryDTO } from "@/services/prompts/prompts.dto";
 
 export function getPaginatedPrompts(
   promptsSummaryMocks: PromptSummaryDTO[],
-  { page = 1, limit = 10, user_id, model, tags }: GetPromptsParams
+  { page = 1, limit = 10, author_handle, model, hashtags }: GetPromptsParams
 ) {
   const filtered = promptsSummaryMocks.filter((prompt) => {
     let isValid = true;
-    if (user_id) {
-      isValid &&= prompt.author_id === user_id;
+    if (author_handle) {
+      isValid &&= prompt.author_handle === author_handle;
     }
     if (model) {
       isValid &&= prompt.model === model;
     }
-    if (tags) {
-      isValid &&= prompt.tags.some((promptTags) => tags.includes(promptTags));
+    if (hashtags) {
+      isValid &&= prompt.hashtags.some((promptTags) => hashtags.includes(promptTags));
     }
 
     return isValid;

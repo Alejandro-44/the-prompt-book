@@ -8,6 +8,7 @@ import type {
   GetPromptsParams,
   PaginatedPrompts,
   Prompt,
+  PromptComment,
   PromptCommentCreate,
   PromptCreate,
   PromptCreateResponse,
@@ -21,55 +22,68 @@ import {
 } from "./prompts.mapper";
 
 export class PromptsService {
-  static async getAllPrompts(params: GetPromptsParams): Promise<PaginatedPrompts> {
-    const data = await httpClient.get<GetPromptsResponse>("/prompts/", { params });
+  static async getAllPrompts(params: GetPromptsParams): Promise<{ data: PaginatedPrompts, status: number }> {
+    const response = await httpClient.get<GetPromptsResponse>("/prompts/", { params });
+    const { data } = response;
     const processedPrompts = data.items.map(promptSummaryMapper.toPromptSummary);
     return {
-      items: processedPrompts,
-      total: data.total,
-      limit: data.limit,
-      page: data.page,
-      pages: data.pages
+      data: {
+        items: processedPrompts,
+        total: data.total,
+        limit: data.limit,
+        page: data.page,
+        pages: data.pages
+      },
+      status: response.status
     }
   }
 
-  static async getPromptDetail(id: string): Promise<Prompt> {
-    const data = await httpClient.get<PromptDTO>(`/prompts/${id}`);
-    return promptMapper.toPrompt(data);
+  static async getPromptDetail(id: string): Promise<{ data: Prompt, status: number }> {
+    const response = await httpClient.get<PromptDTO>(`/prompts/${id}`);
+    const { data } = response;
+    return { data: promptMapper.toPrompt(data), status: response.status };
   }
 
-  static async create(prompt: PromptCreate) {
+  static async create(prompt: PromptCreate): Promise<{ data: { id: string, message: string }, status: number }> {
     const promptDTO = promptCreateMapper.toPromptCreateDTO(prompt);
-    const data = await httpClient.post<PromptCreateResponse>(
+    const response = await httpClient.post<PromptCreateResponse>(
       "/prompts/",
       promptDTO
     );
+    const { data } = response;
     return {
-      id: data.id,
-      message: data.message,
+      data: {
+        id: data.id,
+        message: data.message,
+      },
+      status: response.status
     };
   }
 
-  static async update(id: string, prompt: Partial<PromptCreate>) {
+  static async update(id: string, prompt: Partial<PromptCreate>): Promise<{ status: number }> {
     const promptDTO = promptUpdateMapper.toPartialPromptCreateDTO(prompt);
-    await httpClient.patch(`/prompts/${id}`, promptDTO);
+    const response = await httpClient.patch(`/prompts/${id}`, promptDTO);
+    return { status: response.status };
   }
 
-  static async delete(id: string) {
-    await httpClient.delete(`/prompts/${id}`);
+  static async delete(id: string): Promise<{ status: number }> {
+    const response = await httpClient.delete(`/prompts/${id}`);
+    return { status: response.status };
   }
 
-  static async getPromptComments(id: string) {
-    const data = await httpClient.get<PromptCommentDTO[]>(
+  static async getPromptComments(id: string): Promise<{ data: PromptComment[], status: number }> {
+    const response = await httpClient.get<PromptCommentDTO[]>(
       `/prompts/${id}/comments`
     );
-    return data.map(promptCommentMapper.toPromptComment);
+    const { data } = response;
+    return { data: data.map(promptCommentMapper.toPromptComment), status: response.status };
   }
 
-  static async createComment(id: string, comment: PromptCommentCreate) {
-    await httpClient.post(
+  static async createComment(id: string, comment: PromptCommentCreate): Promise<{ status: number }> {
+    const response = await httpClient.post(
       `/prompts/${id}/comments`,
       comment
     );
+    return { status: response.status };
   }
 }

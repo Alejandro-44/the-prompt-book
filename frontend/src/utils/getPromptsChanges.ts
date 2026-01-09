@@ -1,8 +1,5 @@
 import type { PromptCreate } from "@/services";
 
-function areTagsEqual(a: string[], b: string[]) {
-  return a.length === b.length && b.every(tag => a.includes(tag));
-}
 
 export function getPromptChanges(
   original: PromptCreate,
@@ -12,6 +9,10 @@ export function getPromptChanges(
 
   if (original.title !== current.title) {
     changes.title = current.title;
+  }
+
+  if (original.description !== current.description) {
+    changes.description = current.description;
   }
 
   if (original.prompt !== current.prompt) {
@@ -24,10 +25,6 @@ export function getPromptChanges(
 
   if (original.model !== current.model) {
     changes.model = current.model;
-  }
-
-  if (!areTagsEqual(original.tags, current.tags)) {
-    changes.tags = current.tags;
   }
 
   return changes;

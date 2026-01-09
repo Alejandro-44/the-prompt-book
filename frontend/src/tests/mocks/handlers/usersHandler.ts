@@ -12,17 +12,17 @@ export const userHandlers = [
     const page = Number(url.searchParams.get("page") || 1);
     const limit = Number(url.searchParams.get("limit") || 10);
     const model = url.searchParams.get("model") ?? undefined;
-    let tags: string[] | undefined = url.searchParams.getAll("tags");
-    tags = tags.length > 0 ? tags : undefined;
-    const user_id = "6939872c7f7a423bcb83fe0b";
+    let hashtags: string[] | undefined = url.searchParams.getAll("hashtags");
+    hashtags = hashtags.length > 0 ? hashtags : undefined;
+    const author_handle = "alex";
     const response = getPaginatedPrompts(promptSummaryMocks, {
       page,
       limit,
-      user_id,
+      author_handle,
       model,
-      tags,
+      hashtags,
     });
-    return HttpResponse.json(response);
+    return HttpResponse.json(response, );
   }),
   http.delete("http://127.0.0.1:8000/users/me", async () => {
     return HttpResponse.json({}, { status: 204 });
@@ -33,22 +33,22 @@ export const userHandlers = [
       return HttpResponse.json(users.find((user) => user.id === params.id));
     }
   ),
-  http.get<{ id: string }>(
-    "http://127.0.0.1:8000/users/:id/prompts",
+  http.get<{ user_handle: string }>(
+    "http://127.0.0.1:8000/users/:user_handle/prompts",
     async ({ request, params }) => {
       const url = new URL(request.url);
       const page = Number(url.searchParams.get("page") || 1);
       const limit = Number(url.searchParams.get("limit") || 10);
       const model = url.searchParams.get("model") ?? undefined;
-      let tags: string[] | undefined = url.searchParams.getAll("tags");
-      tags = tags.length > 0 ? tags : undefined;
-      const user_id = params.id;
+      let hashtags: string[] | undefined = url.searchParams.getAll("hashtags");
+      hashtags = hashtags.length > 0 ? hashtags : undefined;
+      const user_handle = params.user_handle;
       const response = getPaginatedPrompts(promptSummaryMocks, {
         page,
         limit,
-        user_id,
+        author_handle: user_handle,
         model,
-        tags,
+        hashtags,
       });
       return HttpResponse.json(response);
     }

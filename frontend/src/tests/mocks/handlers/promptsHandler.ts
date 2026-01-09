@@ -13,15 +13,15 @@ export const promptsHandlers = [
     const page = Number(url.searchParams.get("page") || 1);
     const limit = Number(url.searchParams.get("limit") || 10);
     const model = url.searchParams.get("model") ?? undefined;
-    let tags: string[] | undefined = url.searchParams.getAll("tags");
-    tags = tags.length > 0 ? tags : undefined;
+    let hashtags: string[] | undefined = url.searchParams.getAll("hashtags");
+    hashtags = hashtags.length > 0 ? hashtags : undefined;
     const response = getPaginatedPrompts(promptSummaryMocks, {
       page,
       limit,
       model,
-      tags,
+      hashtags,
     });
-    return HttpResponse.json(response);
+    return HttpResponse.json(response, { status: 200 });
   }),
   http.get<{ id: string }>(
     "http://127.0.0.1:8000/prompts/:id",
@@ -35,7 +35,7 @@ export const promptsHandlers = [
           { status: 404 }
         );
       }
-      return HttpResponse.json(prompt);
+      return HttpResponse.json(prompt, { status: 200 });
     }
   ),
   http.post<{}, PromptCreateDTO>(
@@ -46,13 +46,6 @@ export const promptsHandlers = [
       if (!prompt.title || !prompt.prompt || !prompt.model) {
         return HttpResponse.json(
           { message: "Missing required fields" },
-          { status: 400 }
-        );
-      }
-
-      if (prompt.tags && !Array.isArray(prompt.tags)) {
-        return HttpResponse.json(
-          { message: "Tags must be an array" },
           { status: 400 }
         );
       }
@@ -83,7 +76,7 @@ export const promptsHandlers = [
 
       Object.assign(updatedPrompt, updatedData);
 
-      return HttpResponse.json({}, { status: 201 });
+      return HttpResponse.json({}, { status: 204 });
     }
   ),
   http.delete<{ id: string }>(
@@ -114,7 +107,7 @@ export const promptsHandlers = [
       const promptComments = comments.filter(
         (comment) => comment.prompt_id === params.id
       );
-      return HttpResponse.json(promptComments);
+      return HttpResponse.json(promptComments, { status: 200 });
     }
   ),
   http.post<{ id: string }, PromptCommentCreateDTO>(
@@ -132,9 +125,11 @@ export const promptsHandlers = [
       const body = await request.json();
       comments.push({
         id: "jkl-101112",
-        author: "johndoe",
         prompt_id: params.id,
         content: body.content,
+        author_id: "6939872c7f7a423bcb83fe0b",
+        author_name: "alex",
+        author_handle: "alex",
         pub_date: Date(),
       });
       return HttpResponse.json({}, { status: 201 });

@@ -7,41 +7,51 @@ import type { GetPromptsResponse } from "../prompts/prompts.dto";
 import { promptSummaryMapper } from "../prompts/prompts.mapper";
 
 export class UsersService {
-  static async getMe(): Promise<User> {
-    const data = await httpClient.get<UserDTO>("/users/me");
-    return userMapper.toUser(data);
+  static async getMe(): Promise<{ data: User, status: number }> {
+    const response = await httpClient.get<UserDTO>("/users/me");
+    const { data } = response;
+    return { data: userMapper.toUser(data), status: response.status };
   }
 
-  static async deleteMe(): Promise<void> {
-    await httpClient.delete("/users/me");
+  static async deleteMe(): Promise<{ status: number }> {
+    const response = await httpClient.delete("/users/me");
+    return { status: response.status };
   }
 
-  static async getMyPrompts(params: GetPromptsParams): Promise<PaginatedPrompts> {
-    const data = await httpClient.get<GetPromptsResponse>("/users/me/prompts/", { params });
+  static async getMyPrompts(params: GetPromptsParams): Promise<{ data: PaginatedPrompts, status: number }> {
+    const response = await httpClient.get<GetPromptsResponse>("/users/me/prompts/", { params });
+    const { data } = response;
     const processedPrompts = data.items.map(promptSummaryMapper.toPromptSummary);
     return {
-      items: processedPrompts,
-      total: data.total,
-      limit: data.limit,
-      page: data.page,
-      pages: data.pages
+      data: {
+        items: processedPrompts,
+        total: data.total,
+        limit: data.limit,
+        page: data.page,
+        pages: data.pages
+      },
+      status: response.status
     }
   }
 
-  static async getUserById(userId: string): Promise<User> {
-    const data = await httpClient.get<UserDTO>(`/users/${userId}`);
-    return userMapper.toUser(data);
+  static async getUserById(userId: string): Promise<{ data: User, status: number }> {
+    const response = await httpClient.get<UserDTO>(`/users/${userId}`);
+    const { data } = response;
+    return { data: userMapper.toUser(data), status: response.status };
   }
 
-  static async getUserPrompts(userId: string, params: GetPromptsParams): Promise<PaginatedPrompts> {
-    const data = await httpClient.get<GetPromptsResponse>(`/users/${userId}/prompts/`, { params });
+  static async getUserPrompts(user_handle: string, params: GetPromptsParams): Promise<{ data: PaginatedPrompts, status: number }> {
+    const { data, status } = await httpClient.get<GetPromptsResponse>(`/users/${user_handle}/prompts/`, { params });
     const processedPrompts = data.items.map(promptSummaryMapper.toPromptSummary);
     return {
-      items: processedPrompts,
-      total: data.total,
-      limit: data.limit,
-      page: data.page,
-      pages: data.pages
+      data: {
+        items: processedPrompts,
+        total: data.total,
+        limit: data.limit,
+        page: data.page,
+        pages: data.pages
+      },
+      status
     }
   }
 }

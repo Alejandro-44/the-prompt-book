@@ -12,18 +12,10 @@ export const authHandlers = [
         { status: 409 }
       );
     }
-
-    users.push({
-      id: "new-user-id",
-      username: body.username,
-      email: body.email,
-      hashed_password: body.password,
-      is_active: true,
-    });
-
     return HttpResponse.json({
       id: "new-user-id",
       username: body.username,
+      handle: body.username,
       is_active: true,
     }, { status: 201 });
   }),

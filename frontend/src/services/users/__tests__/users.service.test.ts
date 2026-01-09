@@ -2,36 +2,46 @@ import { UsersService } from "../users.service";
 
 describe("UsersService", () => {
   it("should get the current logged user", async () => {
-    const user = await UsersService.getMe();
-    expect(user).toEqual({
+    const { data } = await UsersService.getMe();
+    expect(data).toEqual({
       id: "6939872c7f7a423bcb83fe0b",
       username: "alex",
+      handle: "alex",
       isActive: true,
     });
   });
 
   it("should delete the current logged user", async () => {
-    await expect(UsersService.deleteMe()).resolves.toBeUndefined();
+    await expect(UsersService.deleteMe()).resolves.toEqual({ status: 204 });
   });
 
   it("should get the current user's prompts", async () => {
-    const response = await UsersService.getMyPrompts({ page: 1 });
-    
-    expect(response.items).toHaveLength(4);
-    expect(response.total).toBe(4)
+    const { data, status } = await UsersService.getMyPrompts({ page: 1 });
+
+    expect(status).toBe(200);
+    expect(data.items).toHaveLength(4);
+    expect(data.total).toBe(4);
   });
 
   it("should get a user by ID", async () => {
-    const user = await UsersService.getUserById("6939872c7f7a423bcb83fe0b");
-    expect(user).toEqual({
+    const { data, status } = await UsersService.getUserById(
+      "6939872c7f7a423bcb83fe0b"
+    );
+    expect(status).toBe(200);
+    expect(data).toEqual({
       id: "6939872c7f7a423bcb83fe0b",
       username: "alex",
+      handle: "alex",
       isActive: true,
     });
   });
+
   it("should get a user's prompts by user ID", async () => {
-    const response = await UsersService.getUserPrompts("6939872c7f7a423bcb83fe0b", { page: 1 });
-    expect(response.items).toHaveLength(4);
-    expect(response.total).toBe(4)
+    const { data } = await UsersService.getUserPrompts(
+      "alex",
+      { page: 1 }
+    );
+    expect(data.items).toHaveLength(4);
+    expect(data.total).toBe(4);
   });
 });
