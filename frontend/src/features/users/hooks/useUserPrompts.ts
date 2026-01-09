@@ -4,21 +4,21 @@ import { useState } from "react";
 
 interface UseUserPromptsParams extends GetPromptsParams {
   mode: "me" | "public";
-  userId?: GetPromptsParams["user_id"];
+  userHandle?: GetPromptsParams["author_handle"];
 };
 
-export function useUserPrompts({ mode, userId, limit, tags, model, search }: UseUserPromptsParams) {
+export function useUserPrompts({ mode, userHandle, limit, hashtags, model, search }: UseUserPromptsParams) {
   const [page, setPage] = useState(1)
   const isMe = mode === "me";
   const { data, isLoading, error } = useQuery<PaginatedPrompts>({
     queryKey: isMe
-      ? ["users", "me", "prompts", page, limit, tags]
-      : ["users", userId, "prompts", page, limit],
+      ? ["users", "me", "prompts", page, limit, hashtags]
+      : ["users", userHandle, "prompts", page, limit],
     queryFn: () =>
       isMe
-        ?  UsersService.getMyPrompts({ page, tags, model, search })
-        : UsersService.getUserPrompts(userId!, { page, tags, model, search }),
-    enabled: isMe || !!userId,
+        ? UsersService.getMyPrompts({ page, hashtags, model, search })
+        : UsersService.getUserPrompts(userHandle!, { page, hashtags, model, search }),
+    enabled: isMe || !!userHandle,
   });
 
   return {

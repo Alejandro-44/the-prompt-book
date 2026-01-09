@@ -72,7 +72,7 @@ export function PromptCard({ prompt, editable = false }: Props) {
                   <Sparkles fill="inherit" stroke={"1px"} size={16} />
                   <Typography>{prompt.model}</Typography>
                 </Stack>
-                <PromptTags tags={prompt.tags} />
+                <PromptTags tags={prompt.hashtags} />
               </Stack>
             </Grid>
             <Grid size={12}>

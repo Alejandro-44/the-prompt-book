@@ -4,10 +4,10 @@ import { useAuth } from "@/features/auth/hooks";
 
 type UseUserParams = {
   mode: "me" | "public";
-  userId?: string;
+  userHandle?: string;
 };
 
-export function useUser({ mode, userId }: UseUserParams) {
+export function useUser({ mode, userHandle }: UseUserParams) {
   const { user: authUser, isLoading: authLoading } = useAuth();
 
   const {
@@ -15,9 +15,9 @@ export function useUser({ mode, userId }: UseUserParams) {
     isLoading: publicLoading,
     error: publicError,
   } = useQuery({
-    queryKey: ["user", userId],
-    queryFn: () => UsersService.getUserById(userId!),
-    enabled: mode === "public" && !!userId,
+    queryKey: ["user", userHandle],
+    queryFn: () => UsersService.getUser(userHandle!),
+    enabled: mode === "public" && !!userHandle,
   });
 
   const isLoading = mode === "me" ? authLoading : publicLoading;

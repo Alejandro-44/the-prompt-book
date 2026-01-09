@@ -27,10 +27,10 @@ export const userHandlers = [
   http.delete("http://127.0.0.1:8000/users/me", async () => {
     return HttpResponse.json({}, { status: 204 });
   }),
-  http.get<{ id: string }>(
-    "http://127.0.0.1:8000/users/:id",
+  http.get<{ user_handle: string }>(
+    "http://127.0.0.1:8000/users/:user_handle",
     async ({ params }) => {
-      return HttpResponse.json(users.find((user) => user.id === params.id));
+      return HttpResponse.json(users.find((user) => user.handle === params.user_handle));
     }
   ),
   http.get<{ user_handle: string }>(

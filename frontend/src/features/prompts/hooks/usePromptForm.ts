@@ -9,9 +9,9 @@ type PromptFormProps = {
 
 const emptyPrompt: PromptCreate = {
   title: "",
+  description: "",
   prompt: "",
   model: "",
-  tags: [],
   resultExample: "",
 };
 

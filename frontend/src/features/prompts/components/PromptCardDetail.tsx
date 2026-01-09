@@ -28,24 +28,18 @@ export function PromptCardDetail({ promptId }: Props) {
       <CardContent sx={{ p: 3 }}>
         <Grid container spacing={2}>
           <Grid container size={12}>
-            <Typography variant="body1">
-              {prompt?.model}
-            </Typography>
-            <PromptTags tags={prompt?.tags || []} />
+            <Typography variant="body1">{prompt?.model}</Typography>
+            <PromptTags tags={prompt?.hashtags || []} />
           </Grid>
           <Grid size={12}>
-            <Typography
-              component="h1"
-              variant="h4"
-              fontWeight={600}
-            >
+            <Typography component="h1" variant="h4" fontWeight={600}>
               {prompt?.title}
             </Typography>
           </Grid>
           <Grid size={12}>
             <Stack
               component={Link}
-              to={`/users/${prompt?.author.id}`}
+              to={`/users/${prompt?.authorHandle}`}
               display="inline-flex"
               direction="row"
               alignItems="center"
@@ -53,12 +47,15 @@ export function PromptCardDetail({ promptId }: Props) {
               data-testid="author-link"
             >
               <Avatar sx={{ backgroundColor: "#f14b09ff" }}>
-                {prompt?.author.username.slice(0, 2).toUpperCase()}
+                {prompt?.authorName.slice(0, 2).toUpperCase()}
               </Avatar>
               <Typography sx={{ ":hover": { textDecoration: "underline" } }}>
-                {prompt?.author.username}
+                {prompt?.authorName}
               </Typography>
             </Stack>
+          </Grid>
+          <Grid size={12}>
+            <Typography>{prompt?.description}</Typography>
           </Grid>
           <Grid size={12}>
             <Divider />

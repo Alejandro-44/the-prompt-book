@@ -15,9 +15,9 @@ type UserPageProps = {
 };
 
 export function UserPage({ mode }: UserPageProps) {
-  const { userId } = useParams();
-  const { user, isLoading, error } = useUser({ mode, userId });
-  const { prompts, pages, setPage } = useUserPrompts({ mode, userId });
+  const { userHandle } = useParams();
+  const { user, isLoading, error } = useUser({ mode, userHandle });
+  const { prompts, pages, setPage } = useUserPrompts({ mode, userHandle });
 
   if (isLoading) {
     return (

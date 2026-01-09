@@ -43,7 +43,13 @@ export const promptsHandlers = [
     async ({ request }) => {
       const prompt = await request.json();
 
-      if (!prompt.title || !prompt.prompt || !prompt.model) {
+      if (
+        !prompt.title ||
+        !prompt.description ||
+        !prompt.prompt ||
+        !prompt.model ||
+        !prompt.result_example
+      ) {
         return HttpResponse.json(
           { message: "Missing required fields" },
           { status: 400 }

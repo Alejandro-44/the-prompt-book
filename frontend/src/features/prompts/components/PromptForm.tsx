@@ -6,7 +6,7 @@ import type { PromptFormValues } from "../schemas";
 import { RHFAutocomplete } from "@/components/RHFAutocomplete";
 import type { PromptCreate } from "@/services";
 import { useNavigate } from "react-router";
-import { MODELS, TAGS } from "@/constants";
+import { MODELS } from "@/constants";
 
 type PromptFormProps = {
   mode: "create" | "edit";
@@ -50,13 +50,13 @@ export function PromptForm({
             <Input name="title" label="Title" />
           </Grid>
           <Grid size={12}>
+            <Input name="description" label="Description" multiline rows={4} />
+          </Grid>
+          <Grid size={12}>
             <Input name="prompt" label="Prompt" multiline rows={4} />
           </Grid>
-          <Grid size={{ md: 6, xs: 12 }}>
+          <Grid size={12}>
             <RHFAutocomplete name="model" label="Model" options={MODELS} />
-          </Grid>
-          <Grid size={{ md: 6, xs: 12 }}>
-            <RHFAutocomplete name="tags" label="Tags" options={TAGS} multiple />
           </Grid>
           <Grid size={12}>
             <Input name="resultExample" label="Result" multiline rows={4} />

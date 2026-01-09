@@ -23,7 +23,7 @@ export const Header = () => {
               component="span"
               sx={{ marginRight: 2 }}
             >
-              Hello, {user.username}
+              Hello, {user.handle}
             </Typography>
             <Button
               onClick={() => {
