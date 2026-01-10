@@ -22,9 +22,9 @@ describe("PromptCardDetail", () => {
     expect(screen.getByText("Write a short funny TikTok script about studying with AI.")).toBeDefined();
     expect(screen.getByText("AI: 'I analyzed your habits... you need coffee.'")).toBeDefined();
 
-    const tags = ["tiktok", "script"];
-    tags.forEach((tag) => {
-      expect(screen.getByText(tag)).toBeDefined();
+    const hashtags = ["tiktok", "scripts"];
+    hashtags.forEach((hashtag) => {
+      expect(screen.getByText(hashtag)).toBeDefined();
     });
 
     expect(screen.getByText("Copy")).toBeDefined();

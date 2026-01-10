@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { registerSchema } from "./register.schema";
+import { registerSchema } from "../register.schema";
 
 describe("registerSchema", () => {
   it("successfully validates a valid record", () => {

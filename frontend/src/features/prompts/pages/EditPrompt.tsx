@@ -15,9 +15,9 @@ export function EditPrompt() {
   const handleUpdatePrompt = (data: PromptFormValues) => {
     const originalPrompt: PromptCreate = {
       title: prompt.title,
+      description: prompt.description,
       prompt: prompt.prompt,
       model: prompt.model,
-      tags: prompt.tags,
       resultExample: prompt.resultExample,
     };
     const changes = getPromptChanges(originalPrompt, data);

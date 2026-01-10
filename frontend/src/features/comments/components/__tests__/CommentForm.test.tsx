@@ -7,6 +7,7 @@ import type { User } from "@/services";
 const mockUser: User = {
   id: "1",
   username: "johndoe",
+  handle: "johndoe",
   isActive: true,
 };
 

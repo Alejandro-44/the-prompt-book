@@ -18,9 +18,9 @@ describe("useUserPrompts", () => {
     expect(result.current.error).toBeNull();
   });
 
-  it("fetches and returns user's prompts when mode is 'public' and userId is provided", async () => {
+  it("fetches and returns user's prompts when mode is 'public' and userHandle is provided", async () => {
     const { result } = renderHookWithClient(() =>
-      useUserPrompts({ mode: "public", userId: "693987497f7a423bcb83fe0c" })
+      useUserPrompts({ mode: "public", userHandle: "alex" })
     );
 
     await waitFor(() => {
@@ -33,9 +33,9 @@ describe("useUserPrompts", () => {
     expect(result.current.error).toBeNull();
   });
 
-  it("returns empty prompts when mode is 'public' and userId has no prompts", async () => {
+  it("returns empty prompts when mode is 'public' and userHandle has no prompts", async () => {
     const { result } = renderHookWithClient(() =>
-      useUserPrompts({ mode: "public", userId: "456-def" })
+      useUserPrompts({ mode: "public", userHandle: "john_doe" })
     );
 
     await waitFor(() => {
@@ -46,7 +46,7 @@ describe("useUserPrompts", () => {
     expect(result.current.error).toBeNull();
   });
 
-  it("does not fetch when mode is 'public' and userId is not provided", () => {
+  it("does not fetch when mode is 'public' and userHandle is not provided", () => {
     const { result } = renderHookWithClient(() =>
       useUserPrompts({ mode: "public" })
     );

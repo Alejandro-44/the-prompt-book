@@ -22,10 +22,10 @@ export function Comment({ comment }: CommentProps) {
       >
         <CardContent sx={{ "&:last-child": { p: 0 } }}>
           <Stack direction="row" alignItems="center" spacing={2}>
-            <Avatar>{comment.authorName.slice(0, 2).toUpperCase()}</Avatar>
+            <Avatar>{comment.authorHandle.slice(0, 2).toUpperCase()}</Avatar>
             <Stack spacing={0}>
               <Typography component="h1" variant="body1" fontWeight={600}>
-                {comment.authorName}
+                {`@${comment.authorHandle}`}
               </Typography>
               <Typography variant="body2">{comment.content}</Typography>
             </Stack>

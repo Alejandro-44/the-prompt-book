@@ -5,7 +5,8 @@ import { renderWithProviders } from "@/tests/utils/renderWithProviders";
 
 const mockUser: User = {
   id: "user-123",
-  username: "johndoe",
+  username: "john doe",
+  handle: "john_doe",
   isActive: true,
 }
 
@@ -24,7 +25,8 @@ describe("UserCard", () => {
   test("renders UserCard component", async () => {
     await waitFor(() => {
         expect(screen.getByText("JO")).toBeDefined();
-        expect(screen.getByText("johndoe")).toBeDefined();
+        expect(screen.getByText("john doe")).toBeDefined();
+        expect(screen.getByText("@john_doe")).toBeDefined();
     })
   });
 });
