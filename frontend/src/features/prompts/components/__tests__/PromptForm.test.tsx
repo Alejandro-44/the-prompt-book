@@ -9,18 +9,13 @@ const mockOnDelete = vi.fn();
 const mockPrompt = {
   id: "abc-123",
   title: "Generate a marketing headline",
+  description: "With this prompt I ",
   prompt:
-    "Write a catchy marketing headline for a SaaS that helps users automate workflows.",
+    "Write a catchy #marketing headline for a #SaaS that helps users automate workflows.",
   resultExample:
     "Automate Everything: The Smartest Way to Scale Your Productivity.",
   model: "gpt-4",
-  tags: ["marketing", "copywriting", "saas"],
-  pub_date: "2024-01-15T10:30:00Z",
-  author: {
-    id: "123-abc",
-    username: "johndoe",
-    email: "johndoe@example.com",
-  },
+  hashtags: ['marketing', 'saas']
 };
 
 describe("PromptForm", () => {
@@ -34,8 +29,8 @@ describe("PromptForm", () => {
 
       expect(screen.getByLabelText(/title/i)).toBeDefined();
       expect(screen.getByLabelText(/prompt/i)).toBeDefined();
+      expect(screen.getByLabelText(/description/i)).toBeDefined();
       expect(screen.getByLabelText(/result/i)).toBeDefined();
-      expect(screen.getByLabelText(/tags/i)).toBeDefined();
       expect(screen.getByLabelText(/model/i)).toBeDefined();
       expect(screen.getByRole("button", { name: /share/i })).toBeDefined();
       expect(screen.getByRole("button", { name: /cancel/i })).toBeDefined();
@@ -46,11 +41,8 @@ describe("PromptForm", () => {
       const user = userEvent.setup();
 
       await user.type(screen.getByLabelText(/title/i), mockPrompt.title);
-
+      await user.type(screen.getByLabelText(/description/i), mockPrompt.description);
       await user.type(screen.getByLabelText(/prompt/i), mockPrompt.prompt);
-
-      await user.click(screen.getByLabelText(/tags/i));
-      await user.click(screen.getByText(/marketing/i));
 
       await user.click(screen.getByLabelText(/model/i));
       await user.click(screen.getByText("GPT-4"));
@@ -74,7 +66,6 @@ describe("PromptForm", () => {
       expect(await screen.findByText(/title must be at least 3 characters/i)).toBeDefined();
       expect(await screen.findByText(/Prompt must be at least 10 characters/i)).toBeDefined();
       expect(await screen.findByText(/Result example must be at least 10 characters/i)).toBeDefined();
-      expect(await screen.findByText(/Add at least one tag/i)).toBeDefined();
       expect(await screen.findByText(/Select a model/i)).toBeDefined();
     })
 
@@ -101,9 +92,9 @@ describe("PromptForm", () => {
       renderWithProviders(<PromptForm mode="edit" onSubmit={mockOnSubmit} />);
 
       expect(screen.getByLabelText(/title/i)).toBeDefined();
+      expect(screen.getByLabelText(/description/i)).toBeDefined();
       expect(screen.getByLabelText(/prompt/i)).toBeDefined();
       expect(screen.getByLabelText(/result/i)).toBeDefined();
-      expect(screen.getByLabelText(/tags/i)).toBeDefined();
       expect(screen.getByLabelText(/model/i)).toBeDefined();
       expect(
         screen.getByRole("button", { name: /save changes/i })
@@ -127,9 +118,6 @@ describe("PromptForm", () => {
       expect(screen.getByDisplayValue(mockPrompt.resultExample)).toBeDefined();
       expect(screen.getByDisplayValue(new RegExp(mockPrompt.model, "i")));
 
-      mockPrompt.tags.forEach((tag: string) => {
-        expect(screen.getByText(new RegExp(tag, "i"))).toBeDefined();
-      });
     });
 
     it("disable action buttons when isLoading paramther is false", async () => {

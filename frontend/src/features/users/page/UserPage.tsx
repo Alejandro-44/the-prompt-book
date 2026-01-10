@@ -17,7 +17,7 @@ type UserPageProps = {
 export function UserPage({ mode }: UserPageProps) {
   const { userHandle } = useParams();
   const { user, isLoading, error } = useUser({ mode, userHandle });
-  const { prompts, pages, setPage } = useUserPrompts({ mode, userHandle });
+  const { prompts, page, pages, setPage } = useUserPrompts({ mode, userHandle });
 
   if (isLoading) {
     return (
@@ -61,6 +61,7 @@ export function UserPage({ mode }: UserPageProps) {
               <Pagination
                 sx={{ justifySelf: "center" }}
                 count={pages}
+                page={page}
                 onChange={(_, page) => setPage(page)}
                 variant="outlined"
                 shape="rounded"

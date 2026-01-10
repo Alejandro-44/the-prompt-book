@@ -14,7 +14,7 @@ export function PromptOwnerGuard() {
   } = usePrompt({ promptId });
   
   useRedirectOn({when: promptError?.status === 404, to: "/404"});
-  useRedirectOn({when: prompt! && prompt.author.id !== user!.id, to: "/403"});
+  useRedirectOn({when: prompt! && prompt.authorId !== user!.id, to: "/403"});
 
   if (isLoadingPrompt) {
     return <LoadingPage />;

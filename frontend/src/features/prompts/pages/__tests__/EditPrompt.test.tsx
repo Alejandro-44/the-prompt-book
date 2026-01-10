@@ -35,9 +35,9 @@ describe("EditPrompt", () => {
     renderWithProviders(<EditPrompt />);
 
     expect(screen.getByLabelText(/title/i)).toBeDefined();
+    expect(screen.getByLabelText(/description/i)).toBeDefined();
     expect(screen.getByLabelText(/prompt/i)).toBeDefined();
     expect(screen.getByLabelText(/result/i)).toBeDefined();
-    expect(screen.getByLabelText(/tags/i)).toBeDefined();
     expect(screen.getByLabelText(/model/i)).toBeDefined();
     expect(screen.getByRole("button", { name: /save changes/i })).toBeDefined();
     expect(screen.getByRole("button", { name: /delete/i })).toBeDefined();

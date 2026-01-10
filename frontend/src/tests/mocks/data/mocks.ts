@@ -4,7 +4,7 @@ export const promptSummaryMocks = [
     title: "TikTok script idea",
     description:
       "Prompt for generating short and humorous scripts designed for TikTok content.",
-    hashtags: [],
+    hashtags: ['tiktok' ,'scripts'],
     model: "gpt-3.5",
     pub_date: "2024-02-23T12:05:00",
     author_name: "creative_io",
@@ -204,11 +204,11 @@ export const promptMocks = [
     id: "69398c1d5393462cecf974c9",
     title: "TikTok script idea",
     description:
-      "Prompt for generating short and humorous scripts designed for TikTok content.",
+      "Prompt for generating short and humorous #scripts designed for #TikTok content.",
     prompt: "Write a short funny TikTok script about studying with AI.",
     result_example: "AI: 'I analyzed your habits... you need coffee.'",
     model: "gpt-3.5",
-    hashtags: [],
+    hashtags: ['tiktok' ,'scripts'],
     pub_date: "2024-02-23T12:05:00",
     author_id: "6939876c7f7a423bcb83fe0e",
     author_name: "creative_io",
@@ -300,6 +300,7 @@ export const comments = [
   {
     id: "456-def",
     prompt_id: "69398c1d5393462cecf974c9",
+    content: "Awsesome",
     author_id: "693987497f7a423bcb83fe0c",
     author_name: "matt_coder",
     author_handle: "matt_coder",

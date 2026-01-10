@@ -7,7 +7,9 @@ const mockComment: PromptComment = {
   id: "1",
   content: "This is a test comment",
   promptId: "prompt-1",
-  author: "John Doe",
+  authorId: "abc-123",
+  authorName: "John Doe",
+  authorHandle: "john_doe",
   pubDate: new Date("2024-01-01"),
 };
 
@@ -22,7 +24,7 @@ describe("Comment", () => {
   it("renders the author name", () => {
     renderWithProviders(<Comment comment={mockComment} />);
 
-    expect(screen.getByText("John Doe")).toBeDefined();
+    expect(screen.getByText("@john_doe")).toBeDefined();
   });
 
   it("renders the comment content", () => {

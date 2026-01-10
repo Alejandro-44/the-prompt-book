@@ -4,12 +4,17 @@ import { renderWithProviders } from "@/tests/utils/renderWithProviders";
 
 const mockPrompt = {
   id: "abc-123",
-  title: "Generate a marketing headline",
-  model: "gpt-4",
-  tags: ["marketing", "copywriting", "saas"],
-  authorId: "123-abc",
-  authorName: "johndoe",
-  pubDate: new Date("2024-01-15T10:30:00Z"),
+  title: "Code documentation generator",
+  description:
+    "Technical prompt for generating code documentation using the JSDoc standard. #JavaScript",
+  prompt: "Document the following function in JSDoc format: {{code}}",
+  resultExample: "/** Calculates total price... */",
+  model: "gpt-4o",
+  hashtags: ["javascript"],
+  pubDate: new Date("2024-02-22T09:12:00"),
+  authorId: "6939876c7f7a423bcb83fe0e",
+  authorName: "creative_io",
+  authorHandle: "creative_io",
 };
 
 describe("PromptCard", () => {
@@ -17,25 +22,19 @@ describe("PromptCard", () => {
     cleanup();
   });
   it("render PromptCard component", () => {
-    renderWithProviders(
-      <PromptCard prompt={mockPrompt} />
-    );
-    expect(screen.getByText(/Generate a marketing headline/)).toBeDefined();
-    expect(screen.getByText(/gpt-4/)).toBeDefined();
-    expect(screen.getByText(/johndoe/)).toBeDefined();
+    renderWithProviders(<PromptCard prompt={mockPrompt} />);
+    expect(screen.getByText(/Code documentation generator/)).toBeDefined();
+    expect(screen.getByText(/gpt-4o/)).toBeDefined();
+    expect(screen.getByText(/creative_io/)).toBeDefined();
   });
   it("display all tags", () => {
-    renderWithProviders(
-      <PromptCard prompt={mockPrompt} />
-    );
-    mockPrompt.tags.forEach((tag) => {
-      expect(screen.findByText(new RegExp(tag, "i"))).toBeDefined();
+    renderWithProviders(<PromptCard prompt={mockPrompt} />);
+    mockPrompt.hashtags.forEach((hashtag) => {
+      expect(screen.findByText(new RegExp(hashtag, "i"))).toBeDefined();
     });
   });
   it("navigate to prompt detail page on click", () => {
-    const { router } = renderWithProviders(
-      <PromptCard prompt={mockPrompt} />
-    );
+    const { router } = renderWithProviders(<PromptCard prompt={mockPrompt} />);
     const link = screen.getByTestId("prompt-link");
     fireEvent.click(link);
     expect(router.state.location.pathname).toBe("/prompts/abc-123");
@@ -45,7 +44,7 @@ describe("PromptCard", () => {
       <PromptCard prompt={mockPrompt} editable={true} />
     );
     const link = screen.getByTestId("edit-button");
-    fireEvent.click(link)
+    fireEvent.click(link);
     expect(router.state.location.pathname).toBe("/prompts/abc-123/edit");
-  })
+  });
 });

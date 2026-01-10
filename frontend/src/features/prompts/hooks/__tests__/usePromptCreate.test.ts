@@ -16,10 +16,10 @@ describe("usePromptCreate", () => {
   it("should navigate to new prompt detail on successful", async () => {
     const mockPrompt = {
       title: "Write a perfect essay",
+      description: "This is a test prompt",
       prompt: "Write a essay...",
       resultExample: "A prefect essay...",
       model: "gpt-5",
-      tags: ["ai", "poem"],
     };
 
     const { result } = renderHookWithClient(useCreatePrompt);

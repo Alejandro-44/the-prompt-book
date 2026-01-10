@@ -4,33 +4,39 @@ import { renderWithProviders } from "@/tests/utils/renderWithProviders";
 
 const mockPrompts = [
   {
-    id: "abc-123",
-    title: "Generate a marketing headline",
-    model: "gpt-4",
-    tags: ["marketing", "copywriting", "saas"],
-    authorId: "123-abc",
-    authorName: "johndoe",
-    pubDate: new Date("2024-01-15T10:30:00Z"),
-  },
-  {
-    id: "def-456",
-    title: "Refactor JavaScript Code",
-    model: "gpt-4o",
-    tags: ["javascript", "refactor", "programming"],
-    authorId: "123-abc",
-    authorName: "johndoe",
-    pubDate: new Date("2024-02-02T16:45:00Z"),
-  },
-  {
-    id: "ghi-789",
-    title: "Character backstory generator",
+    id: "69398c1d5393462cecf974c9",
+    title: "TikTok script idea",
+    description:
+      "Prompt for generating short and humorous scripts designed for TikTok content.",
+    hashtags: ['tiktok' ,'scripts'],
     model: "gpt-3.5",
-    tags: ["storytelling", "writing", "fantasy"],
-    authorId: "123-abc",
-    authorName: "johndoe",
-    pubDate: new Date("2024-02-10T08:12:00Z"),
+    pubDate: new Date("2024-02-23T12:05:00"),
+    authorName: "creative_io",
+    authorHandle: "creative_io",
   },
-];
+  {
+    id: "69398c1d5393462cecf974c8",
+    title: "Code documentation generator",
+    description:
+      "Technical prompt for generating code documentation using the JSDoc standard.",
+    hashtags: ["javascript"],
+    model: "gpt-4o",
+    pubDate: new Date("2024-02-22T09:12:00"),
+    authorName: "creative_io",
+    authorHandle: "creative_io",
+  },
+  {
+    id: "69398c1d5393462cecf974c7",
+    title: "Rewrite text professionally",
+    description:
+      "Prompt for rewriting text using a formal and professional tone.",
+    hashtags: [],
+    model: "gpt-4o",
+    pubDate: new Date("2024-02-21T17:40:00"),
+    authorName: "creative_io",
+    authorHandle: "creative_io",
+  },
+]
 
 describe("PromptsGrid", () => {
   beforeEach(() => {
@@ -40,13 +46,7 @@ describe("PromptsGrid", () => {
     cleanup();
   });
 
-  test("should render Grid container with correct props", () => {
-    const grid = screen.getByRole("grid");
-    expect(grid).toBeDefined();
-  });
-
-  test("should render PromptCard components when prompts are loaded", async () => {
-    expect(screen.getByText("Generate a marketing headline")).toBeDefined();
+  test("render PromptCard components when prompts are loaded", async () => {
     mockPrompts.forEach((prompt) => {
       expect(screen.getByText(prompt.title)).toBeDefined();
     });
