@@ -1,4 +1,4 @@
-import { loginSchema } from "./login.schema";
+import { loginSchema } from "../login.schema";
 
 describe("loginSchema", () => {
   it("successfully validates a valid record", () => {
