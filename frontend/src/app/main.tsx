@@ -6,7 +6,6 @@ import { queryClient } from "./queryClient";
 import { router } from "./router";
 import "@/app/index.css";
 
-import "@fontsource-variable/inter/index.css";
 import { AuthProvider } from "@/features/auth/providers";
 
 async function enableMocking() {
