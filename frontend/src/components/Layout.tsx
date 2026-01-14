@@ -6,9 +6,9 @@ export function Layout() {
   return (
     <>
       <Header />
-      <Container component="main" sx={{ my: 4 }}>
+      <main className="max-w-7xl mx-auto px-4 py-6">
         <Outlet />
-      </Container>
+      </main>
     </>
   );
 }
