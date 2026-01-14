@@ -1,91 +1,63 @@
 import type { PromptSummary } from "@/services";
-import {
-  Card,
-  CardActionArea,
-  CardContent,
-  Grid,
-  IconButton,
-  Stack,
-  Tooltip,
-  Typography,
-} from "@mui/material";
 import { Link, useNavigate } from "react-router";
+import { Pencil } from "lucide-react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { PromptTags } from "./PromptTags";
-import { Pencil, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 type Props = {
   prompt: PromptSummary;
   editable?: boolean;
+  className?: string;
 };
 
-export function PromptCard({ prompt, editable = false }: Props) {
+export function PromptCard({ prompt, editable = false, className = "" }: Props) {
   const navigate = useNavigate();
   return (
-    <Card
-      sx={{
-        position: "relative",
-        height: "100%",
-        transition: "all 0.2s ease-in-out",
-        "&:hover .edit-button": { opacity: 1 },
-      }}
-      data-testid="prompt-card"
-    >
-      {editable && (
-        <Tooltip title="Edit">
-          <IconButton
-            className="edit-button"
-            sx={{
-              position: "absolute",
-              right: 4,
-              top: 4,
-              zIndex: 10,
-              opacity: 0,
-              backgroundColor: "#DFDFDF",
+    <Link to={`/prompts/${prompt.id}`}>
+      <article className={`relative group bg-card p-4` + className}>
+        {editable && (
+          <Button
+            className="absolute opacity-0 group-hover:opacity-100 rounded-full size-10 top-2 right-2"
+            onClick={() => {
+              navigate(`/prompts/${prompt.id}/edit`);
             }}
-            data-testid="edit-button"
-            onClick={() => navigate(`/prompts/${prompt.id}/edit`)}
           >
-            <Pencil fill="inherit" stroke="1px" />
-          </IconButton>
-        </Tooltip>
-      )}
-      <CardActionArea
-        sx={{ height: "inherit", mb: 2 }}
-        component={Link}
-        to={`/prompts/${prompt.id}`}
-        data-testid="prompt-link"
-      >
-        <CardContent
-          sx={{
-            height: "100%",
-          }}
-        >
-          <Grid
-            sx={{ height: "inherit" }}
-            container
-            spacing={1}
-            alignItems="space-between"
-          >
-            <Grid size={12} alignContent="space-between">
-              <Stack alignItems="baseline" direction="row" spacing={2}>
-                <Stack direction="row" spacing={0.5} alignItems="center">
-                  <Sparkles fill="inherit" stroke={"1px"} size={16} />
-                  <Typography>{prompt.model}</Typography>
-                </Stack>
-                <PromptTags tags={prompt.hashtags} />
-              </Stack>
-            </Grid>
-            <Grid size={12}>
-              <Typography component="h3" variant="h6">
-                {prompt.title}
-              </Typography>
-            </Grid>
-            <Grid size={12}>
-              <Typography>By {prompt.authorName}</Typography>
-            </Grid>
-          </Grid>
-        </CardContent>
-      </CardActionArea>
-    </Card>
+            <Pencil />
+          </Button>
+        )}
+        <div className="flex items-start gap-4">
+          <Avatar className="h-10 w-10">
+            <AvatarFallback>
+              {prompt.authorHandle.slice(0, 2).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <span className="font-medium text-foreground">
+                {prompt.authorName}
+              </span>
+              <span>·</span>
+              <span>{prompt.pubDate.toDateString()}</span>
+              <span>·</span>
+              <span className="bg-muted px-1.5 py-0.5 text-xs font-medium">
+                {prompt.model}
+              </span>
+            </div>
+
+            <h1 className="mt-1 text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
+              {prompt.title}
+            </h1>
+
+            <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
+              {prompt.description}
+            </p>
+
+            <PromptTags hashtags={prompt.hashtags} />
+          </div>
+        </div>
+      </article>
+    </Link>
   );
 }
