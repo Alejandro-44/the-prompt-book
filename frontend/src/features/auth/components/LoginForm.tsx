@@ -1,51 +1,50 @@
-import { Alert, Button, Stack } from "@mui/material";
 import { FormProvider } from "react-hook-form";
-import { CircleXIcon } from "lucide-react";
+import { AlertCircleIcon } from "lucide-react";
 
-import Input from "@/components/Input";
 import { useLoginForm } from "../hooks/useLoginForm";
 import { useLogin } from "../hooks/useAuth";
 import type { LoginFormValues } from "../schemas/login.schema";
+import { RHFInput } from "@/components/RHFInput";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertTitle } from "@/components/ui/alert";
 
-const LoginForm = () => {
+export const LoginForm = () => {
   const { mutate, isPending, error } = useLogin();
   const methods = useLoginForm();
 
   const onSubmit = methods.handleSubmit((data: LoginFormValues) => {
+    console.log(data);
     mutate(data);
     methods.reset();
   });
 
-  const errorMessage = error?.message
-  
+  const errorMessage = error?.message;
+
   return (
     <FormProvider {...methods}>
-      <form onSubmit={onSubmit}>
-        <Stack spacing={2}>
-          <Input
-            type="email"
-            name="email"
-            label="Email"
-            placeholder="youremail@example.com"
-          />
-          <Input
-            type="password"
-            name="password"
-            label="Password"
-            placeholder="••••••••"
-          />
-          <Button type="submit" disabled={isPending} variant="contained">
-            {isPending ? "Loading..." : "Log In"}
-          </Button>
-          {error && (
-            <Alert icon={<CircleXIcon />} severity="error">
-              {errorMessage}
-            </Alert>
-          )}
-        </Stack>
+      <form className="flex flex-col gap-6" onSubmit={onSubmit}>
+        <RHFInput
+          name="email"
+          type="email"
+          label="Email"
+          placeholder="youremail@example.com"
+        />
+        <RHFInput
+          name="password"
+          type="password"
+          label="Password"
+          placeholder="••••••••"
+        />
+        <Button className="cursor-pointer" type="submit" disabled={isPending}>
+          {isPending ? "Loading..." : "Sign In"}
+        </Button>
+        {error && (
+          <Alert variant="destructive">
+            <AlertCircleIcon />
+            <AlertTitle>{errorMessage}</AlertTitle>
+          </Alert>
+        )}
       </form>
     </FormProvider>
   );
 };
-
-export default LoginForm;

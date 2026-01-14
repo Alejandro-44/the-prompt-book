@@ -1,13 +1,14 @@
-import Input from "@/components/Input";
+import { RHFInput } from "@/components/RHFInput";
 import { FormProvider, useForm } from "react-hook-form";
 import {
   commentSchema,
   type CommentFormValues,
 } from "../schema/comment.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Avatar, Button, Stack } from "@mui/material";
 import type { User } from "@/services";
 import { SendHorizontal } from "lucide-react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 
 type CommentFormProps = {
   user: User;
@@ -26,19 +27,16 @@ export function CommentForm({ user, onSubmit }: CommentFormProps) {
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={handleSubmit}>
-        <Stack direction="row" spacing={2}>
-          <Avatar sx={{ width: 32, height: 32, fontSize: 16 }}>
-            {user?.username.slice(0, 2).toUpperCase()}
+      <form className="flex items-center gap-4" onSubmit={handleSubmit}>
+          <Avatar>
+            <AvatarFallback>{user?.username.slice(0, 2).toUpperCase()}</AvatarFallback>
           </Avatar>
-          <Input
-            variant="standard"
+          <RHFInput
             name="content"
             label=""
             placeholder="Add your comment..."
           />
-          <Button variant="text" type="submit"><SendHorizontal /></Button>
-        </Stack>
+          <Button type="submit"><SendHorizontal /></Button>
       </form>
     </FormProvider>
   );

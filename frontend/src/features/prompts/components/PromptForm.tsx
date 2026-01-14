@@ -1,19 +1,20 @@
-import Input from "@/components/Input";
-import { Button, Grid, Stack } from "@mui/material";
+import { RHFInput } from "@/components/RHFInput";
 import { FormProvider } from "react-hook-form";
 import { usePromptForm } from "../hooks/usePromptForm";
 import type { PromptFormValues } from "../schemas";
-import { RHFAutocomplete } from "@/components/RHFAutocomplete";
 import type { PromptCreate } from "@/services";
 import { useNavigate } from "react-router";
 import { MODELS } from "@/constants";
+import { Button } from "@/components/ui/button";
+import { RHFTextArea } from "@/components/RHFTextarea";
+import { RHFSelect } from "@/components/RHFSelect";
 
 type PromptFormProps = {
   mode: "create" | "edit";
   onSubmit: (data: PromptFormValues) => void;
   isLoading?: boolean;
   defaultValues?: PromptCreate;
-  onDelete?: () => void
+  onDelete?: () => void;
 };
 
 export function PromptForm({
@@ -21,7 +22,7 @@ export function PromptForm({
   onSubmit,
   isLoading,
   defaultValues,
-  onDelete
+  onDelete,
 }: PromptFormProps) {
   const navigate = useNavigate();
   const methods = usePromptForm({ defaultValues });
@@ -36,45 +37,38 @@ export function PromptForm({
     if (onDelete) {
       onDelete();
     }
-  }
+  };
 
   const handleOnCancel = () => {
     navigate("/");
-  }
+  };
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={handleSubmit}>
-        <Grid container spacing={2}>
-          <Grid size={12}>
-            <Input name="title" label="Title" />
-          </Grid>
-          <Grid size={12}>
-            <Input name="description" label="Description" multiline rows={4} />
-          </Grid>
-          <Grid size={12}>
-            <Input name="prompt" label="Prompt" multiline rows={4} />
-          </Grid>
-          <Grid size={12}>
-            <RHFAutocomplete name="model" label="Model" options={MODELS} />
-          </Grid>
-          <Grid size={12}>
-            <Input name="resultExample" label="Result" multiline rows={4} />
-          </Grid>
-          <Grid size={12}>
-            <Stack direction="row-reverse" spacing={2}>
-              <Button variant="contained" type="submit" disabled={isLoading}>
-                { mode === "create" ? "Share" : "Save changes"}
-              </Button>
-              { mode === "edit" ? (
-                <Button onClick={handleOnDelete} variant="contained" type="button" disabled={isLoading}>
-                  Delete
-                </Button>
-              ) : null }
-              <Button variant="outlined" onClick={handleOnCancel}>Cancel</Button>
-            </Stack>
-          </Grid>
-        </Grid>
+      <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
+        <RHFInput name="title" label="Title" />
+        <RHFTextArea name="description" label="Description" />
+        <RHFTextArea name="prompt" label="Prompt" />
+        <RHFSelect name="model" label="model" options={MODELS} placeholder="Select a model"  />
+        <RHFTextArea name="resultExample" label="Result" />
+        <div className="flex justify-end gap-4">
+          <Button variant="outline" onClick={handleOnCancel}>
+            Cancel
+          </Button>
+          {mode === "edit" ? (
+            <Button
+              variant="destructive"
+              onClick={handleOnDelete}
+              type="button"
+              disabled={isLoading}
+            >
+              Delete
+            </Button>
+          ) : null}
+          <Button type="submit" disabled={isLoading}>
+            {mode === "create" ? "Share" : "Save changes"}
+          </Button>
+        </div>
       </form>
     </FormProvider>
   );
