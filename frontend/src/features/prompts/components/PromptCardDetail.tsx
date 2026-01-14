@@ -41,7 +41,7 @@ export function PromptCardDetail({ promptId }: Props) {
       </header>
       <section className="space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold">El Prompt</h2>
+          <h2 className="text-xl font-semibold">Prompt</h2>
           <Button variant="outline" size="sm" className="gap-2">
             <CopyIcon />
           </Button>
@@ -53,7 +53,7 @@ export function PromptCardDetail({ promptId }: Props) {
         </div>
       </section>
       <section className="space-y-3">
-        <h2 className="text-xl font-semibold">Resultado Esperado</h2>
+        <h2 className="text-xl font-semibold">Result</h2>
         <div className="rounded-lg border bg-card p-4">
           <p className="text-muted-foreground">{prompt?.resultExample}</p>
         </div>

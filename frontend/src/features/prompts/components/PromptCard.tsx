@@ -11,29 +11,33 @@ type Props = {
   className?: string;
 };
 
-export function PromptCard({ prompt, editable = false, className = "" }: Props) {
+export function PromptCard({
+  prompt,
+  editable = false,
+  className = "",
+}: Props) {
   const navigate = useNavigate();
   return (
-    <Link to={`/prompts/${prompt.id}`}>
-      <article className={`relative group bg-card p-4` + className}>
-        {editable && (
-          <Button
-            className="absolute opacity-0 group-hover:opacity-100 rounded-full size-10 top-2 right-2"
-            onClick={() => {
-              navigate(`/prompts/${prompt.id}/edit`);
-            }}
-          >
-            <Pencil />
-          </Button>
-        )}
-        <div className="flex items-start gap-4">
+    <article className={`relative bg-card group p-4 h-full ` + className}>
+      {editable && (
+        <Button
+          className="absolute z-10 opacity-0 group-hover:opacity-100 rounded-full size-10 top-2 right-2 cursor-pointer"
+          onClick={() => {
+            navigate(`/prompts/${prompt.id}/edit`);
+          }}
+        >
+          <Pencil />
+        </Button>
+      )}
+      <Link to={`/prompts/${prompt.id}`}>
+        <div className="flex h-full items-start gap-4">
           <Avatar className="h-10 w-10">
             <AvatarFallback>
               {prompt.authorHandle.slice(0, 2).toUpperCase()}
             </AvatarFallback>
           </Avatar>
 
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 flex flex-col">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <span className="font-medium text-foreground">
                 {prompt.authorName}
@@ -54,10 +58,12 @@ export function PromptCard({ prompt, editable = false, className = "" }: Props) 
               {prompt.description}
             </p>
 
-            <PromptTags hashtags={prompt.hashtags} />
+            <div className="mt-auto">
+              <PromptTags hashtags={prompt.hashtags} />
+            </div>
           </div>
         </div>
-      </article>
-    </Link>
+      </Link>
+    </article>
   );
 }
