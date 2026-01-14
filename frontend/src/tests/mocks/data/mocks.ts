@@ -4,7 +4,7 @@ export const promptSummaryMocks = [
     title: "TikTok script idea",
     description:
       "Prompt for generating short and humorous scripts designed for TikTok content.",
-    hashtags: ['tiktok' ,'scripts'],
+    hashtags: ["tiktok", "scripts"],
     model: "gpt-3.5",
     pub_date: "2024-02-23T12:05:00",
     author_name: "creative_io",
@@ -208,7 +208,7 @@ export const promptMocks = [
     prompt: "Write a short funny TikTok script about studying with AI.",
     result_example: "AI: 'I analyzed your habits... you need coffee.'",
     model: "gpt-3.5",
-    hashtags: ['tiktok' ,'scripts'],
+    hashtags: ["tiktok", "scripts"],
     pub_date: "2024-02-23T12:05:00",
     author_id: "6939876c7f7a423bcb83fe0e",
     author_name: "creative_io",
@@ -241,6 +241,22 @@ export const promptMocks = [
     author_id: "6939876c7f7a423bcb83fe0e",
     author_name: "creative_io",
     author_handle: "creative_io",
+  },
+  {
+    title: "Character backstory generator",
+    description:
+      "Creative prompt for generating character #backstories within #fantasy worlds.",
+    prompt:
+      "Create a fantasy-style backstory for a character named Arin who is a rogue alchemist.",
+    result_example:
+      "Arin grew up scavenging ingredients from abandoned ruins...",
+    model: "gpt-3.5",
+    id: "69398c1d5393462cecf974ba",
+    hashtags: ["backstories", "fantasy"],
+    pub_date: "2024-02-10T08:12:00",
+    author_id: "6939872c7f7a423bcb83fe0b",
+    author_name: "alex",
+    author_handle: "alex",
   },
 ];
 
