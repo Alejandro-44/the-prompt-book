@@ -19,24 +19,11 @@ export function PromptComments({ promptId }: PromptCommentsProps) {
   };
 
   return (
-    <Card sx={{ maxWidth: "md", mx: "auto", mt: 4 }} component="section">
-      <CardContent sx={{ p: 3 }}>
-        <Grid container>
-          <Grid size={12}>
-            <Typography component="h2" variant="h6" fontWeight={600}>
-              Comments
-            </Typography>
-          </Grid>
-          {user && (
-            <Grid sx={{ my: 2 }} size={12}>
-              <CommentForm user={user} onSubmit={onCommentCreate} />
-            </Grid>
-          )}
-          <Grid size={12}>
-            <CommentsList comments={comments || []} />
-          </Grid>
-        </Grid>
-      </CardContent>
-    </Card>
+    <section className="space-y-6">
+      <h3 className="text-lg font-semibold">
+        Comentarios ({comments?.length ?? 0})
+      </h3>
+      <CommentsList comments={comments ?? []} />
+    </section>
   );
 }

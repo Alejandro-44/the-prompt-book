@@ -1,37 +1,27 @@
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import type { PromptComment } from "@/services";
-import {
-  Avatar,
-  Card,
-  CardContent,
-  ListItem,
-  Stack,
-  Typography,
-} from "@mui/material";
-
 type CommentProps = {
   comment: PromptComment;
 };
 
 export function Comment({ comment }: CommentProps) {
   return (
-    <ListItem sx={{ p: 0 }}>
-      <Card
-        component="article"
-        variant="outlined"
-        sx={{ width: "100%", py: 2, borderRadius: 0, border: "none" }}
-      >
-        <CardContent sx={{ "&:last-child": { p: 0 } }}>
-          <Stack direction="row" alignItems="center" spacing={2}>
-            <Avatar>{comment.authorHandle.slice(0, 2).toUpperCase()}</Avatar>
-            <Stack spacing={0}>
-              <Typography component="h1" variant="body1" fontWeight={600}>
-                {`@${comment.authorHandle}`}
-              </Typography>
-              <Typography variant="body2">{comment.content}</Typography>
-            </Stack>
-          </Stack>
-        </CardContent>
-      </Card>
-    </ListItem>
+    <div className="flex gap-3 p-4 rounded-lg bg-muted/50">
+      <Avatar className="h-8 w-8">
+        <AvatarFallback className="text-xs">
+          {comment.authorName.slice(0, 2).toUpperCase()}
+        </AvatarFallback>
+      </Avatar>
+      <div className="flex-1">
+        <div className="flex items-center gap-2 text-sm">
+          <span className="font-medium">{comment.authorName}</span>
+          <span className="text-muted-foreground">·</span>
+          <span className="text-muted-foreground">
+            {comment.pubDate.toDateString()}
+          </span>
+        </div>
+        <p className="mt-1 text-sm text-foreground">{comment.content}</p>
+      </div>
+    </div>
   );
 }
