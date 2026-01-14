@@ -4,7 +4,6 @@ import { CommentsList } from "@/features/comments/components/CommentsList";
 import { useComments } from "@/features/comments/hook/useComments";
 import { useCreateComment } from "@/features/comments/hook/useCreateComment";
 import type { CommentFormValues } from "@/features/comments/schema/comment.schema";
-import { Card, CardContent, Grid, Typography } from "@mui/material";
 
 type PromptCommentsProps = {
   promptId: string;
@@ -23,6 +22,7 @@ export function PromptComments({ promptId }: PromptCommentsProps) {
       <h3 className="text-lg font-semibold">
         Comentarios ({comments?.length ?? 0})
       </h3>
+      { user && <CommentForm user={user}  onSubmit={onCommentCreate} />}
       <CommentsList comments={comments ?? []} />
     </section>
   );

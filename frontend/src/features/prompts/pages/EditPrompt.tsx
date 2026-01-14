@@ -1,10 +1,10 @@
-import { Card, CardContent } from "@mui/material";
 import { PromptForm } from "../components/PromptForm";
 import type { PromptFormValues } from "../schemas";
 import type { Prompt, PromptCreate } from "@/services";
 import { useOutletContext, useParams } from "react-router";
 import { getPromptChanges } from "@/utils";
 import { usePromptDelete, usePromptUpdate } from "../hooks";
+import { Card, CardContent } from "@/components/ui/card";
 
 export function EditPrompt() {
   const { promptId } = useParams();
@@ -29,8 +29,8 @@ export function EditPrompt() {
   }
 
   return (
-    <Card sx={{ maxWidth: 875, mx: "auto" }}>
-      <CardContent sx={{ p: 4 }}>
+    <Card className="max-w-5xl ">
+      <CardContent className="px-6">
         <PromptForm
           mode="edit"
           onSubmit={handleUpdatePrompt}

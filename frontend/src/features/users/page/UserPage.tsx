@@ -1,10 +1,4 @@
-import {
-  Container,
-  Typography,
-  CircularProgress,
-  Pagination,
-  Grid,
-} from "@mui/material";
+import { AppPagination } from "@/components/AppPagination";
 import { UserCard } from "../components/UserCard";
 import { useUser, useUserPrompts } from "../hooks";
 import { PromptsGrid } from "@/features/prompts/components/PromptsGrid";
@@ -19,59 +13,44 @@ export function UserPage({ mode }: UserPageProps) {
   const { user, isLoading, error } = useUser({ mode, userHandle });
   const { prompts, page, pages, setPage } = useUserPrompts({ mode, userHandle });
 
-  if (isLoading) {
-    return (
-      <Container sx={{ mt: 4, display: "flex", justifyContent: "center" }}>
-        <CircularProgress />
-      </Container>
-    );
-  }
-
   if (error) {
     return (
-      <Container sx={{ mt: 4 }}>
-        <Typography variant="h6" color="error">
+      <div >
+        <p>
           Error loading user: {error.message}
-        </Typography>
-      </Container>
+        </p>
+      </div>
     );
   }
 
   if (!user) {
     return (
-      <Container sx={{ mt: 4 }}>
-        <Typography variant="h6">User not found</Typography>
-      </Container>
+      <div>
+        <p>User not found</p>
+      </div>
     );
   }
 
   return (
     <>
-      <Container sx={{ mt: 4 }}>
+      <div>
         <UserCard user={user} />
-      </Container>
-      <Container sx={{ mt: 2 }}>
-        <Typography variant="h5" component="h2">
+      </div>
+      <div className="mt-2">
+        <h2>
           {mode === "me" ? "My Prompts" : `${user.username}'s prompts`}
-        </Typography>
-        <Grid justifyContent="center">
+        </h2>
+        <div>
           {prompts ? (
             <>
               <PromptsGrid prompts={prompts} editable={mode === "me"} />
-              <Pagination
-                sx={{ justifySelf: "center" }}
-                count={pages}
-                page={page}
-                onChange={(_, page) => setPage(page)}
-                variant="outlined"
-                shape="rounded"
-              />
+              <AppPagination page={page!} totalPages={pages!} onPageChange={setPage} />
             </>
           ) : (
-            <Typography>Share your first prompt</Typography>
+            <p>Share your first prompt</p>
           )}
-        </Grid>
-      </Container>
+        </div>
+      </div>
     </>
   );
 }
