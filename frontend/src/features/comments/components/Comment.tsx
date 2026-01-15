@@ -6,7 +6,7 @@ type CommentProps = {
 
 export function Comment({ comment }: CommentProps) {
   return (
-    <div className="flex gap-3 p-4 rounded-lg bg-muted/50">
+    <article className="flex gap-3 p-4 rounded-lg bg-muted/50">
       <Avatar className="h-8 w-8">
         <AvatarFallback className="text-xs">
           {comment.authorName.slice(0, 2).toUpperCase()}
@@ -22,6 +22,6 @@ export function Comment({ comment }: CommentProps) {
         </div>
         <p className="mt-1 text-sm text-foreground">{comment.content}</p>
       </div>
-    </div>
+    </article>
   );
 }
