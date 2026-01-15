@@ -16,8 +16,8 @@ export function PromptCardDetail({ promptId }: Props) {
   useRedirectOn({ when: error?.status === 404, to: "/404" });
 
   return (
-    <article className="py-6">
-      <header className="space-y-4">
+    <article className="py-6 space-y-6">
+      <header className="space-y-6">
         <div className="flex items-center gap-3">
           <Avatar className="h-12 w-12">
             <AvatarFallback>
