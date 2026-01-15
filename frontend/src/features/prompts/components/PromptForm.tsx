@@ -52,7 +52,7 @@ export function PromptForm({
         <RHFSelect name="model" label="Model" options={MODELS} placeholder="Select a model" />
         <RHFTextArea name="resultExample" label="Result" />
         <div className="flex justify-between md:justify-end md:gap-4">
-          <Button variant="outline" onClick={handleOnCancel}>
+          <Button type="button" variant="outline" onClick={handleOnCancel}>
             Cancel
           </Button>
           {mode === "edit" ? (
