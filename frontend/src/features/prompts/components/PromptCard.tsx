@@ -4,6 +4,7 @@ import { Pencil } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { PromptTags } from "./PromptTags";
 import { Button } from "@/components/ui/button";
+import { formatDate } from "@/utils";
 
 type Props = {
   prompt: PromptSummary;
@@ -21,7 +22,7 @@ export function PromptCard({
     <article className={`relative bg-card group p-4 h-full ` + className} data-testid="prompt-card">
       {editable && (
         <Button
-          className="absolute z-10 opacity-0 group-hover:opacity-100 rounded-full size-10 top-2 right-2 cursor-pointer"
+          className="absolute z-10 md:opacity-0 md:group-hover:opacity-100 rounded-full size-10 top-2 right-2 cursor-pointer"
           data-testid="edit-button"
           onClick={() => {
             navigate(`/prompts/${prompt.id}/edit`);
@@ -44,7 +45,7 @@ export function PromptCard({
                 {prompt.authorName}
               </span>
               <span>·</span>
-              <span>{prompt.pubDate.toDateString()}</span>
+              <span>{formatDate(prompt.pubDate.toDateString())}</span>
               <span>·</span>
               <span className="bg-muted px-1.5 py-0.5 text-xs font-medium">
                 {prompt.model}

@@ -5,6 +5,7 @@ import { Link } from "react-router";
 import { useRedirectOn } from "@/features/auth/hooks";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { formatDate } from "@/utils";
 
 type Props = {
   promptId: string;
@@ -15,7 +16,7 @@ export function PromptCardDetail({ promptId }: Props) {
   useRedirectOn({ when: error?.status === 404, to: "/404" });
 
   return (
-    <article className="space-y-8">
+    <article className="py-6">
       <header className="space-y-4">
         <div className="flex items-center gap-3">
           <Avatar className="h-12 w-12">
@@ -28,12 +29,12 @@ export function PromptCardDetail({ promptId }: Props) {
               <p className="font-medium">{prompt?.authorName}</p>
             </Link>
             <p className="text-sm text-muted-foreground">
-              {prompt?.pubDate.toDateString()}
+              {formatDate(prompt?.pubDate.toDateString() || "")}
             </p>
           </div>
         </div>
         <h1 className="text-3xl font-bold tracking-tight">{prompt?.title}</h1>
-        <p className="text-lg text-muted-foreground">{prompt?.description}</p>
+        <p className="text-sm text-muted-foreground">{prompt?.description}</p>
         {prompt && <PromptTags hashtags={prompt.hashtags} />}
         <div className="inline-block rounded-md bg-muted px-3 py-1 text-sm font-medium">
           {prompt?.model}
