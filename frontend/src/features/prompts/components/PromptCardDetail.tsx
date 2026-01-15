@@ -24,7 +24,7 @@ export function PromptCardDetail({ promptId }: Props) {
             </AvatarFallback>
           </Avatar>
           <div>
-            <Link to={`/users/${prompt?.authorHandle}`} className="hover:underline">
+            <Link to={`/users/${prompt?.authorHandle}`} className="hover:underline" data-testid="author-link">
               <p className="font-medium">{prompt?.authorName}</p>
             </Link>
             <p className="text-sm text-muted-foreground">
@@ -42,7 +42,7 @@ export function PromptCardDetail({ promptId }: Props) {
       <section className="space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold">Prompt</h2>
-          <Button variant="outline" size="sm" className="gap-2">
+          <Button variant="outline" size="sm" className="gap-2" data-testid="copy-prompt-button">
             <CopyIcon />
           </Button>
         </div>

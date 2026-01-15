@@ -18,10 +18,11 @@ export function PromptCard({
 }: Props) {
   const navigate = useNavigate();
   return (
-    <article className={`relative bg-card group p-4 h-full ` + className}>
+    <article className={`relative bg-card group p-4 h-full ` + className} data-testid="prompt-card">
       {editable && (
         <Button
           className="absolute z-10 opacity-0 group-hover:opacity-100 rounded-full size-10 top-2 right-2 cursor-pointer"
+          data-testid="edit-button"
           onClick={() => {
             navigate(`/prompts/${prompt.id}/edit`);
           }}
@@ -29,7 +30,7 @@ export function PromptCard({
           <Pencil />
         </Button>
       )}
-      <Link to={`/prompts/${prompt.id}`}>
+      <Link to={`/prompts/${prompt.id}`} data-testid="prompt-link">
         <div className="flex h-full items-start gap-4">
           <Avatar className="h-10 w-10">
             <AvatarFallback>
