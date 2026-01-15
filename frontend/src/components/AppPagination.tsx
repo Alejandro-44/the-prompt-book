@@ -24,7 +24,7 @@ export function AppPagination({
   const pages = getPageNumbers(page, totalPages, siblingCount)
 
   return (
-    <Pagination>
+    <Pagination className="mt-8">
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious
