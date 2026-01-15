@@ -31,17 +31,17 @@ export const RHFSelect = ({
   const { control } = useFormContext();
   const { field, fieldState } = useController({ control, name });
   return (
-    <Field>
+    <Field data-invalid={!!fieldState.error}>
       {label && <FieldLabel htmlFor={field.name}>{label}</FieldLabel>}
       <Select value={field.value} onValueChange={field.onChange}>
-        <SelectTrigger>
+        <SelectTrigger aria-invalid={!!fieldState.error} id={field.name}>
           <SelectValue  placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
             <SelectLabel>{field.name}</SelectLabel>
             {options.map((option) => (
-              <SelectItem key={option.id} value={option.id}>
+              <SelectItem key={option.id} value={option.id} role="option">
                 {option.label}
               </SelectItem>
             ))}
