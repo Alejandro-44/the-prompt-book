@@ -1,9 +1,9 @@
 import { AppPagination } from "@/components/AppPagination";
-import { PromptsGrid } from "@/features/prompts/components/PromptsGrid";
+import PromptsFeed from "@/features/prompts/components/PromptsFeed";
 import { usePrompts } from "@/features/prompts/hooks/usePrompts";
 export function HomePage() {
   const { prompts, isLoading, error, page, pages, setPage } = usePrompts({
-    limit: 12,
+    limit: 10,
   });
 
   if (!prompts) {
@@ -12,7 +12,7 @@ export function HomePage() {
 
   return (
     <div>
-      <PromptsGrid prompts={prompts} />
+      <PromptsFeed prompts={prompts} />
       <AppPagination page={page!} totalPages={pages!} onPageChange={setPage} />
     </div>
   );
