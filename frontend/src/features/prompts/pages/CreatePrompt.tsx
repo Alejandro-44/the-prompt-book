@@ -12,8 +12,8 @@ export function CreatePrompt() {
   };
 
   return (
-    <Card className="max-w-5xl mx-auto">
-      <CardContent className="px-6">
+    <Card className="w-full">
+      <CardContent>
         <PromptForm
           mode="create"
           onSubmit={handleCreatePrompt}

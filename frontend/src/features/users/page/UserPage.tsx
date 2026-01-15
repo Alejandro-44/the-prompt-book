@@ -32,11 +32,11 @@ export function UserPage({ mode }: UserPageProps) {
   }
 
   return (
-    <>
+    <div className="grid max-w-6xl gap-4">
       <div>
         <UserCard user={user} />
       </div>
-      <div className="mt-2">
+      <div>
         <h2>
           {mode === "me" ? "My Prompts" : `${user.username}'s prompts`}
         </h2>
@@ -51,6 +51,6 @@ export function UserPage({ mode }: UserPageProps) {
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 }

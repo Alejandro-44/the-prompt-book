@@ -18,7 +18,7 @@ export function PromptComments({ promptId }: PromptCommentsProps) {
   };
 
   return (
-    <section className="mt-6">
+    <section className="py-6">
       <h3 className="text-lg font-semibold mb-6">
         Comentarios ({comments?.length ?? 0})
       </h3>
