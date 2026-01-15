@@ -12,7 +12,7 @@ export function CreatePrompt() {
   };
 
   return (
-    <Card className="w-full">
+    <Card className="w-full max-w-4xl">
       <CardContent>
         <PromptForm
           mode="create"

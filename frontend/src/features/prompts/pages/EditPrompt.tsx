@@ -29,7 +29,7 @@ export function EditPrompt() {
   }
 
   return (
-    <Card className="w-full">
+    <Card className="w-full max-w-4xl">
       <CardContent className="px-6">
         <PromptForm
           mode="edit"
