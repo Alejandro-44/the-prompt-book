@@ -27,7 +27,7 @@ describe("PromptCardDetail", () => {
       expect(screen.getByText(hashtag)).toBeDefined();
     });
 
-    expect(screen.getByText("Copy")).toBeDefined();
+    expect(screen.getByTestId("copy-prompt-button")).toBeDefined();
   });
 
   test("should redirect to user profile on author name click", async () => {
