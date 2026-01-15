@@ -7,7 +7,7 @@ import { Input } from "./ui/input";
 export const Header = () => {
   const navigate = useNavigate();
   return (
-    <header className="flex justify-cente px-4 border-b">
+    <header className="flex justify-center px-4 border-b mx-auto">
       <div className="container flex h-16 items-center justify-between gap-4">
         <Link to="/">
           <span className="font-bold text-xl">ThePromptBook</span>
