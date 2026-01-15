@@ -1,19 +1,11 @@
-import {
-  Avatar,
-  Button,
-  Card,
-  CardContent,
-  Divider,
-  Grid,
-  Paper,
-  Stack,
-  Typography,
-} from "@mui/material";
 import { usePrompt } from "../hooks";
 import { PromptTags } from "./PromptTags";
 import { CopyIcon } from "lucide-react";
 import { Link } from "react-router";
 import { useRedirectOn } from "@/features/auth/hooks";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { formatDate } from "@/utils";
 
 type Props = {
   promptId: string;
@@ -24,92 +16,49 @@ export function PromptCardDetail({ promptId }: Props) {
   useRedirectOn({ when: error?.status === 404, to: "/404" });
 
   return (
-    <Card component="article" sx={{ maxWidth: "md", mx: "auto" }}>
-      <CardContent sx={{ p: 3 }}>
-        <Grid container spacing={2}>
-          <Grid container size={12}>
-            <Typography variant="body1">{prompt?.model}</Typography>
-            <PromptTags tags={prompt?.hashtags || []} />
-          </Grid>
-          <Grid size={12}>
-            <Typography component="h1" variant="h4" fontWeight={600}>
-              {prompt?.title}
-            </Typography>
-          </Grid>
-          <Grid size={12}>
-            <Stack
-              component={Link}
-              to={`/users/${prompt?.authorHandle}`}
-              display="inline-flex"
-              direction="row"
-              alignItems="center"
-              spacing={1}
-              data-testid="author-link"
-            >
-              <Avatar sx={{ backgroundColor: "#f14b09ff" }}>
-                {prompt?.authorName.slice(0, 2).toUpperCase()}
-              </Avatar>
-              <Typography sx={{ ":hover": { textDecoration: "underline" } }}>
-                {prompt?.authorName}
-              </Typography>
-            </Stack>
-          </Grid>
-          <Grid size={12}>
-            <Typography>{prompt?.description}</Typography>
-          </Grid>
-          <Grid size={12}>
-            <Divider />
-          </Grid>
-          <Grid size={12}>
-            <Stack direction="row" justifyContent="space-between">
-              <Typography component="h2" variant="h6" fontWeight={600}>
-                Prompt
-              </Typography>
-              <Button variant="outlined" size="small" startIcon={<CopyIcon />}>
-                Copy
-              </Button>
-            </Stack>
-            <Paper
-              sx={{
-                mt: 2,
-                p: 3,
-                bgcolor: "#E8E8E8",
-              }}
-              variant="outlined"
-            >
-              <Typography
-                component="pre"
-                sx={{
-                  fontFamily: "monospace",
-                  fontSize: "0.875rem",
-                  whiteSpace: "pre-wrap",
-                  m: 0,
-                  color: "text.primary",
-                  lineHeight: 1.6,
-                }}
-              >
-                {prompt?.prompt}
-              </Typography>
-            </Paper>
-          </Grid>
-          <Grid size={12}>
-            <Divider />
-          </Grid>
-          <Grid size={12}>
-            <Typography
-              component="h2"
-              variant="h6"
-              fontWeight={600}
-              gutterBottom
-            >
-              Result
-            </Typography>
-            <Typography sx={{ lineHeight: 1.7 }}>
-              {prompt?.resultExample}
-            </Typography>
-          </Grid>
-        </Grid>
-      </CardContent>
-    </Card>
+    <article className="py-6 space-y-6">
+      <header className="space-y-6">
+        <div className="flex items-center gap-3">
+          <Avatar className="h-12 w-12">
+            <AvatarFallback>
+              {prompt?.authorName.slice(0, 2).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <div>
+            <Link to={`/users/${prompt?.authorHandle}`} className="hover:underline" data-testid="author-link">
+              <p className="font-medium">{prompt?.authorName}</p>
+            </Link>
+            <p className="text-sm text-muted-foreground">
+              {formatDate(prompt?.pubDate.toDateString() || "")}
+            </p>
+          </div>
+        </div>
+        <h1 className="text-3xl font-bold tracking-tight">{prompt?.title}</h1>
+        <p className="text-sm text-muted-foreground">{prompt?.description}</p>
+        {prompt && <PromptTags hashtags={prompt.hashtags} />}
+        <div className="inline-block rounded-md bg-muted px-3 py-1 text-sm font-medium">
+          {prompt?.model}
+        </div>
+      </header>
+      <section className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold">Prompt</h2>
+          <Button variant="outline" size="sm" className="gap-2" data-testid="copy-prompt-button">
+            <CopyIcon />
+          </Button>
+        </div>
+        <div className="rounded-lg border bg-muted/50 p-4">
+          <pre className="whitespace-pre-wrap font-mono text-sm">
+            {prompt?.prompt}
+          </pre>
+        </div>
+      </section>
+      <section className="space-y-3">
+        <h2 className="text-xl font-semibold">Result</h2>
+        <div className="rounded-lg border bg-card p-4">
+          <p className="text-muted-foreground">{prompt?.resultExample}</p>
+        </div>
+      </section>
+    </article>
   );
 }

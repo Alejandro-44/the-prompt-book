@@ -1,5 +1,4 @@
 import type { PromptComment } from "@/services";
-import { List } from "@mui/material";
 import { Comment } from "./Comment";
 
 type CommentsListProps = {
@@ -8,18 +7,10 @@ type CommentsListProps = {
 
 export function CommentsList({ comments }: CommentsListProps) {
   return (
-    <List
-      sx={{
-        p: 0,
-        "& > li:not(:last-child)": {
-          borderBottom: "1px solid",
-          borderColor: "divider",
-        },
-      }}
-    >
+    <ul className="space-y-4 pt-4">
       {comments.map((comment) => (
-        <Comment key={comment.id} comment={comment} />
+        <li key={comment.id}><Comment comment={comment} /></li>
       ))}
-    </List>
+    </ul>
   );
 }

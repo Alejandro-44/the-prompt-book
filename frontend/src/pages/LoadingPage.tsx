@@ -1,16 +1,9 @@
-import { CircularProgress, Container } from "@mui/material";
+import { Spinner } from "@/components/ui/spinner";
 
 export function LoadingPage() {
   return (
-    <Container
-      sx={{
-        minHeight: "50vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      <CircularProgress />
-    </Container>
+    <div className="flex items-center justify-center h-screen">
+      <Spinner className="size-20" />
+    </div>
   );
 }

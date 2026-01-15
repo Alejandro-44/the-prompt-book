@@ -6,6 +6,10 @@ export function useLoginForm() {
   return useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     criteriaMode: "all",
-    mode: "all"
+    mode: "all",
+    defaultValues: {
+      email: "",
+      password: "",
+    }
   });
 }

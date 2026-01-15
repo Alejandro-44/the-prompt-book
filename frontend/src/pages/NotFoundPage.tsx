@@ -1,32 +1,16 @@
-import { Button, Container, Typography } from "@mui/material";
 import { useNavigate } from "react-router";
 
 export function NotFoundPage() {
   const navigate = useNavigate();
 
   return (
-    <Container
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        minHeight: "50vh",
-        textAlign: "center",
-      }}
-    >
-      <Typography variant="h1" component="h1" gutterBottom>
-        404
-      </Typography>
-      <Typography variant="h5" component="h2" gutterBottom>
-        Page Not Found
-      </Typography>
-      <Typography variant="body1" gutterBottom>
-        The page you are looking for does not exist.
-      </Typography>
-      <Button variant="contained" onClick={() => navigate("/")}>
+    <div className="flex flex-col items-center justify-center min-h-[50vh] text-center">
+      <h1 className="text-6xl font-bold mb-4">404</h1>
+      <h2 className="text-2xl font-semibold mb-4">Page Not Found</h2>
+      <p className="text-base mb-4">The page you are looking for does not exist.</p>
+      <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={() => navigate("/")}>
         Go Home
-      </Button>
-    </Container>
+      </button>
+    </div>
   );
 }

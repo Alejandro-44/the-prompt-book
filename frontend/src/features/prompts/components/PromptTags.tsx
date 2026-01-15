@@ -1,20 +1,15 @@
-import { Box, Chip } from "@mui/material";
+import { Tag } from "./Tag";
 
 type PromptTagsProps = {
-  tags: string[];
+  hashtags: string[];
 };
 
-export function PromptTags({ tags }: PromptTagsProps) {
+export function PromptTags({ hashtags }: PromptTagsProps) {
   return (
-    <Box
-      sx={{
-        display: "flex",
-        gap: 1,
-      }}
-    >
-      {tags.map((tag) => (
-        <Chip role="tag" key={tag} label={tag} size="small" />
+    <div className="mt-3 flex flex-wrap gap-2">
+      {hashtags.map((hashtag) => (
+        <Tag key={hashtag} hashtag={hashtag} />
       ))}
-    </Box>
+    </div>
   );
 }

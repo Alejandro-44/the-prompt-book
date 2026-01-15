@@ -1,4 +1,3 @@
-import { Box, Grid } from "@mui/material";
 import { PromptCard } from "./PromptCard";
 import type { PromptSummary } from "@/services";
 
@@ -19,21 +18,14 @@ export function PromptsGrid({ prompts, editable }: PromptsGridProps) {
   ];
 
   return (
-    <Grid role="grid" sx={{ mt: 2 }} container spacing={2}>
+    <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3">
       {promptsToRender.map((prompt, index) => (
-        <Grid size={{ xs: 12, md: 6, lg: 4 }} key={prompt?.id ?? `placeholder-${index}`}>
-           {prompt ? (
-            <PromptCard prompt={prompt} editable={editable} />
-          ) : (
-            <Box
-              sx={{
-                height: 147.75,         
-                visibility: 'hidden',
-              }}
-            />
-          )}
-        </Grid>
+        prompt ? (
+          <PromptCard key={prompt.id} className="rounded-2xl" prompt={prompt} editable={editable} />
+        ) : (
+          <div key={index} className="h-40 w-full rounded-md" />
+        )
       ))}
-    </Grid>
+    </div>
   );
 }

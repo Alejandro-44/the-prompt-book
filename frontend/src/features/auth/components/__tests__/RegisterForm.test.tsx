@@ -4,7 +4,7 @@ import {
   waitFor,
   cleanup,
 } from "@testing-library/react";
-import RegisterForm from "../RegisterForm";
+import { RegisterForm } from "../RegisterForm";
 import { renderWithProviders } from "@/tests/utils/renderWithProviders";
 
 describe("Register Form", () => {
@@ -26,7 +26,7 @@ describe("Register Form", () => {
       target: { value: "12345Test" },
     });
 
-    fireEvent.click(screen.getByRole("button", { name: /Register/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Sign Up/i }));
 
     await waitFor(() => {
       expect(screen.getByText(/Login page/i)).toBeDefined();
@@ -44,7 +44,7 @@ describe("Register Form", () => {
       target: { value: "12345Test" },
     });
 
-    fireEvent.click(screen.getByRole("button", { name: /Register/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Sign Up/i }));
 
     await waitFor(() => {
       expect(screen.getByText(/Email already registered/i)).toBeDefined();
@@ -53,7 +53,7 @@ describe("Register Form", () => {
 
   it("display validation errors when data is incomplete or has wrong format", async () => {
 
-    fireEvent.click(screen.getByRole("button", { name: /Register/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Sign Up/i }));
 
     expect(await screen.findByText(/The username is required/i)).toBeDefined();
     expect(await screen.findByText(/The email is required/i)).toBeDefined();
@@ -62,7 +62,7 @@ describe("Register Form", () => {
     fireEvent.change(screen.getByLabelText(/email/i), {
       target: { value: "no-email" },
     });
-    fireEvent.click(screen.getByRole("button", { name: /Register/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Sign Up/i }));
 
     expect(await screen.findByText(/The email is required/i)).toBeDefined();
   });

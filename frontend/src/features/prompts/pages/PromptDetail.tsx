@@ -6,9 +6,9 @@ export function PromptDetail() {
   const params = useParams<{ promptId: string }>();
 
   return (
-    <>
+    <div className="container max-w-4xl grid gap-2">
       <PromptCardDetail promptId={params.promptId || ""} />
       <PromptComments promptId={params.promptId || ""}/>
-    </>
+    </div>
   )
 }

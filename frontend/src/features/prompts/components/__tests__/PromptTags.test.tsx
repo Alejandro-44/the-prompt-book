@@ -8,20 +8,20 @@ describe("PromptTags", () => {
   });
 
   test("should render tags as chips", () => {
-    const tags = ["marketing", "copywriting", "saas"];
-    renderWithProviders(<PromptTags tags={tags} />);
+    const hashtags = ["marketing", "copywriting", "saas"];
+    renderWithProviders(<PromptTags hashtags={hashtags} />);
 
-    tags.forEach((tag) => {
+    hashtags.forEach((tag) => {
       expect(screen.getByText(tag)).toBeDefined();
     });
 
-    const chips = screen.getAllByRole("tag");
-    expect(chips).toHaveLength(tags.length);
+    const chips = screen.getAllByRole("hashtag");
+    expect(chips).toHaveLength(hashtags.length);
   });
 
   test("should render empty when no tags", () => {
-    const tags: string[] = [];
-    renderWithProviders(<PromptTags tags={tags} />);
+    const hashtags: string[] = [];
+    renderWithProviders(<PromptTags hashtags={hashtags} />);
 
     const chips = screen.queryAllByRole("button");
     expect(chips).toHaveLength(0);

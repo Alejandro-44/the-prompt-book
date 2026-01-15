@@ -24,7 +24,7 @@ describe("Comment", () => {
   it("renders the author name", () => {
     renderWithProviders(<Comment comment={mockComment} />);
 
-    expect(screen.getByText("@john_doe")).toBeDefined();
+    expect(screen.getByText("John Doe")).toBeDefined();
   });
 
   it("renders the comment content", () => {
@@ -35,9 +35,6 @@ describe("Comment", () => {
 
   it("renders the comment structure correctly", () => {
     renderWithProviders(<Comment comment={mockComment} />);
-
-    const listItem = screen.getByRole("listitem");
-    expect(listItem).toBeDefined();
 
     const card = screen.getByRole("article");
     expect(card).toBeDefined();

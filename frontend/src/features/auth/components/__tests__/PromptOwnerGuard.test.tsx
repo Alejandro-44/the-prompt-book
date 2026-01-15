@@ -22,7 +22,7 @@ describe("PromptOwnerGuard", () => {
     });
 
     renderWithProviders(null, ["/prompts/69398c1d5393462cecf974c9/edit"]);
-    expect(screen.getByRole("progressbar")).toBeDefined();
+    expect(screen.getByRole("status")).toBeDefined();
   });
 
   test("navigates to home 404 when doesn't find the prompt", async () => {

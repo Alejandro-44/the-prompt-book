@@ -1,17 +1,17 @@
-import { Card, CardContent, Container, Typography } from "@mui/material";
-import RegisterForm from "../components/RegisterForm";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { RegisterForm } from "../components/RegisterForm";
 
 export function RegisterPage() {
   return (
-      <Container maxWidth="sm" sx={{ mt: 8 }}>
-        <Card>
-          <CardContent>
-            <Typography variant="h5" component="h1" align="center" sx={{ mb: 2 }} >
-              Register
-            </Typography>
-            <RegisterForm />
-          </CardContent>
-        </Card>
-      </Container>
+    <div className="w-full flex justify-center items-center">
+      <Card className="w-full sm:max-w-md">
+        <CardHeader>
+          <CardTitle>Sign Up</CardTitle>
+        </CardHeader>
+        <CardContent className="px-6">
+          <RegisterForm />
+        </CardContent>
+      </Card>
+    </div>
   );
 }

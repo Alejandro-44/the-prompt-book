@@ -1,56 +1,80 @@
-import { useAuth, useLogout } from "@/features/auth/hooks/useAuth";
-import { useUserStore } from "@/features/users/contexts";
-import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
-import { LogIn } from "lucide-react";
 import { Link, useNavigate } from "react-router";
+import { UserMenu } from "./UserMenu";
+import { Button } from "./ui/button";
+import { Plus, Search, X } from "lucide-react";
+import { Input } from "./ui/input";
+import { useState } from "react";
+import { useAuth } from "@/features/auth/hooks";
 
 export const Header = () => {
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const { mutate: logoutUser } = useLogout();
-  const { user } = useAuth()
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const openSearch = () => {
+    setIsSearchOpen(true);
+  };
+  const closeSearch = () => {
+    setIsSearchOpen(false);
+    setSearchQuery("");
+  };
   return (
-    <AppBar position="relative">
-      <Toolbar sx={{ justifyContent: "space-between" }}>
-        <Box>
-          <Typography variant="h5" component="h2">
-            <Link to="/">ThePromptBook</Link>
-          </Typography>
-        </Box>
-        {user ? (
-          <Box>
-            <Typography
-              variant="body1"
-              component="span"
-              sx={{ marginRight: 2 }}
-            >
-              Hello, {user.handle}
-            </Typography>
-            <Button
-              onClick={() => {
-                logoutUser();
-                useUserStore.getState().clearUser();
-                navigate("/");
-              }}
-              color="inherit"
-            >
-              Logout
+    <header className="relative flex justify-center px-4 border-b mx-auto">
+      <div className="container flex h-16 items-center justify-between gap-4">
+        <Link to="/">
+          <span className="font-bold text-xl">ThePromptBook</span>
+        </Link>
+
+        {isSearchOpen && (
+          <div className="absolute z-10 inset-0 flex items-center gap-2 bg-background px-4 md:hidden">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Buscar prompts..."
+                className="w-full pl-10"
+                value={searchQuery}
+              />
+            </div>
+            <Button variant="ghost" size="icon" onClick={closeSearch}>
+              <X className="h-5 w-5" />
             </Button>
-          </Box>
-        ) : (
-          <Box>
-            <Button
-              startIcon={<LogIn />}
-              onClick={() => navigate("/login")}
-              color="inherit"
-            >
-              SignIn
-            </Button>
-            <Button onClick={() => navigate("/register")} color="inherit">
-              SignUp
-            </Button>
-          </Box>
+          </div>
         )}
-      </Toolbar>
-    </AppBar>
+
+        <div className="hidden md:flex flex-1 items-center justify-center max-w-md">
+          <div className="relative w-full">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Buscar prompts..."
+              className="w-full pl-10"
+            />
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 md:gap-6">
+          <Button
+            className="md:hidden cursor-pointer"
+            variant="ghost"
+            onClick={openSearch}
+          >
+            <Search className="h-5 w-5" />
+          </Button>
+          {isAuthenticated && (
+            <Button
+              onClick={() => navigate("/prompts/new")}
+              variant="outline"
+              size="sm"
+              className="gap-2 cursor-pointer"
+            >
+              <Plus className="h-4 w-4" />
+              <span className="hidden sm:inline">Share</span>
+            </Button>
+          )}
+          <UserMenu />
+        </div>
+      </div>
+    </header>
   );
 };
