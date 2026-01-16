@@ -27,7 +27,7 @@ export function PromptCardDetail({ promptId }: Props) {
     <article className="py-6 space-y-6">
       <header className="space-y-6">
         <div className="flex items-center gap-3">
-          <Avatar className="h-12 w-12">
+          <Avatar className="size-12">
             <AvatarFallback>
               {prompt?.authorName.slice(0, 2).toUpperCase()}
             </AvatarFallback>

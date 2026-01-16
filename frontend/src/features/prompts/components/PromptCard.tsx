@@ -33,7 +33,7 @@ export function PromptCard({
       )}
       <Link to={`/prompts/${prompt.id}`} data-testid="prompt-link">
         <div className="flex h-full items-start gap-4">
-          <Avatar className="h-10 w-10">
+          <Avatar className="size-10">
             <AvatarFallback>
               {prompt.authorHandle.slice(0, 2).toUpperCase()}
             </AvatarFallback>

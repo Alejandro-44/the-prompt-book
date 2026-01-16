@@ -27,13 +27,12 @@ export function CommentForm({ user, onSubmit }: CommentFormProps) {
 
   return (
     <FormProvider {...methods}>
-      <form className="flex items-center gap-4" onSubmit={handleSubmit}>
-          <Avatar>
+      <form className="flex items-center gap-4 py-4" onSubmit={handleSubmit}>
+          <Avatar className="size-10">
             <AvatarFallback>{user?.username.slice(0, 2).toUpperCase()}</AvatarFallback>
           </Avatar>
           <RHFInput
             name="content"
-            label=""
             placeholder="Add your comment..."
           />
           <Button type="submit"><SendHorizontal /></Button>

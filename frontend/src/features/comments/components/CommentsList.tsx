@@ -7,7 +7,7 @@ type CommentsListProps = {
 
 export function CommentsList({ comments }: CommentsListProps) {
   return (
-    <ul className="space-y-4 pt-4">
+    <ul>
       {comments.map((comment) => (
         <li key={comment.id}><Comment comment={comment} /></li>
       ))}

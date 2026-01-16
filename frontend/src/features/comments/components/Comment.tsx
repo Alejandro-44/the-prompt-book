@@ -6,8 +6,8 @@ type CommentProps = {
 
 export function Comment({ comment }: CommentProps) {
   return (
-    <article className="flex gap-3 p-4 rounded-lg bg-muted/50">
-      <Avatar className="h-8 w-8">
+    <article className="flex gap-3 py-4">
+      <Avatar className="size-8">
         <AvatarFallback className="text-xs">
           {comment.authorName.slice(0, 2).toUpperCase()}
         </AvatarFallback>
