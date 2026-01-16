@@ -6,14 +6,14 @@ type CommentsHookProps = {
 }
 
 export function useComments({ promptId }: CommentsHookProps) {
-  const { data: comments, isPending, error } = useQuery({
+  const { data: comments, isLoading, error } = useQuery({
     queryKey: ["prompt", promptId, "comments"],
     queryFn: () => PromptsService.getPromptComments(promptId)
   })
 
   return {
     comments,
-    isPending,
+    isLoading,
     error
   }
 }

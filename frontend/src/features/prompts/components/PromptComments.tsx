@@ -4,6 +4,7 @@ import { CommentsList } from "@/features/comments/components/CommentsList";
 import { useComments } from "@/features/comments/hook/useComments";
 import { useCreateComment } from "@/features/comments/hook/useCreateComment";
 import type { CommentFormValues } from "@/features/comments/schema/comment.schema";
+import { PromptCommentsSkeleton } from "./PromptCommentsSkeleton";
 
 type PromptCommentsProps = {
   promptId: string;
@@ -11,11 +12,15 @@ type PromptCommentsProps = {
 
 export function PromptComments({ promptId }: PromptCommentsProps) {
   const { user } = useAuth();
-  const { comments } = useComments({ promptId });
+  const { comments, isLoading } = useComments({ promptId });
   const { mutate } = useCreateComment({ promptId });
   const onCommentCreate = (data: CommentFormValues) => {
     mutate(data);
   };
+
+  if (isLoading) {
+    return <PromptCommentsSkeleton />
+  }
 
   return (
     <section className="py-6">
