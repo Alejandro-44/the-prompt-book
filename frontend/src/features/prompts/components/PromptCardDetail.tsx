@@ -1,11 +1,12 @@
 import { usePrompt } from "../hooks";
 import { PromptTags } from "./PromptTags";
-import { CopyIcon } from "lucide-react";
+import { Check, CopyIcon } from "lucide-react";
 import { Link } from "react-router";
 import { useRedirectOn } from "@/features/auth/hooks";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/utils";
+import { useState } from "react";
 
 type Props = {
   promptId: string;
@@ -13,7 +14,14 @@ type Props = {
 
 export function PromptCardDetail({ promptId }: Props) {
   const { data: prompt, error } = usePrompt({ promptId });
+  const [copied, setCopied] = useState(false);
   useRedirectOn({ when: error?.status === 404, to: "/404" });
+
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(prompt?.prompt || "");
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
     <article className="py-6 space-y-6">
@@ -25,7 +33,11 @@ export function PromptCardDetail({ promptId }: Props) {
             </AvatarFallback>
           </Avatar>
           <div>
-            <Link to={`/users/${prompt?.authorHandle}`} className="hover:underline" data-testid="author-link">
+            <Link
+              to={`/users/${prompt?.authorHandle}`}
+              className="hover:underline"
+              data-testid="author-link"
+            >
               <p className="font-medium">{prompt?.authorName}</p>
             </Link>
             <p className="text-sm text-muted-foreground">
@@ -43,8 +55,24 @@ export function PromptCardDetail({ promptId }: Props) {
       <section className="space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold">Prompt</h2>
-          <Button variant="outline" size="sm" className="gap-2" data-testid="copy-prompt-button">
-            <CopyIcon />
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2"
+            data-testid="copy-prompt-button"
+            onClick={handleCopy}
+          >
+            {copied ? (
+              <>
+                <Check className="h-4 w-4" />
+                Copied
+              </>
+            ) : (
+              <>
+                <CopyIcon className="h-4 w-4" />
+                Copy
+              </>
+            )}
           </Button>
         </div>
         <div className="rounded-lg border bg-muted/50 p-4">
