@@ -3,12 +3,12 @@ import { PromptCardDetail } from "../components/PromptCardDetail";
 import { PromptComments } from "../components/PromptComments";
 
 export function PromptDetail() {
-  const params = useParams<{ promptId: string }>();
+  const { promptId } = useParams();
 
   return (
     <div className="container max-w-4xl grid gap-2">
-      <PromptCardDetail promptId={params.promptId || ""} />
-      <PromptComments promptId={params.promptId || ""}/>
+      <PromptCardDetail promptId={promptId || ""} />
+      <PromptComments promptId={promptId || ""}/>
     </div>
   )
 }
