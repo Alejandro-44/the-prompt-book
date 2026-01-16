@@ -7,8 +7,14 @@ type UsePrompt = {
 };
 
 export function usePrompt({ promptId }: UsePrompt) {
-    return useQuery<Prompt, ApiError>({
-    queryKey: ['prompt', promptId],
+  const { data: prompt, isLoading, error } = useQuery<Prompt, ApiError>({
+    queryKey: ["prompt", promptId],
     queryFn: () => PromptsService.getPromptDetail(promptId),
-  })
+  });
+
+  return {
+    prompt,
+    isLoading,
+    error
+  }
 }

@@ -8,7 +8,7 @@ export function PromptOwnerGuard() {
   const promptId = params.promptId || "";
   const { user } = useAuth();
   const {
-    data: prompt,
+    prompt,
     isLoading: isLoadingPrompt,
     error: promptError,
   } = usePrompt({ promptId });
