@@ -7,8 +7,8 @@ type PromptsFeedProps = {
 
 function PromptsFeed({ prompts }: PromptsFeedProps) {
   return (
-    <div className="max-w-2xl">
-      {prompts.map((prompt) => <PromptCard className="border-b" prompt={prompt} />)}
+    <div className="max-w-2xl grid">
+      {prompts.map((prompt) => <PromptCard key={prompt.id} className="border-b" prompt={prompt} />)}
     </div>
   )
 }
