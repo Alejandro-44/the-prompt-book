@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export function PromptsGridSkeleton() {
   return (
     <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3">
-      {Array.from({ length: 12 }, (_, i) => (
+      {Array.from({ length: 3}, (_, i) => (
         <div key={i} className="relative bg-card group p-4 h-full rounded-2xl">
           <div className="flex h-full items-start gap-4">
             <Skeleton className="size-10 rounded-full" />

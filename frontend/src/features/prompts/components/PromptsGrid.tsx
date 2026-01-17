@@ -4,15 +4,15 @@ import type { PromptSummary } from "@/services";
 interface PromptsGridProps {
   prompts: PromptSummary[];
   editable?: boolean;
+  itemsLimit?: number;
 }
 
-const MAX_ITEMS = 12;
 
-export function PromptsGrid({ prompts, editable }: PromptsGridProps) {
+export function PromptsGrid({ prompts, editable, itemsLimit=9 }: PromptsGridProps) {
   const promptsToRender: Array<PromptSummary | null> = [
     ...prompts,
     ...Array.from(
-      { length: MAX_ITEMS - prompts.length },
+      { length: itemsLimit - prompts.length },
       () => null
     ),
   ];
