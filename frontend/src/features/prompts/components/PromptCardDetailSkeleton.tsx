@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function PromptCardDetailSkeleton() {
   return (
-    <article className="py-6 space-y-6">
+    <article data-testid="prompt-detail-skeleton" className="py-6 space-y-6">
       <header className="space-y-6">
         <div className="flex items-center gap-3">
           <Skeleton className="size-12 rounded-full" />
