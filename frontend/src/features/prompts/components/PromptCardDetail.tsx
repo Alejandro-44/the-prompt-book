@@ -53,9 +53,9 @@ export function PromptCardDetail({ promptId }: Props) {
         <h1 className="text-3xl font-bold tracking-tight">{prompt?.title}</h1>
         <p className="text-sm text-muted-foreground">{prompt?.description}</p>
         {prompt && <PromptTags hashtags={prompt.hashtags} />}
-        <div className="inline-block rounded-md bg-muted px-3 py-1 text-sm font-medium">
+        <span className="inline-block rounded-md bg-muted px-3 py-1 text-sm font-medium">
           {prompt?.model}
-        </div>
+        </span>
       </header>
       <section className="space-y-3">
         <div className="flex items-center justify-between">
