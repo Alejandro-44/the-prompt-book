@@ -12,7 +12,7 @@ export function useUserPrompts({ mode, userHandle, limit, hashtags, model, searc
   const isMe = mode === "me";
   const { data, isLoading, error } = useQuery<PaginatedPrompts>({
     queryKey: isMe
-      ? ["users", "me", "prompts", page, limit, hashtags]
+      ? ["users", "me", "prompts", page, limit]
       : ["users", userHandle, "prompts", page, limit],
     queryFn: () =>
       isMe
