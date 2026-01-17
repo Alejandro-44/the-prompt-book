@@ -22,7 +22,7 @@ export function PromptCard({
     <article className={`relative bg-card group p-4 h-full ` + className} data-testid="prompt-card">
       {editable && (
         <Button
-          className="absolute z-10 md:opacity-0 md:group-hover:opacity-100 rounded-full size-10 top-2 right-2 cursor-pointer"
+          className="absolute z-10 lg:opacity-0 lg:group-hover:opacity-100 rounded-full size-10 top-2 right-2 cursor-pointer"
           data-testid="edit-button"
           onClick={() => {
             navigate(`/prompts/${prompt.id}/edit`);
