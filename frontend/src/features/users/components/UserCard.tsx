@@ -9,7 +9,7 @@ export function UserCard({ user }: UserCardProps) {
   return (
     <article className="border-b px-4 py-6">
       <div className="flex items-start gap-4">
-        <Avatar className="h-20 w-20">
+        <Avatar className="size-20">
           <AvatarFallback className="text-2xl">
             {user.username.slice(0, 2).toUpperCase()}
           </AvatarFallback>
