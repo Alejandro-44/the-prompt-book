@@ -8,6 +8,7 @@ import { useState } from "react";
 import { usePrompt } from "../hooks";
 import { useRedirectOn } from "@/features/auth/hooks";
 import { PromptCardDetailSkeleton } from "./PromptCardDetailSkeleton";
+import { HashtagText } from "./HashtagText";
 
 type Props = {
   promptId: string;
@@ -51,8 +52,7 @@ export function PromptCardDetail({ promptId }: Props) {
           </div>
         </div>
         <h1 className="text-3xl font-bold tracking-tight">{prompt?.title}</h1>
-        <p className="text-sm text-muted-foreground">{prompt?.description}</p>
-        {prompt && <PromptTags hashtags={prompt.hashtags} />}
+        <HashtagText text={prompt?.description || ""} />
         <span className="inline-block rounded-md bg-muted px-3 py-1 text-sm font-medium">
           {prompt?.model}
         </span>
