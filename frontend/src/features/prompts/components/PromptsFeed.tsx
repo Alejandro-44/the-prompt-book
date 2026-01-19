@@ -5,12 +5,10 @@ type PromptsFeedProps = {
   prompts: PromptSummary[];
 }
 
-function PromptsFeed({ prompts }: PromptsFeedProps) {
+export function PromptsFeed({ prompts }: PromptsFeedProps) {
   return (
-    <div className="max-w-2xl grid">
+    <section data-testid="prompts-feed" className="max-w-2xl grid">
       {prompts.map((prompt) => <PromptCard key={prompt.id} className="border-b" prompt={prompt} />)}
-    </div>
+    </section>
   )
 }
-
-export default PromptsFeed
