@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createMemoryRouter, RouterProvider } from "react-router";
 import { ProtectedRoute } from "@/features/auth/components/ProtectedRoute";
 import { PromptOwnerGuard } from "@/features/auth/components/PromptOwnerGuard";
+import { PromptDetail } from "@/features/prompts/pages/PromptDetail";
 
 export function renderWithProviders(
   ui: React.ReactNode,
@@ -35,7 +36,7 @@ export function renderWithProviders(
             children: [
               {
                 index: true,
-                element: <div>Prompt Detail</div>,
+                Component: PromptDetail,
               },
               {
                 Component: PromptOwnerGuard,
