@@ -1,24 +1,21 @@
-import { AppPagination } from "@/components/AppPagination";
+import { Button } from "@/components/ui/button";
 import { PromptsFeed } from "@/features/prompts/components/PromptsFeed";
 import { PromptsFeedSkeleton } from "@/features/prompts/components/PromptsFeedSkeleton";
-import { usePrompts } from "@/features/prompts/hooks/usePrompts";
+import { useInfinitePrompts } from "@/features/prompts/hooks";
+
 export function HomePage() {
-  const { prompts, isLoading, page, pages, setPage } = usePrompts({
-    limit: 10,
-  });
-
-  if (!prompts) {
-    return <div>Nothing to show</div>;
-  }
-
-  if (isLoading) {
-    return <PromptsFeedSkeleton />;
-  }
+  const { prompts, isFetching, hasNextPage, fetchNextPage } =
+    useInfinitePrompts();
 
   return (
-    <div>
-      <PromptsFeed prompts={prompts} />
-      <AppPagination page={page} totalPages={pages} onPageChange={setPage} />
+    <div className="grid justify-items-center gap-6">
+      {isFetching && <PromptsFeedSkeleton />}
+      {!isFetching && prompts && <PromptsFeed prompts={prompts} />}
+      {hasNextPage && (
+        <Button disabled={isFetching} onClick={() => fetchNextPage()}>
+          {isFetching ? "Loading..." : "Load more"}
+        </Button>
+      )}
     </div>
   );
 }
