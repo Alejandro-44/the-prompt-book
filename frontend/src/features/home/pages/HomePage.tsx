@@ -1,5 +1,5 @@
 import { AppPagination } from "@/components/AppPagination";
-import PromptsFeed from "@/features/prompts/components/PromptsFeed";
+import { PromptsFeed } from "@/features/prompts/components/PromptsFeed";
 import { PromptsFeedSkeleton } from "@/features/prompts/components/PromptsFeedSkeleton";
 import { usePrompts } from "@/features/prompts/hooks/usePrompts";
 export function HomePage() {
@@ -12,7 +12,7 @@ export function HomePage() {
   }
 
   if (isLoading) {
-    return <PromptsFeedSkeleton />
+    return <PromptsFeedSkeleton />;
   }
 
   return (
