@@ -18,14 +18,14 @@ export function PromptsGrid({ prompts, editable, itemsLimit=9 }: PromptsGridProp
   ];
 
   return (
-    <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3">
+    <section data-testid="prompts-grid" className="grid gap-2 md:grid-cols-2 lg:grid-cols-3">
       {promptsToRender.map((prompt, index) => (
         prompt ? (
           <PromptCard key={prompt.id} className="rounded-2xl" prompt={prompt} editable={editable} />
         ) : (
-          <div key={index} className="h-40 w-full rounded-md" />
+          <div data-testid="prompt-card-empty" key={index} className="h-40 w-full rounded-md" />
         )
       ))}
-    </div>
+    </section>
   );
 }

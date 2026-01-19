@@ -46,12 +46,78 @@ describe("PromptsGrid", () => {
     cleanup();
   });
 
-  test("render PromptCard components when prompts are loaded", async () => {
+  it("render PromptCard components when prompts are passed", async () => {
     mockPrompts.forEach((prompt) => {
       expect(screen.getByText(prompt.title)).toBeDefined();
     });
+    
+    const grid = screen.getByTestId('prompts-grid');
+    expect(grid).toBeDefined();
 
     const promptCards = screen.getAllByTestId("prompt-card");
     expect(promptCards).toHaveLength(mockPrompts.length);
+
+    const children = Array.from(grid!.children);
+    expect(children).toHaveLength(9);
+
+    const emptyDivs = screen.getAllByTestId("prompt-card-empty");
+    expect(emptyDivs).toHaveLength(6);
+  });
+});
+
+describe("PromptsGrid with empty prompts", () => {
+  it("renders 9 empty divs when no prompts are provided", () => {
+    renderWithProviders(<PromptsGrid prompts={[]} />);
+    const emptyDivs = screen.getAllByTestId("prompt-card-empty");
+    expect(emptyDivs).toHaveLength(9);
+  });
+});
+
+describe("PromptsGrid with custom itemsLimit", () => {
+  it("renders prompts and fillers up to itemsLimit", () => {
+    renderWithProviders(<PromptsGrid prompts={mockPrompts.slice(0,2)} itemsLimit={5} />);
+
+    const grid = screen.getByTestId('prompts-grid');
+    expect(grid).toBeDefined();
+    expect(grid.children).toHaveLength(5);
+
+    const promptCards = screen.getAllByTestId("prompt-card");
+    expect(promptCards).toHaveLength(2);
+
+    const emptyDivs = screen.getAllByTestId("prompt-card-empty");
+    expect(emptyDivs).toHaveLength(3);
+  });
+
+  it("renders no fillers when prompts length equals itemsLimit", () => {
+    renderWithProviders(<PromptsGrid prompts={mockPrompts.slice(0,3)} itemsLimit={3} />);
+    const grid = screen.getByTestId('prompts-grid');
+    expect(grid).toBeDefined();
+    expect(grid.children).toHaveLength(3);
+
+    const promptCards = screen.getAllByTestId("prompt-card");
+    expect(promptCards).toHaveLength(3);
+
+    const emptyDivs = promptCards.filter(card => card.getAttribute('data-testid') === 'prompt-card-empty');
+    expect(emptyDivs).toHaveLength(0);
+  });
+
+  it("renders all prompts when prompts length exceeds itemsLimit", () => {
+    renderWithProviders(<PromptsGrid prompts={mockPrompts.slice(0,3)} itemsLimit={2} />);
+
+    const grid = screen.getByTestId('prompts-grid');
+    expect(grid).toBeDefined();
+    expect(grid.children).toHaveLength(3);
+
+    const promptCards = screen.getAllByTestId("prompt-card");
+    expect(promptCards).toHaveLength(3);
+  });
+});
+
+describe("PromptsGrid with editable", () => {
+  it("passes editable true to PromptCard enable edit button", () => {
+    renderWithProviders(<PromptsGrid prompts={mockPrompts} editable={true} />);
+    screen.debug()
+    const editButtons = screen.getAllByTestId("edit-button");
+    expect(editButtons).toHaveLength(mockPrompts.length);
   });
 });
