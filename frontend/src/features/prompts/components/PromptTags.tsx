@@ -6,7 +6,7 @@ type PromptTagsProps = {
 
 export function PromptTags({ hashtags }: PromptTagsProps) {
   return (
-    <div className="mt-3 flex flex-wrap gap-2">
+    <div className="flex flex-wrap gap-2">
       {hashtags.map((hashtag) => (
         <Tag key={hashtag} hashtag={hashtag} />
       ))}

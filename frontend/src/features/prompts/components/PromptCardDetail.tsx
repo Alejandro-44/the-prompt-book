@@ -1,5 +1,4 @@
-import { PromptTags } from "./PromptTags";
-import { Check, CopyIcon } from "lucide-react";
+import { Check, CopyIcon, Heart } from "lucide-react";
 import { Link } from "react-router";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -26,7 +25,7 @@ export function PromptCardDetail({ promptId }: Props) {
   };
 
   if (isLoading) {
-    return <PromptCardDetailSkeleton />
+    return <PromptCardDetailSkeleton />;
   }
 
   return (
@@ -92,6 +91,13 @@ export function PromptCardDetail({ promptId }: Props) {
           <p className="text-muted-foreground">{prompt?.resultExample}</p>
         </div>
       </section>
+
+      <div className="flex items-center gap-4 border-t border-b py-4">
+        <Button variant="outline" className="gap-2 cursor-pointer">
+          <Heart className="size-4" />
+          {prompt?.likesCount}
+        </Button>
+      </div>
     </article>
   );
 }
