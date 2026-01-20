@@ -18,3 +18,9 @@ class PromptNotFoundError(Exception):
 
 class CommentNotFoundError(Exception):
     """Raised when a comment is not found in database"""
+
+class AlreadyLikedError(Exception):
+    """Raised when try to add a prompt that already exists"""
+
+class LikeNotFoundError(Exception):
+    """Raised when try to unlike a prompt that does not exist"""
