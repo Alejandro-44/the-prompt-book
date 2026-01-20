@@ -9,6 +9,7 @@ export type PromptDTO = {
   model: string;
   hashtags: string[];
   pub_date: string;
+  likes_count: number;
   author_id: string;
   author_name: string;
   author_handle: string;
@@ -21,6 +22,7 @@ export type PromptSummaryDTO = {
   hashtags: string[];
   model: string;
   pub_date: string;
+  likes_count: number;
   author_name: string;
   author_handle: string;
 };
