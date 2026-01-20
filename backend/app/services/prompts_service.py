@@ -56,6 +56,7 @@ class PromptsService:
             "author_name": user.username,
             "author_handle": user.handle,
             "hashtags": hashtags,
+            "likes_count": 0,
             "pub_date": datetime.now(timezone.utc)
         })
 
