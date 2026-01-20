@@ -192,3 +192,85 @@ async def test_get_comments_from_a_prompt(e2e_client, seed_data, prompt_ids):
     assert response.status_code == 200
     comments = response.json()
     assert len(comments) == 2
+
+
+async def test_like_prompt(e2e_client, seed_data, prompt_ids):
+    test_user = {"email": "johndoe@example.com", "password": "qwerty12345"}
+    prompt_id = str(prompt_ids["matt_prompt"])
+
+    response = await e2e_client.post("/auth/login", json=test_user)
+    assert response.status_code == 200
+    e2e_client.cookies.set("access_token", response.cookies.get("access_token"))
+
+    # Get initial likes count
+    response = await e2e_client.get(f"/prompts/{prompt_id}")
+    initial_likes = response.json()["likes_count"]
+
+    # Like the prompt
+    response = await e2e_client.post(f"/prompts/{prompt_id}/like")
+    assert response.status_code == 201
+
+    # Check likes count increased
+    response = await e2e_client.get(f"/prompts/{prompt_id}")
+    assert response.json()["likes_count"] == initial_likes + 1
+
+
+
+async def test_unlike_prompt(e2e_client, seed_data, prompt_ids):
+    test_user = {"email": "johndoe@example.com", "password": "qwerty12345"}
+    prompt_id = str(prompt_ids["matt_prompt"])
+
+    response = await e2e_client.post("/auth/login", json=test_user)
+    assert response.status_code == 200
+    e2e_client.cookies.set("access_token", response.cookies.get("access_token"))
+
+    # Like first
+    response = await e2e_client.post(f"/prompts/{prompt_id}/like")
+    assert response.status_code == 201
+
+    # Get likes count after like
+    response = await e2e_client.get(f"/prompts/{prompt_id}")
+    liked_likes = response.json()["likes_count"]
+
+    # Unlike
+    response = await e2e_client.delete(f"/prompts/{prompt_id}/like")
+    assert response.status_code == 204
+
+    # Check likes count decreased
+    response = await e2e_client.get(f"/prompts/{prompt_id}")
+    assert response.json()["likes_count"] == liked_likes - 1
+
+
+async def test_unlike_prompt_without_like_returns_not_found(e2e_client, seed_data, prompt_ids):
+    test_user = {"email": "johndoe@example.com", "password": "qwerty12345"}
+    prompt_id = str(prompt_ids["matt_prompt"])
+
+    response = await e2e_client.post("/auth/login", json=test_user)
+    assert response.status_code == 200
+    e2e_client.cookies.set("access_token", response.cookies.get("access_token"))
+
+    # Try to unlike without liking
+    response = await e2e_client.delete(f"/prompts/{prompt_id}/like")
+    assert response.status_code == 404
+
+
+async def test_like_prompt_with_bad_id_returns_bad_request(e2e_client, seed_data):
+    test_user = {"email": "johndoe@example.com", "password": "qwerty12345"}
+
+    response = await e2e_client.post("/auth/login", json=test_user)
+    assert response.status_code == 200
+    e2e_client.cookies.set("access_token", response.cookies.get("access_token"))
+
+    response = await e2e_client.post("/prompts/abc/like")
+    assert response.status_code == 400
+
+
+async def test_unlike_prompt_with_bad_id_returns_bad_request(e2e_client, seed_data):
+    test_user = {"email": "johndoe@example.com", "password": "qwerty12345"}
+
+    response = await e2e_client.post("/auth/login", json=test_user)
+    assert response.status_code == 200
+    e2e_client.cookies.set("access_token", response.cookies.get("access_token"))
+
+    response = await e2e_client.delete("/prompts/abc/like")
+    assert response.status_code == 400

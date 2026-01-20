@@ -35,7 +35,8 @@ def mock_prompt():
         "pub_date": "2024-01-01T00:00:00Z",
         "author_id": ObjectId(MOCK_USER_ID),
         "author_name": "user",
-        "author_handle": "user"
+        "author_handle": "user",
+        "likes_count": 0,
     }
 
 
@@ -50,6 +51,7 @@ async def test_get_summary_returns_metadata_query(service, mock_repo):
         "author_id": ObjectId(),
         "author_name": "user1",
         "author_handle": "user1",
+        "likes_count": 0,
     },
     {
         "_id": ObjectId(),
@@ -61,6 +63,7 @@ async def test_get_summary_returns_metadata_query(service, mock_repo):
         "author_id": ObjectId(),
         "author_name": "user2",
         "author_handle": "user2",
+        "likes_count": 0,
     }], 2 )
 
     result = await service.get_summary(filters={}, page=2, limit=2)
