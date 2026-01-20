@@ -3,7 +3,6 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
-from .user_schema import User
 
 class PromptBase(BaseModel):
     title: str
@@ -23,7 +22,8 @@ class Prompt(PromptBase):
     pub_date: datetime
     author_id: str
     author_name: str
-    author_handle: str 
+    author_handle: str
+    likes_count: int
 
     @staticmethod
     def from_document(document):
@@ -39,6 +39,7 @@ class Prompt(PromptBase):
             author_id=str(document["author_id"]),
             author_name=document["author_name"],
             author_handle=document["author_handle"],
+            likes_count=document["likes_count"]
         )
 
 
@@ -57,7 +58,8 @@ class PromptSummary(BaseModel):
     model: str
     pub_date: datetime
     author_name: str
-    author_handle: str 
+    author_handle: str
+    likes_count: int
 
     @staticmethod
     def from_document(document):
@@ -70,4 +72,5 @@ class PromptSummary(BaseModel):
             pub_date=document["pub_date"],
             author_name=document["author_name"],
             author_handle=document["author_handle"],
+            likes_count=document["likes_count"]
         )
