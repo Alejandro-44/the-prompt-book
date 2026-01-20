@@ -5,7 +5,6 @@ from app.schemas.prompt_schema import Prompt
 
 
 class PromptsRepository:
-
     def __init__(self, database):
         self.__collection: Collection[Prompt] = database["prompts"]
 
@@ -47,6 +46,7 @@ class PromptsRepository:
                     "pub_date": 1,
                     "author_name": 1,
                     "author_handle": 1,
+                    "likes_count": 1
                 }
             }
         ]
@@ -71,3 +71,8 @@ class PromptsRepository:
         result = await self.__collection.delete_one({ "_id": prompt_id })
         return result.deleted_count > 0
  
+    async def increment_likes(self, prompt_id, delta: int):
+        await self.__collection.update_one(
+            {"_id": prompt_id},
+            {"$inc": {"likes_count": delta}},
+        )
