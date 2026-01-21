@@ -7,7 +7,7 @@ interface UseUserPromptsParams extends GetPromptsParams {
   userHandle?: GetPromptsParams["author_handle"];
 };
 
-export function useUserPrompts({ mode, userHandle, limit, hashtags, model, search }: UseUserPromptsParams) {
+export function useUserPrompts({ mode, userHandle, limit, hashtags, model, search, liked_by }: UseUserPromptsParams) {
   const [page, setPage] = useState(1)
   const isMe = mode === "me";
   const { data, isLoading, error } = useQuery<PaginatedPrompts>({
@@ -16,8 +16,8 @@ export function useUserPrompts({ mode, userHandle, limit, hashtags, model, searc
       : ["users", userHandle, "prompts", page, limit],
     queryFn: () =>
       isMe
-        ? UsersService.getMyPrompts({ page, hashtags, model, search })
-        : UsersService.getUserPrompts(userHandle!, { page, hashtags, model, search }),
+        ? UsersService.getMyPrompts({ page, hashtags, model, search, liked_by })
+        : UsersService.getUserPrompts(userHandle!, { page, hashtags, model, search, liked_by }),
     enabled: isMe || !!userHandle,
   });
 
