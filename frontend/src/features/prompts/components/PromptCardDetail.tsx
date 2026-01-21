@@ -16,9 +16,9 @@ type Props = {
 export function PromptCardDetail({ promptId }: Props) {
   const { prompt, isLoading, error } = usePrompt({ promptId });
   useRedirectOn({ when: error?.status === 404, to: "/404" });
-  
-  const { mutate: likePrompt } = useLikePrompt({ promptId })
-  const { mutate: unlikePrompt } = useUnlikePrompt({ promptId })
+
+  const { mutate: likePrompt } = useLikePrompt({ promptId });
+  const { mutate: unlikePrompt } = useUnlikePrompt({ promptId });
 
   const [copied, setCopied] = useState(false);
 
@@ -97,8 +97,16 @@ export function PromptCardDetail({ promptId }: Props) {
       </section>
 
       <div className="flex items-center gap-4 border-t border-b py-4">
-        <Button onClick={() => likePrompt()} variant="outline" className="gap-2 cursor-pointer">
-          <Heart className="size-4" />
+        <Button
+          onClick={() => {
+            prompt?.likeByMe ? unlikePrompt() : likePrompt();
+          }}
+          variant="outline"
+          className="gap-2 cursor-pointer"
+        >
+          <Heart
+            className={`size-4 ${prompt?.likeByMe ? "text-red-600 fill-red-600" : ""}`}
+          />
           {prompt?.likesCount}
         </Button>
       </div>
