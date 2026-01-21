@@ -13,7 +13,6 @@ export const LoginForm = () => {
   const methods = useLoginForm();
 
   const onSubmit = methods.handleSubmit((data: LoginFormValues) => {
-    console.log(data);
     mutate(data);
     methods.reset();
   });

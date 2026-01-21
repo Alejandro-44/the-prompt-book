@@ -1,6 +1,6 @@
 import type { PromptSummary } from "@/services";
 import { Link, useNavigate } from "react-router";
-import { Pencil } from "lucide-react";
+import { Heart, Pencil } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { PromptTags } from "./PromptTags";
 import { Button } from "@/components/ui/button";
@@ -40,7 +40,7 @@ export function PromptCard({
             </AvatarFallback>
           </Avatar>
 
-          <div className="flex-1 min-w-0 flex flex-col">
+          <div className="flex-1 min-w-0 flex flex-col space-y-3">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <span className="font-medium text-foreground">
                 {prompt.authorName}
@@ -53,15 +53,19 @@ export function PromptCard({
               </span>
             </div>
 
-            <h1 className="mt-1 text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
+            <h1 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
               {prompt.title}
             </h1>
 
-            <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
+            <p className="text-sm text-muted-foreground line-clamp-2">
               {prompt.description}
             </p>
 
-            <div className="mt-auto">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center text-muted-foreground gap-1.5">
+                <Heart className="size-4" />
+                <span>{prompt.likesCount}</span>
+              </div>
               <PromptTags hashtags={prompt.hashtags} />
             </div>
           </div>

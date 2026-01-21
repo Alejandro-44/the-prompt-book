@@ -3,15 +3,16 @@ from datetime import datetime, timezone
 
 from bson import ObjectId
 
-from app.repositories.prompts_repository import PromptsRepository
+from app.repositories import PromptsRepository, LikesRepository
 from app.schemas import PromptCreate, PromptUpdate, Prompt, PromptSummary, User
 from app.core.exceptions import PromptNotFoundError, DatabaseError, PromptOwnershipError
 from app.utils import extract_hashtags
 
 
 class PromptsService:
-    def __init__(self, prompts_repo: PromptsRepository):
+    def __init__(self, prompts_repo: PromptsRepository, likes_repo: LikesRepository):
         self.__prompts_repo = prompts_repo
+        self.__likes_repo = likes_repo
 
     async def _validate_prompt_ownership(
         self,
@@ -40,13 +41,22 @@ class PromptsService:
             "pages": math.ceil(total / limit) if total > 0 else 0
         }
     
-    async def get_one(self, prompt_id: ObjectId) -> Prompt:
+    async def get_one(self, prompt_id: ObjectId, user: User | None = None) -> Prompt:
         prompt_document = await self.__prompts_repo.get_one(prompt_id)
 
         if not prompt_document:
             raise PromptNotFoundError()
 
-        return Prompt.from_document(prompt_document)
+        prompt = Prompt.from_document(prompt_document)
+
+        liked_ids = set()
+        if user:
+            liked_ids = set(await self.__likes_repo.get_prompt_ids_by_user(ObjectId(user.id)))
+
+        prompt.like_by_me = prompt_id in liked_ids
+
+        return prompt
+
 
     async def create(self, user: User, prompt: PromptCreate):
         prompt_data = prompt.model_dump()
@@ -56,6 +66,7 @@ class PromptsService:
             "author_name": user.username,
             "author_handle": user.handle,
             "hashtags": hashtags,
+            "likes_count": 0,
             "pub_date": datetime.now(timezone.utc)
         })
 

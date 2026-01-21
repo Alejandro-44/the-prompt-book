@@ -95,4 +95,20 @@ describe("PromptsService", () => {
     const data = await PromptsService.getPromptComments(mockPromptId);
     expect(data).toHaveLength(1);
   });
+
+  it("add a like successfully", async () => {
+    const mockPromptId = "69398c1d5393462cecf974c8";
+    await PromptsService.likePrompt(mockPromptId)
+
+    const data = await PromptsService.getPromptDetail(mockPromptId);
+    expect(data.likesCount).toBe(11)
+  })
+
+  it("unlike a prompt successfully", async () => {
+    const mockPromptId = "69398c1d5393462cecf974c8";
+    await PromptsService.unlikePrompt(mockPromptId)
+
+    const data = await PromptsService.getPromptDetail(mockPromptId);
+    expect(data.likesCount).toBe(10)
+  })
 });

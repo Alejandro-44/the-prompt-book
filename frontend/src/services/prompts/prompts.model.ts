@@ -9,6 +9,8 @@ export type Prompt = {
   model: string;
   hashtags: string[];
   pubDate: Date;
+  likesCount: number;
+  likeByMe: boolean;
   authorId: string;
   authorName: string;
   authorHandle: string;
@@ -20,6 +22,7 @@ export type PromptSummary = {
   description: string;
   hashtags: string[];
   model: string;
+  likesCount: number;
   pubDate: Date;
   authorName: string;
   authorHandle: string;

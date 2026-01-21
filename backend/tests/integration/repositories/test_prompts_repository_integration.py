@@ -202,3 +202,31 @@ async def test_delete_prompt(
 
     assert found is None
 
+
+async def test_increment_likes_increases_likes_count(
+    prompts_repo, seed_prompts
+):
+    prompt = seed_prompts[0]
+    initial_likes = prompt["likes_count"]
+
+    await prompts_repo.increment_likes(prompt["_id"], 1)
+
+    saved = await prompts_repo._PromptsRepository__collection.find_one(
+        {"_id": prompt["_id"]}
+    )
+    assert saved["likes_count"] == initial_likes + 1
+
+
+async def test_increment_likes_decreases_likes_count(
+    prompts_repo, seed_prompts
+):
+    prompt = seed_prompts[0]
+    initial_likes = prompt["likes_count"]
+
+    await prompts_repo.increment_likes(prompt["_id"], -1)
+
+    saved = await prompts_repo._PromptsRepository__collection.find_one(
+        {"_id": prompt["_id"]}
+    )
+    assert saved["likes_count"] == initial_likes - 1
+

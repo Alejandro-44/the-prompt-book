@@ -39,6 +39,7 @@ mock_prompts = [
         "author_id": ObjectId("6939872c7f7a423bcb83fe0b"),
         "author_name": "alex",
         "author_handle": "alex",
+        "likes_count": 0
     },
     {
         "_id": ObjectId("69398c1d5393462cecf974b9"),
@@ -52,6 +53,7 @@ mock_prompts = [
         "author_id": ObjectId("6939872c7f7a423bcb83fe0b"),
         "author_name": "alex",
         "author_handle": "alex",
+        "likes_count": 0
     },
     {
         "_id": ObjectId("69398c1d5393462cecf974ba"),
@@ -65,6 +67,7 @@ mock_prompts = [
         "author_id": ObjectId("6939872c7f7a423bcb83fe0b"),
         "author_name": "alex",
         "author_handle": "alex",
+        "likes_count": 0
     },
     {
         "_id": ObjectId("69398c1d5393462cecf974bb"),
@@ -78,6 +81,7 @@ mock_prompts = [
         "author_id": ObjectId("6939872c7f7a423bcb83fe0b"),
         "author_name": "alex",
         "author_handle": "alex",
+        "likes_count": 0
     },
     {
         "_id": ObjectId("69398c1d5393462cecf974bc"),
@@ -91,6 +95,7 @@ mock_prompts = [
         "author_id": ObjectId("693987497f7a423bcb83fe0c"),
         "author_name": "matt_coder",
         "author_handle": "matt_coder",
+        "likes_count": 0
     },
     {
         "_id": ObjectId("69398c1d5393462cecf974bd"),
@@ -104,6 +109,7 @@ mock_prompts = [
         "author_id": ObjectId("693987497f7a423bcb83fe0c"),
         "author_name": "matt_coder",
         "author_handle": "matt_coder",
+        "likes_count": 0
     },
     {
         "_id": ObjectId("69398c1d5393462cecf974be"),
@@ -117,6 +123,7 @@ mock_prompts = [
         "author_id": ObjectId("693987497f7a423bcb83fe0c"),
         "author_name": "matt_coder",
         "author_handle": "matt_coder",
+        "likes_count": 0
     },
     {
         "_id": ObjectId("69398c1d5393462cecf974bf"),
@@ -130,6 +137,7 @@ mock_prompts = [
         "author_id": ObjectId("693987497f7a423bcb83fe0c"),
         "author_name": "matt_coder",
         "author_handle": "matt_coder",
+        "likes_count": 0
     },
     {
         "_id": ObjectId("69398c1d5393462cecf974c0"),
@@ -143,6 +151,7 @@ mock_prompts = [
         "author_id": ObjectId("6939875e7f7a423bcb83fe0d"),
         "author_name": "luna_writer",
         "author_handle": "luna_writer",
+        "likes_count": 0
     },
     {
         "_id": ObjectId("69398c1d5393462cecf974c1"),
@@ -156,6 +165,7 @@ mock_prompts = [
         "author_id": ObjectId("6939875e7f7a423bcb83fe0d"),
         "author_name": "luna_writer",
         "author_handle": "luna_writer",
+        "likes_count": 0
     },
     {
         "_id": ObjectId("69398c1d5393462cecf974c2"),
@@ -169,6 +179,7 @@ mock_prompts = [
         "author_id": ObjectId("6939875e7f7a423bcb83fe0d"),
         "author_name": "luna_writer",
         "author_handle": "luna_writer",
+        "likes_count": 0
     },
     {
         "_id": ObjectId("69398c1d5393462cecf974c3"),
@@ -182,6 +193,7 @@ mock_prompts = [
         "author_id": ObjectId("6939875e7f7a423bcb83fe0d"),
         "author_name": "luna_writer",
         "author_handle": "luna_writer",
+        "likes_count": 0
     },
     {
         "_id": ObjectId("69398c1d5393462cecf974c4"),
@@ -195,6 +207,7 @@ mock_prompts = [
         "author_id": ObjectId("6939875e7f7a423bcb83fe0d"),
         "author_name": "luna_writer",
         "author_handle": "luna_writer",
+        "likes_count": 0
     },
     {
         "_id": ObjectId("69398c1d5393462cecf974c5"),
@@ -208,6 +221,7 @@ mock_prompts = [
         "author_id": ObjectId("6939876c7f7a423bcb83fe0e"),
         "author_name": "creative_io",
         "author_handle": "creative_io",
+        "likes_count": 0
     },
     {
         "_id": ObjectId("69398c1d5393462cecf974c6"),
@@ -221,6 +235,7 @@ mock_prompts = [
         "author_id": ObjectId("6939876c7f7a423bcb83fe0e"),
         "author_name": "creative_io",
         "author_handle": "creative_io",
+        "likes_count": 0
     },
     {
         "_id": ObjectId("69398c1d5393462cecf974c7"),
@@ -234,6 +249,7 @@ mock_prompts = [
         "author_id": ObjectId("6939876c7f7a423bcb83fe0e"),
         "author_name": "creative_io",
         "author_handle": "creative_io",
+        "likes_count": 0
     },
     {
         "_id": ObjectId("69398c1d5393462cecf974c8"),
@@ -247,6 +263,7 @@ mock_prompts = [
         "author_id": ObjectId("6939876c7f7a423bcb83fe0e"),
         "author_name": "creative_io",
         "author_handle": "creative_io",
+        "likes_count": 0
     },
     {
         "_id": ObjectId("69398c1d5393462cecf974c9"),
@@ -260,5 +277,6 @@ mock_prompts = [
         "author_id": ObjectId("6939876c7f7a423bcb83fe0e"),
         "author_name": "creative_io",
         "author_handle": "creative_io",
+        "likes_count": 0
     },
 ]

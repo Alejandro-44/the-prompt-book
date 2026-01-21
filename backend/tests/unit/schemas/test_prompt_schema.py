@@ -22,7 +22,8 @@ def test_prompt_from_document_maps_fields_and_author():
         "pub_date": now,
         "author_id": ObjectId("507f1f77bcf86cd799439022"),
         "author_name": "john doe",
-        "author_handle": "john_doe"
+        "author_handle": "john_doe",
+        "likes_count": 0, 
     }
 
     prompt = Prompt.from_document(document)
@@ -51,7 +52,8 @@ def test_prompt_from_document_sets_empty_hashtags_when_missing():
         "pub_date": datetime.now(timezone.utc),
         "author_id": ObjectId("507f1f77bcf86cd799439022"),
         "author_name": "john doe",
-        "author_handle": "john_doe"
+        "author_handle": "john_doe",
+        "likes_count": 0
     }
 
     prompt = Prompt.from_document(document)

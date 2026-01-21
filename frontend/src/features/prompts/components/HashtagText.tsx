@@ -7,7 +7,6 @@ interface HashtagTextProps {
 
 export function HashtagText({ text }: HashtagTextProps) {
   const parts = parseHashtags(text)
-  console.log(parts)
   return (
     <p className="text-muted-foreground leading-relaxed">
       {parts.map((part, i) =>
@@ -15,7 +14,7 @@ export function HashtagText({ text }: HashtagTextProps) {
           <span
             key={i}
             className={cn(
-              "font-medium text-primary cursor-pointer",
+              "font-medium text-blue-500 cursor-pointer",
               "hover:underline"
             )}
           >

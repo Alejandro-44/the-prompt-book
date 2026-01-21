@@ -93,6 +93,16 @@ async def test_get_one_not_found_raises_error(
         await services.prompts.get_one(ObjectId())
 
 
+async def test_get_one_with_user_like_return_like_by_me_true(services, seed_data, prompt_ids):
+    prompt_id = prompt_ids["luna_prompt"]
+    test_user = User(id="6939872c7f7a423bcb83fe0b", handle="alex", username="alex", is_active=True)
+
+    prompt = await services.prompts.get_one(prompt_id, test_user)
+
+    prompt = Prompt.model_validate(prompt)
+    assert prompt.like_by_me == True
+
+
 async def test_update_prompt_success(
     services, seed_data, user_ids, prompt_ids
 ):

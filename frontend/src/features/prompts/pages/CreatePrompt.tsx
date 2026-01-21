@@ -7,7 +7,6 @@ export function CreatePrompt() {
   const { mutate, isPending } = useCreatePrompt();
 
   const handleCreatePrompt = (data: PromptFormValues) => {
-    console.log(data)
     mutate(data);
   };
 

@@ -66,10 +66,22 @@ export class PromptsService {
     return data.map(promptCommentMapper.toPromptComment);
   }
 
-  static async createComment(id: string, comment: PromptCommentCreate) {
+  static async createComment(promptId: string, comment: PromptCommentCreate) {
     await httpClient.post(
-      `/prompts/${id}/comments`,
+      `/prompts/${promptId}/comments`,
       comment
     );
+  }
+  
+  static async likePrompt(promptId: string) {
+    await httpClient.post(
+      `/prompts/${promptId}/like`
+    )
+  }
+
+  static async unlikePrompt(promptId: string) {
+    await httpClient.delete(
+      `/prompts/${promptId}/like`
+    )
   }
 }

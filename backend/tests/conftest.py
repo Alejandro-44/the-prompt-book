@@ -8,7 +8,7 @@ from app.services.services_manager import ServiceManager
 from app.dependencies.database_deps import get_services
 from app.main import app
 
-from tests.mocks import mock_users, mock_prompts, mock_comments
+from tests.mocks import mock_users, mock_prompts, mock_comments, mock_likes
 
 
 @pytest.fixture
@@ -69,11 +69,18 @@ async def seed_comments(db):
 
 
 @pytest.fixture
-async def seed_data(seed_users, seed_prompts, seed_comments):
+async def seed_likes(db):
+    await db.likes.insert_many(mock_likes)
+    return mock_likes
+
+
+@pytest.fixture
+async def seed_data(seed_users, seed_prompts, seed_comments, seed_likes):
     return {
         "users": seed_users,
         "prompts": seed_prompts,
         "comments": seed_comments,
+        "likes": seed_likes,
     }
 
 

@@ -2,9 +2,16 @@ from fastapi import APIRouter, HTTPException, Query, status
 from bson import ObjectId
 from bson.errors import InvalidId
 
-from app.dependencies import ServicesDependency, UserDependency
+from app.dependencies import ServicesDependency, UserDependency, OptionalUserDependency
 from app.schemas import Prompt, PromptCreate, PromptUpdate, PromptSummary, Comment, CommentCreate, PaginatedResponse
-from app.core.exceptions import PromptNotFoundError, DatabaseError, CommentNotFoundError, PromptOwnershipError
+from app.core.exceptions import (
+    PromptNotFoundError,
+    DatabaseError,
+    CommentNotFoundError,
+    PromptOwnershipError,
+    LikeNotFoundError,
+    AlreadyLikedError
+)
 
 
 router = APIRouter(prefix="/prompts", tags=["Prompts"])
@@ -41,9 +48,9 @@ async def get_prompts(
     response_model=Prompt,
     status_code=status.HTTP_200_OK
 )
-async def get_prompt(prompt_id: str, services: ServicesDependency):
+async def get_prompt(prompt_id: str, services: ServicesDependency, user: OptionalUserDependency):
     try:
-        return await services.prompts.get_one(ObjectId(prompt_id))
+        return await services.prompts.get_one(ObjectId(prompt_id), user)
     except InvalidId:
         raise HTTPException(
             status_code=400,
@@ -154,7 +161,7 @@ async def get_comments(
         return await services.comments.get_prompt_comments(ObjectId(prompt_id))
     except InvalidId:
         raise HTTPException(
-            status_code=400,
+            status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid prompt id"
         )
     except PromptNotFoundError:
@@ -214,4 +221,50 @@ async def delete_comment(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Comment not found"
+        )
+
+
+@router.post(
+    "/{prompt_id}/like",
+    status_code=status.HTTP_201_CREATED
+)
+async def like_prompt(
+    prompt_id: str,
+    user: UserDependency,
+    services: ServicesDependency
+):
+    try:
+        await services.likes.like_prompt(ObjectId(prompt_id), ObjectId(user.id))
+    except InvalidId:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Bad prompt id"
+        )
+    except AlreadyLikedError:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Prompt already liked by user"
+        )
+
+
+@router.delete(
+    "/{prompt_id}/like",
+    status_code=status.HTTP_204_NO_CONTENT
+)
+async def unlike_prompt(
+    prompt_id: str,
+    user: UserDependency,
+    services: ServicesDependency
+):
+    try:
+        await services.likes.unlike_prompt(ObjectId(prompt_id), ObjectId(user.id))
+    except InvalidId:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Bad prompt id"
+        )
+    except LikeNotFoundError:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Like not found"
         )
