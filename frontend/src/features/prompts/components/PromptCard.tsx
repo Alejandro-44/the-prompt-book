@@ -62,7 +62,7 @@ export function PromptCard({
             </p>
 
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center text-muted-foreground gap-1.5">
                 <Heart className="size-4" />
                 <span>{prompt.likesCount}</span>
               </div>
