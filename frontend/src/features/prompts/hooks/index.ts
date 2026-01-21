@@ -5,3 +5,5 @@ export { usePrompts } from "./usePrompts";
 export { usePromptUpdate } from "./usePromptUpdate";
 export { usePromptDelete } from "./usePromptDelete";
 export { useInfinitePrompts } from "./useInfinitePrompts"
+export { useLikePrompt } from "./useLikePrompt"
+export { useUnlikePrompt } from "./useUnlikePrompt.ts"
