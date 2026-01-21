@@ -66,5 +66,6 @@ export type GetPromptsParams = {
   hashtags?: string[];
   model?: string;
   author_handle?: string;
+  liked_by?: string;
 };
 

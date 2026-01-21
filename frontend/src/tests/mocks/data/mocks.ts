@@ -229,6 +229,7 @@ export const promptMocks = [
     hashtags: ["tiktok", "scripts"],
     pub_date: "2024-02-23T12:05:00",
     likes_count: 12,
+    like_by_me: true,
     author_id: "6939876c7f7a423bcb83fe0e",
     author_name: "creative_io",
     author_handle: "creative_io",
