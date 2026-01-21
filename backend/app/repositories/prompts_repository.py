@@ -9,51 +9,82 @@ class PromptsRepository:
         self.__collection: Collection[Prompt] = database["prompts"]
 
     async def get_summary(
-        self, 
+        self,
         filters: dict,
         skip: int,
         limit: int
-    ) -> list[Prompt]:
-        mongo_filters = {}
+    ) -> tuple[list[Prompt], int]:
+        mongo_filters: dict = {}
 
-        if filters:
-            if filters.get("author_id"):
-                mongo_filters["author_id"] = filters["author_id"]
+        if filters.get("author_id"):
+            mongo_filters["author_id"] = filters["author_id"]
 
-            if filters.get("author_handle"):
-                mongo_filters["author_handle"] = filters["author_handle"]
+        if filters.get("author_handle"):
+            mongo_filters["author_handle"] = filters["author_handle"]
 
-            if filters.get("hashtags"):
-                mongo_filters["hashtags"] = {"$in": filters["hashtags"]}
+        if filters.get("hashtags"):
+            mongo_filters["hashtags"] = {"$in": filters["hashtags"]}
 
-            if filters.get("model"):
-                mongo_filters["model"] = filters["model"]
+        if filters.get("model"):
+            mongo_filters["model"] = filters["model"]
 
-            if filters.get("liked_ids"):
-                mongo_filters["_id"] = { "$in": filters["liked_ids"]}
+        if filters.get("liked_ids"):
+            mongo_filters["_id"] = {"$in": filters["liked_ids"]}
+
+        if filters.get("search"):
+            mongo_filters["$text"] = {"$search": filters["search"]}
+
 
         total = await self.__collection.count_documents(mongo_filters)
 
-        pipeline = [
-            {"$match": mongo_filters},
-            {"$sort": {"pub_date": -1}},
-            {"$skip": skip},
-            {"$limit": limit},
-            {
-                "$project": {
-                    "_id": 1,
-                    "title": 1,
-                    "description": 1,
-                    "hashtags": 1,
-                    "model": 1,
-                    "pub_date": 1,
-                    "author_name": 1,
-                    "author_handle": 1,
-                    "likes_count": 1
-                }
-            }
+
+        pipeline: list[dict] = [
+            {"$match": mongo_filters}
         ]
-            
+
+        if filters.get("search"):
+            pipeline.extend([
+                {
+                    "$addFields": {
+                        "score": {"$meta": "textScore"}
+                    }
+                },
+                {
+                    "$sort": {
+                        "score": -1,
+                        "pub_date": -1
+                    }
+                }
+            ])
+        else:
+            pipeline.append({
+                "$sort": {"pub_date": -1}
+            })
+
+
+        pipeline.extend([
+            {"$skip": skip},
+            {"$limit": limit}
+        ])
+
+
+        project = {
+            "_id": 1,
+            "title": 1,
+            "description": 1,
+            "hashtags": 1,
+            "model": 1,
+            "pub_date": 1,
+            "author_name": 1,
+            "author_handle": 1,
+            "likes_count": 1
+        }
+
+        if filters.get("search"):
+            project["score"] = {"$meta": "textScore"}
+
+        pipeline.append({"$project": project})
+
         cursor = await self.__collection.aggregate(pipeline)
         items = await cursor.to_list()
 

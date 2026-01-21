@@ -27,15 +27,17 @@ async def get_prompts(
     page: int = Query(1, ge=1),
     limit: int = Query(10, ge=1, le=100),
     hashtags: list[str] | None = Query(None),
-    model: str | None = None,
+    model: str | None = Query(None),
     author_handle: str | None = Query(None, max_length=30),
-    liked_by: str | None = Query(None)
+    liked_by: str | None = Query(None),
+    search: str | None = Query(None),
 ):
     try:
         filters = {
             "hashtags": hashtags,
             "model": model,
             "author_handle": author_handle,
+            "search": search
         }
 
         if liked_by:
