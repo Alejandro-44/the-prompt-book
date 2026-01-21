@@ -13,6 +13,7 @@ export const promptsHandlers = [
     const page = Number(url.searchParams.get("page") || 1);
     const limit = Number(url.searchParams.get("limit") || 10);
     const model = url.searchParams.get("model") ?? undefined;
+    const liked_by = url.searchParams.get("liked_by") ?? undefined;
     let hashtags: string[] | undefined = url.searchParams.getAll("hashtags");
     hashtags = hashtags.length > 0 ? hashtags : undefined;
     const response = getPaginatedPrompts(promptSummaryMocks, {
@@ -20,6 +21,7 @@ export const promptsHandlers = [
       limit,
       model,
       hashtags,
+      liked_by,
     });
     return HttpResponse.json(response, { status: 200 });
   }),

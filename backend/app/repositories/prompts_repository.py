@@ -29,6 +29,9 @@ class PromptsRepository:
             if filters.get("model"):
                 mongo_filters["model"] = filters["model"]
 
+            if filters.get("liked_ids"):
+                mongo_filters["_id"] = { "$in": filters["liked_ids"]}
+
         total = await self.__collection.count_documents(mongo_filters)
 
         pipeline = [
