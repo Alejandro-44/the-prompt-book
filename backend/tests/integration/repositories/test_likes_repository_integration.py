@@ -58,7 +58,6 @@ async def test_get_prompt_ids_by_user_returns_distinct_prompt_ids(
 
     prompt_ids = await likes_repo.get_prompt_ids_by_user(user_id)
 
-    # johndoe has likes on two prompts: 69398c1d5393462cecf974b8 and 69398c1d5393462cecf974b9
     expected_ids = [
         ObjectId("69398c1d5393462cecf974b8"),
         ObjectId("69398c1d5393462cecf974b9"),

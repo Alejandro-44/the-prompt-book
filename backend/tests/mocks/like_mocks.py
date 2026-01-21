@@ -15,7 +15,7 @@ mock_likes = [
     },
     {
         "_id": ObjectId("69398c1d5393462cecf97703"),
-        "prompt_id": ObjectId("69398c1d5393462cecf974c1"),  # luna_prompt
+        "prompt_id": ObjectId("69398c1d5393462cecf974c0"),  # luna_prompt
         "user_id": ObjectId("6939872c7f7a423bcb83fe0b"),  # alex
         "created_at": "2025-01-16T10:40:00.000Z",
     },
