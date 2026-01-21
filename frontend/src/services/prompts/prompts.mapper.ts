@@ -12,6 +12,7 @@ export const promptMapper = {
     hashtags: dto.hashtags,
     pubDate: new Date(dto.pub_date),
     likesCount: dto.likes_count,
+    likeByMe: dto.like_by_me,
     authorId: dto.author_id,
     authorName: dto.author_name,
     authorHandle: dto.author_handle,

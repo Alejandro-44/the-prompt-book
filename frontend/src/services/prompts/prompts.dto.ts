@@ -10,6 +10,7 @@ export type PromptDTO = {
   hashtags: string[];
   pub_date: string;
   likes_count: number;
+  like_by_me: boolean;
   author_id: string;
   author_name: string;
   author_handle: string;

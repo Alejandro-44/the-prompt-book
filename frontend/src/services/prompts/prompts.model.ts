@@ -10,6 +10,7 @@ export type Prompt = {
   hashtags: string[];
   pubDate: Date;
   likesCount: number;
+  likeByMe: boolean;
   authorId: string;
   authorName: string;
   authorHandle: string;
