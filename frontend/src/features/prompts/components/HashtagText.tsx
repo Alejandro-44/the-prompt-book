@@ -7,7 +7,6 @@ interface HashtagTextProps {
 
 export function HashtagText({ text }: HashtagTextProps) {
   const parts = parseHashtags(text)
-  console.log(parts)
   return (
     <p className="text-muted-foreground leading-relaxed">
       {parts.map((part, i) =>

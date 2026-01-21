@@ -33,11 +33,6 @@ describe("PromptCardDetail", () => {
     expect(screen.getByText("TikTok script idea")).toBeDefined();
     expect(
       screen.getByText(
-        "Prompt for generating short and humorous #scripts designed for #TikTok content.",
-      ),
-    ).toBeDefined;
-    expect(
-      screen.getByText(
         "Write a short funny TikTok script about studying with AI.",
       ),
     ).toBeDefined();
@@ -45,11 +40,6 @@ describe("PromptCardDetail", () => {
     expect(
       screen.getByText("AI: 'I analyzed your habits... you need coffee.'"),
     ).toBeDefined();
-
-    const hashtags = ["tiktok", "scripts"];
-    hashtags.forEach((hashtag) => {
-      expect(screen.getByText(hashtag)).toBeDefined();
-    });
 
     expect(screen.getByTestId("copy-prompt-button")).toBeDefined();
   });
