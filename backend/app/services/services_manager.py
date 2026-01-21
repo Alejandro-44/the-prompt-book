@@ -16,7 +16,9 @@ class ServiceManager:
         # Services
         self.__user_service = UserService(self.__user_repo)
         self.__auth_service = AuthService(self.__user_repo)
-        self.__prompts_service = PromptsService(self.__prompts_repo)
+        self.__prompts_service = PromptsService(
+            self.__prompts_repo, self.__likes_repo
+        )
         self.__comments_service = CommentsService(self.__comments_repo)
         self.__likes_service = LikesService(
             self.__likes_repo, self.__prompts_repo
