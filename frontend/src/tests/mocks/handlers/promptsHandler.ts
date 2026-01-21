@@ -152,6 +152,7 @@ export const promptsHandlers = [
         );
       }
       prompt.likes_count += 1;
+      prompt.like_by_me = true;
       return HttpResponse.json({}, { status: 201 });
     },
   ),
@@ -166,6 +167,7 @@ export const promptsHandlers = [
         );
       }
       prompt.likes_count -= 1;
+      prompt.like_by_me = false;
       return HttpResponse.json({}, { status: 204 });
     },
   ),
