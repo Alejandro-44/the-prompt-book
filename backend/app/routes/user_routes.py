@@ -68,7 +68,9 @@ async def get_user_prompts(
     page: int = Query(1, ge=1),
     limit: int = Query(10, ge=1, le=100),
     tags: list[str] | None = Query(None),
-    model: str | None = None):
+    model: str | None = Query(None),
+    liked_by: str | None = Query(None)
+):
     """
     Get prompts created by a specific user
     """
@@ -78,6 +80,9 @@ async def get_user_prompts(
             "model": model,
             "author_handle": user_handle
         }
+
+        if liked_by:
+            filters["liked_by"] = ObjectId(liked_by)
 
         return await services.prompts.get_summary(
             filters=filters,

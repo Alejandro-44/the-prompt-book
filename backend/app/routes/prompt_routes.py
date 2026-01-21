@@ -29,18 +29,28 @@ async def get_prompts(
     hashtags: list[str] | None = Query(None),
     model: str | None = None,
     author_handle: str | None = Query(None, max_length=30),
+    liked_by: str | None = Query(None)
 ):
-    filters = {
-        "hashtags": hashtags,
-        "model": model,
-        "author_handle": author_handle,
-    }
+    try:
+        filters = {
+            "hashtags": hashtags,
+            "model": model,
+            "author_handle": author_handle,
+        }
 
-    return await services.prompts.get_summary(
-        filters=filters,
-        page=page,
-        limit=limit
-    )
+        if liked_by:
+            filters["liked_by"] = ObjectId(liked_by)
+
+        return await services.prompts.get_summary(
+            filters=filters,
+            page=page,
+            limit=limit
+        )
+    except InvalidId:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Bad user id"
+        )
 
 
 @router.get(

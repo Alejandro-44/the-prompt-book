@@ -28,11 +28,17 @@ class PromptsService:
 
     async def get_summary(self, filters: dict, page: int, limit: int) -> list[PromptSummary]:
         skip = (page - 1) * limit
+
+        if filters.get("liked_by"):
+            liked_ids = list(await self.__likes_repo.get_prompt_ids_by_user(filters.get("liked_by")))
+            filters["liked_ids"] = liked_ids
+
         items, total = await self.__prompts_repo.get_summary(
             filters,
             skip,
             limit
         )
+
         return {
             "items": self.process_prompt_documents(items),
             "total": total,
