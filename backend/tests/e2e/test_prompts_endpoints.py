@@ -63,6 +63,20 @@ async def test_get_paginated_prompts(e2e_client, seed_data):
     assert data["page"] == 2
     assert data["pages"] == 2
 
+async def test_get_a_prompt_with_a_user_like_returns_like_by_me_as_true(e2e_client, seed_data, prompt_ids):
+    login_data = {
+        "email": "alex@example.com",
+        "password": "password12345",
+    }
+
+    response = await e2e_client.post("/auth/login", json=login_data)
+    e2e_client.cookies.set("access_token", response.cookies.get("access_token"))
+
+    response = await e2e_client.get(f"/prompts/{prompt_ids["luna_prompt"]}")
+    data = response.json()
+
+    assert data["like_by_me"] == True
+
 
 async def test_get_an_unexistent_prompt_returns_not_found(e2e_client, seed_data):
     response = await e2e_client.get(f"/prompts/{MOCK_RANDOM_ID}")
