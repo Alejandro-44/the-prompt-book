@@ -24,6 +24,7 @@ class Prompt(PromptBase):
     author_name: str
     author_handle: str
     likes_count: int
+    like_by_me: bool = False
 
     @staticmethod
     def from_document(document):
