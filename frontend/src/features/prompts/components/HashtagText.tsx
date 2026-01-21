@@ -15,7 +15,7 @@ export function HashtagText({ text }: HashtagTextProps) {
           <span
             key={i}
             className={cn(
-              "font-medium text-primary cursor-pointer",
+              "font-medium text-blue-500 cursor-pointer",
               "hover:underline"
             )}
           >
