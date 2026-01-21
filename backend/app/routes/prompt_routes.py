@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Query, status
 from bson import ObjectId
 from bson.errors import InvalidId
 
-from app.dependencies import ServicesDependency, UserDependency
+from app.dependencies import ServicesDependency, UserDependency, OptionalUserDependency
 from app.schemas import Prompt, PromptCreate, PromptUpdate, PromptSummary, Comment, CommentCreate, PaginatedResponse
 from app.core.exceptions import (
     PromptNotFoundError,
@@ -48,9 +48,9 @@ async def get_prompts(
     response_model=Prompt,
     status_code=status.HTTP_200_OK
 )
-async def get_prompt(prompt_id: str, services: ServicesDependency):
+async def get_prompt(prompt_id: str, services: ServicesDependency, user: OptionalUserDependency):
     try:
-        return await services.prompts.get_one(ObjectId(prompt_id))
+        return await services.prompts.get_one(ObjectId(prompt_id), user)
     except InvalidId:
         raise HTTPException(
             status_code=400,
