@@ -23,7 +23,7 @@ export const promptsHandlers = [
       model,
       hashtags,
       liked_by,
-      search
+      search,
     });
     return HttpResponse.json(response, { status: 200 });
   }),
@@ -106,18 +106,28 @@ export const promptsHandlers = [
   ),
   http.get<{ id: string }>(
     "http://127.0.0.1:8000/prompts/:id/comments",
-    ({ params }) => {
-      const prompt = promptMocks.find((prompt) => prompt.id === params.id);
-      if (!prompt) {
-        return HttpResponse.json(
-          { message: "Prompt not found" },
-          { status: 404 },
-        );
-      }
-      const promptComments = comments.filter(
+    ({ params, request }) => {
+      const url = new URL(request.url);
+      const page = Number(url.searchParams.get("page") || 1);
+      const limit = Number(url.searchParams.get("limit") || 10);
+
+      const filtered = comments.filter(
         (comment) => comment.prompt_id === params.id,
       );
-      return HttpResponse.json(promptComments, { status: 200 });
+
+      const skip = (page - 1) * limit;
+      const items = filtered.slice(skip, skip + limit) || [];
+
+      return HttpResponse.json(
+        {
+          items,
+          total: filtered.length,
+          pages: Math.ceil(filtered.length / limit),
+          page,
+          limit,
+        },
+        { status: 200 },
+      );
     },
   ),
   http.post<{ id: string }, PromptCommentCreateDTO>(

@@ -8,13 +8,25 @@ class CommentsRepository:
     def __init__(self, database):
         self.__collection: Collection[Comment] = database["comments"]
 
-    async def get_by_prompt(self, prompt_id: ObjectId):
-        cursor = (self.__collection
+    async def get_by_prompt(
+            self,
+            prompt_id: ObjectId,
+            skip: int,
+            limit: int
+        ) -> tuple[list[Comment], int]:
+        total = await self.__collection.count_documents({"prompt_id": prompt_id})
+
+        cursor = (
+            self.__collection
             .find({"prompt_id": prompt_id})
+            .skip(skip)
+            .limit(limit)
             .sort("pub_date", -1)
         )
 
-        return await cursor.to_list()
+        items = await cursor.to_list()
+
+        return items, total
 
     async def create(self, comment_data: dict) -> str:
         result = await self.__collection.insert_one(comment_data)

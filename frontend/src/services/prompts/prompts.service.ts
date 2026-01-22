@@ -1,11 +1,12 @@
 import { httpClient } from "../api/httpClient";
 import type {
+  GetCommentsResponse,
   GetPromptsResponse,
-  PromptCommentDTO,
   PromptDTO,
 } from "./prompts.dto";
 import type {
   GetPromptsParams,
+  PaginatedComments,
   PaginatedPrompts,
   Prompt,
   PromptCommentCreate,
@@ -59,11 +60,18 @@ export class PromptsService {
     await httpClient.delete(`/prompts/${id}`);
   }
 
-  static async getPromptComments(id: string) {
-    const data = await httpClient.get<PromptCommentDTO[]>(
-      `/prompts/${id}/comments`
+  static async getPromptComments(id: string, page: number): Promise<PaginatedComments>  {
+    const data = await httpClient.get<GetCommentsResponse>(
+      `/prompts/${id}/comments`, { params: { page }}
     );
-    return data.map(promptCommentMapper.toPromptComment);
+    const processedComments = data.items.map(promptCommentMapper.toPromptComment);
+    return {
+      items: processedComments,
+      total: data.total,
+      limit: data.limit,
+      page: data.page,
+      pages: data.pages
+    }
   }
 
   static async createComment(promptId: string, comment: PromptCommentCreate) {

@@ -199,13 +199,99 @@ async def test_trying_to_delete_a_prompt_when_user_is_not_owner_returns_forbidde
     assert response.status_code == 403
 
 
-
 async def test_get_comments_from_a_prompt(e2e_client, seed_data, prompt_ids):
     prompt_id = str(prompt_ids["commented_prompt_1"])
     response = await e2e_client.get(f"/prompts/{prompt_id}/comments")
     assert response.status_code == 200
-    comments = response.json()
-    assert len(comments) == 2
+    data = response.json()
+    assert "items" in data
+    assert "total" in data
+    assert "page" in data
+    assert "pages" in data
+    assert len(data["items"]) == 2
+    assert data["total"] == 2
+    assert data["page"] == 1
+    assert data["pages"] == 1
+
+
+async def test_get_comments_with_bad_prompt_id(e2e_client, seed_data):
+    response = await e2e_client.get("/prompts/abc/comments")
+    assert response.status_code == 400
+
+
+async def test_create_comment(e2e_client, seed_data, prompt_ids):
+    test_user = {"email": "matt@example.com", "password": "password12345"}
+    prompt_id = str(prompt_ids["matt_prompt"])
+
+    response = await e2e_client.post("/auth/login", json=test_user)
+    assert response.status_code == 200
+    e2e_client.cookies.set("access_token", response.cookies.get("access_token"))
+
+    comment_data = {"content": "This is a new comment"}
+    response = await e2e_client.post(f"/prompts/{prompt_id}/comments", json=comment_data)
+    assert response.status_code == 201
+
+    data = response.json()
+    assert "message" in data
+    assert "id" in data
+
+
+async def test_create_comment_with_bad_prompt_id(e2e_client, seed_data):
+    test_user = {"email": "matt@example.com", "password": "password12345"}
+
+    response = await e2e_client.post("/auth/login", json=test_user)
+    assert response.status_code == 200
+    e2e_client.cookies.set("access_token", response.cookies.get("access_token"))
+
+    comment_data = {"content": "This is a new comment"}
+    response = await e2e_client.post("/prompts/abc/comments", json=comment_data)
+    assert response.status_code == 400
+
+
+async def test_delete_comment(e2e_client, seed_data, comments_ids):
+    test_user = {"email": "johndoe@example.com", "password": "qwerty12345"}
+    comment_id = comments_ids["comment_2"]
+
+    response = await e2e_client.post("/auth/login", json=test_user)
+    assert response.status_code == 200
+    e2e_client.cookies.set("access_token", response.cookies.get("access_token"))
+
+    response = await e2e_client.delete(f"/prompts/comments/{comment_id}")
+    assert response.status_code == 204
+
+
+async def test_delete_comment_with_bad_comment_id(e2e_client, seed_data):
+    test_user = {"email": "johndoe@example.com", "password": "qwerty12345"}
+
+    response = await e2e_client.post("/auth/login", json=test_user)
+    assert response.status_code == 200
+    e2e_client.cookies.set("access_token", response.cookies.get("access_token"))
+
+    response = await e2e_client.delete("/prompts/comments/abc")
+    assert response.status_code == 400
+
+
+async def test_delete_comment_non_existent(e2e_client, seed_data):
+    test_user = {"email": "johndoe@example.com", "password": "qwerty12345"}
+
+    response = await e2e_client.post("/auth/login", json=test_user)
+    assert response.status_code == 200
+    e2e_client.cookies.set("access_token", response.cookies.get("access_token"))
+
+    response = await e2e_client.delete(f"/prompts/comments/{MOCK_RANDOM_ID}")
+    assert response.status_code == 404
+
+
+async def test_delete_comment_not_owner(e2e_client, seed_data):
+    test_user = {"email": "matt@example.com", "password": "password12345"}
+    comment_id = "69398c1d5393462cecf97601"  # Comment by john doe
+
+    response = await e2e_client.post("/auth/login", json=test_user)
+    assert response.status_code == 200
+    e2e_client.cookies.set("access_token", response.cookies.get("access_token"))
+
+    response = await e2e_client.delete(f"/comments/{comment_id}")
+    assert response.status_code == 404
 
 
 async def test_like_prompt(e2e_client, seed_data, prompt_ids):
@@ -227,8 +313,6 @@ async def test_like_prompt(e2e_client, seed_data, prompt_ids):
     # Check likes count increased
     response = await e2e_client.get(f"/prompts/{prompt_id}")
     assert response.json()["likes_count"] == initial_likes + 1
-
-
 
 async def test_unlike_prompt(e2e_client, seed_data, prompt_ids):
     test_user = {"email": "johndoe@example.com", "password": "qwerty12345"}
