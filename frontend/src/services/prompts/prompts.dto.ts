@@ -53,3 +53,4 @@ export type PromptCommentCreateDTO = {
 };
 
 export type GetPromptsResponse = PaginatedResponse<PromptSummaryDTO>;
+export type GetCommentsResponse = PaginatedResponse<PromptCommentDTO>;

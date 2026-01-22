@@ -59,6 +59,8 @@ export type PromptCommentCreate = {
 
 export type PaginatedPrompts = PaginatedResponse<PromptSummary>;
 
+export type PaginatedComments = PaginatedResponse<PromptComment>;
+
 export type GetPromptsParams = {
   page?: number;
   limit?: number;

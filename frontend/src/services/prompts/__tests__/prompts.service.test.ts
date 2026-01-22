@@ -81,8 +81,8 @@ describe("PromptsService", () => {
     );
     const mockAuthors = ["alex", "matt_coder", "luna_writer"];
 
-    expect(data).toHaveLength(3);
-    data.forEach((comment) => {
+    expect(data.items).toHaveLength(3);
+    data.items.forEach((comment) => {
       expect(mockAuthors).toContain(comment.authorHandle);
     });
   });
@@ -93,7 +93,7 @@ describe("PromptsService", () => {
     await PromptsService.createComment(mockPromptId, mockComment);
 
     const data = await PromptsService.getPromptComments(mockPromptId);
-    expect(data).toHaveLength(1);
+    expect(data.items).toHaveLength(1);
   });
 
   it("add a like successfully", async () => {
