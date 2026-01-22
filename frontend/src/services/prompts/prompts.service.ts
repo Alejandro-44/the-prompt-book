@@ -60,9 +60,9 @@ export class PromptsService {
     await httpClient.delete(`/prompts/${id}`);
   }
 
-  static async getPromptComments(id: string): Promise<PaginatedComments>  {
+  static async getPromptComments(id: string, page: number): Promise<PaginatedComments>  {
     const data = await httpClient.get<GetCommentsResponse>(
-      `/prompts/${id}/comments`
+      `/prompts/${id}/comments`, { params: { page }}
     );
     const processedComments = data.items.map(promptCommentMapper.toPromptComment);
     return {

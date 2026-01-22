@@ -77,7 +77,8 @@ describe("PromptsService", () => {
     const mockPromptId = "69398c1d5393462cecf974c9";
 
     const data = await PromptsService.getPromptComments(
-      mockPromptId
+      mockPromptId,
+      1
     );
     const mockAuthors = ["alex", "matt_coder", "luna_writer"];
 
@@ -92,7 +93,7 @@ describe("PromptsService", () => {
     const mockComment = { content: "Hey, that was helpful" };
     await PromptsService.createComment(mockPromptId, mockComment);
 
-    const data = await PromptsService.getPromptComments(mockPromptId);
+    const data = await PromptsService.getPromptComments(mockPromptId, 1);
     expect(data.items).toHaveLength(1);
   });
 
