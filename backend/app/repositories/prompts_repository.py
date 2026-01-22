@@ -37,7 +37,6 @@ class PromptsRepository:
 
         total = await self.__collection.count_documents(mongo_filters)
 
-
         pipeline: list[dict] = [
             {"$match": mongo_filters}
         ]

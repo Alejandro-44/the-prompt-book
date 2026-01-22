@@ -1,4 +1,4 @@
-import math
+from math import ceil
 from datetime import datetime, timezone
 
 from bson import ObjectId
@@ -44,7 +44,7 @@ class PromptsService:
             "total": total,
             "page": page,
             "limit": limit,
-            "pages": math.ceil(total / limit) if total > 0 else 0
+            "pages": ceil(total / limit) if total > 0 else 0
         }
     
     async def get_one(self, prompt_id: ObjectId, user: User | None = None) -> Prompt:
