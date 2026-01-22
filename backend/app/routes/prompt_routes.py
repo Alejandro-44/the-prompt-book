@@ -178,11 +178,6 @@ async def get_comments(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid prompt id"
         )
-    except PromptNotFoundError:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Prompt not found"
-        )
 
 
 @router.post(
@@ -213,7 +208,6 @@ async def create_comment(
             detail="Failed to create new comment"
         )
         
-
 
 @router.delete(
     "/comments/{comment_id}",

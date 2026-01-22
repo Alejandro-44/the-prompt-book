@@ -56,8 +56,8 @@ class CommentsService:
             raise CommentNotFoundError()
         return updated
 
-    async def delete(self, comment_id: ObjectId, user_id: ObjectId) -> bool:
-        deleted = await self._comments_repo.delete(comment_id, user_id)
+    async def delete(self, comment_id: ObjectId, author_id: ObjectId) -> bool:
+        deleted = await self._comments_repo.delete(comment_id, author_id)
         if not deleted:
             raise CommentNotFoundError()
         return deleted
