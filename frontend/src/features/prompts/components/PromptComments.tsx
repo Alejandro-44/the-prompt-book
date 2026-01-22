@@ -32,7 +32,7 @@ export function PromptComments({ promptId }: PromptCommentsProps) {
       {user && <CommentForm user={user} onSubmit={onCommentCreate} />}
       <CommentsList comments={comments ?? []} />
       {hasNextPage && (
-        <Button disabled={isFetching} onClick={() => fetchNextPage()}>
+        <Button className="mx-auto" disabled={isFetching} onClick={() => fetchNextPage()}>
           {isFetching ? "Loading..." : "Load more"}
         </Button>
       )}
