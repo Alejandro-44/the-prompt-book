@@ -11,11 +11,13 @@ export function SearchPage() {
   const { prompts, page, pages, setPage } = usePrompts({ search, limit: 12 });
   return (
     <div className="container max-w-6xl grid gap-2">
-      <div>
-        <SearchForm onSearch={(value: string) => {
-          setSearchParams({ search: value})
-        }} />
-      </div>
+      <section className="my-6">
+        <div className="max-w-2xl mx-auto">
+          <SearchForm onSearch={(value: string) => {
+            setSearchParams({ search: value})
+          }} />
+        </div>
+      </section>
       <PromptsGrid prompts={prompts} itemsLimit={12} />
       <AppPagination page={page!} totalPages={pages!} onPageChange={setPage} />
     </div>
