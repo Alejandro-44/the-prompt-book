@@ -19,8 +19,8 @@ def service(service_factory) -> CommentsService:
     return service_factory(CommentsService)
 
 
-async def test_get_prompt_comments_returns_comment_models(service, mock_repo):
-    mock_repo.get_by_prompt.return_value = [
+async def test_get_prompt_comments_returns_comment_models_paginated(service, mock_repo):
+    mock_repo.get_by_prompt.return_value = ([
         {
             "_id": ObjectId(),
             "content": "Nice prompt",
@@ -30,13 +30,20 @@ async def test_get_prompt_comments_returns_comment_models(service, mock_repo):
             "author_name": "john doe",
             "author_handle": "john_doe",
         }
-    ]
+    ], 1)
+    page = 1
+    limit = 5
+    result = await service.get_prompt_comments(ObjectId(MOCK_PROMPT_ID), page, limit)
+    skip = (page - 1) * limit
+    mock_repo.get_by_prompt.assert_awaited_once_with(ObjectId(MOCK_PROMPT_ID), skip, limit)
 
-    result = await service.get_prompt_comments(ObjectId(MOCK_PROMPT_ID))
+    comments = result["items"]
 
-    mock_repo.get_by_prompt.assert_awaited_once_with(ObjectId(MOCK_PROMPT_ID))
-    assert len(result) == 1
-    assert isinstance(result[0], Comment)
+    assert len(comments) == 1
+    assert isinstance(comments[0], Comment)
+    assert result["page"] == 1
+    assert result["pages"] == 1
+    assert result["total"] == 1
 
 
 async def test_create_comment_adds_required_fields(service, mock_repo):

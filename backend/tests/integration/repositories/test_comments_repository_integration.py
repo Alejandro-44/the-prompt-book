@@ -16,27 +16,30 @@ def comments_repo(db):
 async def test_get_by_prompt_returns_comments_with_author(
     comments_repo, seed_comments, prompt_ids
     ):
-    result = await comments_repo.get_by_prompt(
-        prompt_ids["commented_prompt_1"]
+    skip = 0
+    limit = 5
+    items, total = await comments_repo.get_by_prompt(
+        prompt_ids["commented_prompt_1"], skip, limit
     )
 
-    assert len(result) == 2
+    assert len(items) == 2
 
-    assert result[0]["content"] == "Second comment"
-    assert result[1]["content"] == "First comment"
+    assert items[0]["content"] == "Second comment"
+    assert items[1]["content"] == "First comment"
 
     assert all(
         (comment["author_name"] == "john doe" and
         comment["author_handle"] == "john_doe")
-        for comment in result
+        for comment in items
     )
 
 
 async def test_get_by_prompt_returns_empty_list_for_unknown_prompt(
     comments_repo, seed_comments
 ):
-    result = await comments_repo.get_by_prompt(ObjectId())
-    assert result == []
+    items, total = await comments_repo.get_by_prompt(ObjectId(), 0, 5)
+    assert items == []
+    assert total == 0
 
 
 async def test_create_inserts_comment_and_returns_id(
