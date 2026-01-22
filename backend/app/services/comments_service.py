@@ -1,8 +1,10 @@
+from math import ceil
+
 from datetime import datetime, timezone
 
 from bson import ObjectId
 
-from app.schemas import CommentCreate, CommentUpdate, Comment, User
+from app.schemas import CommentCreate, CommentUpdate, Comment, User, PaginatedResponse
 from app.repositories.comments_repository import CommentsRepository
 from app.core.exceptions import CommentNotFoundError, DatabaseError
 
@@ -10,13 +12,24 @@ class CommentsService:
     def __init__(self, comments_repo: CommentsRepository):
         self._comments_repo = comments_repo
 
-    async def get_prompt_comments(self, prompt_id: ObjectId) -> list[Comment]:
-        comment_documents = None
+    async def get_prompt_comments(self, prompt_id: ObjectId, page: int, limit: int) -> PaginatedResponse[Comment]:
+        skip = (page - 1) * limit
+        comments = []
+        total = 0
         try:
-            comment_documents = await self._comments_repo.get_by_prompt(prompt_id)
+            comments_docs, total = await self._comments_repo.get_by_prompt(prompt_id, skip, limit)
         except:
             raise DatabaseError
-        return [Comment.from_document(document) for document in comment_documents]
+        
+        comments = [Comment.from_document(document) for document in comments_docs]
+
+        return {
+            "items": comments,
+            "total": total,
+            "page": page,
+            "limit": limit,
+            "pages": ceil(total / limit) if total > 0 else 0
+        }
 
     async def create(self, prompt_id: ObjectId, user: User, comment_in: CommentCreate) -> str:
         comment_data = comment_in.model_dump()
