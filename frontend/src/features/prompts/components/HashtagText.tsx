@@ -1,5 +1,6 @@
 import { parseHashtags } from "@/utils"
 import { cn } from "@/lib/utils"
+import { useNavigate } from "react-router"
 
 interface HashtagTextProps {
   text: string
@@ -7,6 +8,10 @@ interface HashtagTextProps {
 
 export function HashtagText({ text }: HashtagTextProps) {
   const parts = parseHashtags(text)
+  const navitage = useNavigate()
+  const onClick = (value: string) => {
+    navitage(`/explore?search=${value}`)
+  }
   return (
     <p className="text-muted-foreground leading-relaxed">
       {parts.map((part, i) =>
@@ -17,6 +22,7 @@ export function HashtagText({ text }: HashtagTextProps) {
               "font-medium text-blue-500 cursor-pointer",
               "hover:underline"
             )}
+            onClick={() => onClick(part.value.slice(1))}
           >
             {part.value}
           </span>
