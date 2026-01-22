@@ -28,7 +28,7 @@ class PromptsRepository:
         if filters.get("model"):
             mongo_filters["model"] = filters["model"]
 
-        if filters.get("liked_ids"):
+        if filters.get("liked_by"):
             mongo_filters["_id"] = {"$in": filters["liked_ids"]}
 
         if filters.get("search"):
