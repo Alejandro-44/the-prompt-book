@@ -87,6 +87,9 @@ class PromptsService:
         await self._validate_prompt_ownership(prompt_id, user_id)
 
         new_data = update_data.model_dump(exclude_unset=True)
+        if "description" in new_data:
+            new_data["hashtags"] = extract_hashtags(new_data["description"])
+
         try:            
             await self.__prompts_repo.update(prompt_id, new_data)    
         except Exception as exc:

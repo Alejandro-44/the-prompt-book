@@ -48,9 +48,6 @@ body {
   font-family: 'Inter Variable', sans-serif;
 }
 
-button.MuiButton-root {
-  font-weight: bold;
-}
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);

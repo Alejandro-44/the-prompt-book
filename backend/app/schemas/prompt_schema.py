@@ -46,10 +46,10 @@ class Prompt(PromptBase):
 
 class PromptUpdate(BaseModel):
     title: Optional[str] = None
+    description: Optional[str] = None
     prompt: Optional[str] = None
     result_example: Optional[str] = None
     model: Optional[str] = None
-    hashtags: Optional[List[str]] = None
 
 class PromptSummary(BaseModel):
     id: str

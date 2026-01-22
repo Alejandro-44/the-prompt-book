@@ -51,7 +51,7 @@ export function PromptForm({
         <RHFTextArea name="prompt" label="Prompt" />
         <RHFSelect name="model" label="Model" options={MODELS} placeholder="Select a model" />
         <RHFTextArea name="resultExample" label="Result" />
-        <div className="flex justify-between md:justify-end md:gap-4">
+        <div className="flex justify-between sm:justify-end sm:gap-4">
           <Button type="button" variant="outline" onClick={handleOnCancel}>
             Cancel
           </Button>

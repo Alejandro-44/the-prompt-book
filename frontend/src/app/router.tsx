@@ -11,6 +11,7 @@ import { PromptOwnerGuard } from "@/features/auth/components/PromptOwnerGuard";
 import { EditPrompt } from "@/features/prompts/pages/EditPrompt";
 import { NotFoundPage } from "@/pages/NotFoundPage";
 import { UnauthorizedPage } from "@/pages/UnauthorizedPage";
+import { SearchPage } from "@/features/explore/pages/SearchPage";
 
 export const router = createBrowserRouter([
   {
@@ -46,6 +47,10 @@ export const router = createBrowserRouter([
             Component: () => <UserPage mode="public" />,
           },
         ],
+      },
+      {
+        path: "explore",
+        Component: SearchPage,
       },
       {
         path: "prompts",
