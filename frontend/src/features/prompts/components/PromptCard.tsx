@@ -20,7 +20,7 @@ export function PromptCard({
   const navigate = useNavigate();
   return (
     <article
-      className={`relative bg-card group p-4 h-full ${className}`}
+      className={`relative group p-4 h-full ${className}`}
       data-testid="prompt-card"
     >
       {editable && (
