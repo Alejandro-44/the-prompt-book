@@ -3,7 +3,7 @@ import type { PromptSummaryDTO } from "@/services/prompts/prompts.dto";
 
 export function getPaginatedPrompts(
   promptsSummaryMocks: PromptSummaryDTO[],
-  { page = 1, limit = 10, author_handle, model, hashtags, liked_by }: GetPromptsParams
+  { page = 1, limit = 10, author_handle, model, hashtags, liked_by, search }: GetPromptsParams
 ) {
   const filtered = promptsSummaryMocks.filter((prompt) => {
     let isValid = true;
@@ -19,6 +19,11 @@ export function getPaginatedPrompts(
 
     if (liked_by) {
       isValid &&= prompt.id === "69398c1d5393462cecf974c9"
+    }
+
+    if (search) {
+      const regex = new RegExp(search, "i")
+      isValid &&= regex.test(prompt.title) || regex.test(prompt.description)  
     }
 
     return isValid;
