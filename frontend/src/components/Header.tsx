@@ -5,18 +5,20 @@ import { Plus, Search, X } from "lucide-react";
 import { Input } from "./ui/input";
 import { useState } from "react";
 import { useAuth } from "@/features/auth/hooks";
+import SearchForm from "@/features/explore/components/SearchForm";
 
 export const Header = () => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const onSeacrh = (value: string) => {
+    navigate(`/explore?search=${value}`);
+  }
   const openSearch = () => {
     setIsSearchOpen(true);
   };
   const closeSearch = () => {
     setIsSearchOpen(false);
-    setSearchQuery("");
   };
   return (
     <header className="relative flex justify-center px-4 border-b mx-auto">
@@ -27,15 +29,7 @@ export const Header = () => {
 
         {isSearchOpen && (
           <div className="absolute z-10 inset-0 flex items-center gap-2 bg-background px-4 md:hidden">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search prompts..."
-                className="w-full pl-10"
-                value={searchQuery}
-              />
-            </div>
+            <SearchForm onSearch={onSeacrh} />
             <Button variant="ghost" size="icon" onClick={closeSearch}>
               <X className="h-5 w-5" />
             </Button>
@@ -43,14 +37,7 @@ export const Header = () => {
         )}
 
         <div className="hidden md:flex flex-1 items-center justify-center max-w-md">
-          <div className="relative w-full">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search prompts..."
-              className="w-full pl-10"
-            />
-          </div>
+          <SearchForm onSearch={onSeacrh} />
         </div>
 
         <div className="flex items-center gap-2 md:gap-6">
