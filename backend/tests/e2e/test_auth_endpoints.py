@@ -5,7 +5,7 @@ pytestmark = [pytest.mark.e2e, pytest.mark.asyncio]
 
 
 async def test_register_user_success(e2e_client):
-    test_user = {"username": "alice", "email": "alice@example.com", "password": "1234"} 
+    test_user = {"username": "alice", "email": "alice@example.com", "password": "Password12345"} 
     response = await e2e_client.post(
         "/auth/register",
         json=test_user
@@ -18,7 +18,7 @@ async def test_register_user_success(e2e_client):
 
 
 async def test_register_user_conflict(e2e_client, seed_users):
-    test_user = {"username": "test", "email": "johndoe@example.com", "password": "abcd"}
+    test_user = {"username": "test", "email": "johndoe@example.com", "password": "Password12345"}
     response = await e2e_client.post("/auth/register", json=test_user)
     assert response.status_code == 409
 

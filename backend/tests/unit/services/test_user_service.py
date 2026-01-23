@@ -95,7 +95,7 @@ async def test_register_user_success(service, mock_repo, mocker):
     user_in = UserCreate(
         username="Alice",
         email="Alice@Example.com",
-        password="1234"
+        password="Password12345"
     )
 
     user = await service.register_user(user_in)
@@ -147,7 +147,7 @@ async def test_register_user_handle_collision_then_success(
     user_in = UserCreate(
         username="Alice",
         email="alice@example.com",
-        password="1234",
+        password="Password12345",
     )
 
     user = await service.register_user(user_in)
@@ -171,7 +171,7 @@ async def test_register_user_handle_collision_then_success(
 async def test_register_user_raises_already_exists(service, mock_repo, mock_user):
     mock_repo.get_one.return_value = mock_user
 
-    user_in = UserCreate(username="johndoe", email="johndoe@example.com", password="password")
+    user_in = UserCreate(username="johndoe", email="johndoe@example.com", password="Password12345")
 
     with pytest.raises(UserAlreadyExistsError):
         await service.register_user(user_in)
@@ -183,7 +183,7 @@ async def test_register_user_raises_database_error(service, mock_repo, mocker):
 
     mocker.patch("app.services.user_service.hash_password", return_value="hashed_pw")
 
-    user_in = UserCreate(username="Fail", email="fail@example.com", password="x")
+    user_in = UserCreate(username="Fail", email="fail@example.com", password="Password12345")
 
     with pytest.raises(DatabaseError):
         await service.register_user(user_in)

@@ -10,7 +10,7 @@ pytestmark = [pytest.mark.integration, pytest.mark.asyncio]
 
 
 async def test_register_new_user_succesfully(services):
-    user_in = UserCreate(username="Alice", email="alice@example.com", password="1234")
+    user_in = UserCreate(username="Alice", email="alice@example.com", password="Password12345")
 
     user = await services.user.register_user(user_in)
     assert user.username == "Alice"
@@ -22,7 +22,7 @@ async def test_register_new_user_succesfully(services):
 
 
 async def test_register_duplicate_user_raises_error(services, seed_data):
-    user_in = UserCreate(username="alex", email="alex@example.com", password="abcdefghi")
+    user_in = UserCreate(username="alex", email="alex@example.com", password="Password12345")
 
     with pytest.raises(UserAlreadyExistsError):
         await services.user.register_user(user_in)

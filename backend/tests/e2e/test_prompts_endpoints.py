@@ -11,7 +11,7 @@ MOCK_RANDOM_ID = str(ObjectId())
 
 
 async def test_register_and_create_a_prompt(e2e_client):
-    test_user = {"username": "testsuser", "email": "testsuser@example.com", "password": "123456"} 
+    test_user = {"username": "testsuser", "email": "testsuser@example.com", "password": "Password12345"} 
     await e2e_client.post(
         "/auth/register",
         json=test_user

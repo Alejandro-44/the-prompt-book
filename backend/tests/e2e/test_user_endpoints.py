@@ -12,7 +12,7 @@ MOCK_RANDOM_ID = str(ObjectId())
 
 
 async def test_register_user_and_access_its_own_info(e2e_client):
-    test_user = {"username": "testuser", "email": "testuser@example.com", "password": "12345678"}
+    test_user = {"username": "testuser", "email": "testuser@example.com", "password": "Password12345"}
     await e2e_client.post(
         "/auth/register",
         json=test_user
