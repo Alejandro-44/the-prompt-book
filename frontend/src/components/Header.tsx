@@ -22,7 +22,7 @@ export const Header = () => {
     setIsSearchOpen(false);
   };
   return (
-    <header className="relative flex justify-center px-4 border-b mx-auto">
+    <header className="sticky top-0 left-0 flex justify-center px-4 border-b mx-auto bg-background z-20">
       <div className="container flex h-16 items-center justify-between gap-4">
         <Link to="/">
           <span className="font-bold text-xl">ThePromptBook</span>
