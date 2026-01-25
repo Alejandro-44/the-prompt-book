@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/utils";
 import { useState } from "react";
-import { useLikePrompt, usePrompt, useUnlikePrompt } from "../hooks";
+import { useLikePrompt, usePrompt } from "../hooks";
 import { useRedirectOn } from "@/features/auth/hooks";
 import { PromptCardDetailSkeleton } from "./PromptCardDetailSkeleton";
 import { HashtagText } from "./HashtagText";
@@ -18,7 +18,6 @@ export function PromptCardDetail({ promptId }: Props) {
   useRedirectOn({ when: error?.status === 404, to: "/404" });
 
   const { mutate: likePrompt } = useLikePrompt({ promptId });
-  const { mutate: unlikePrompt } = useUnlikePrompt({ promptId });
 
   const [copied, setCopied] = useState(false);
 
@@ -99,7 +98,7 @@ export function PromptCardDetail({ promptId }: Props) {
       <div className="flex items-center gap-4 border-t border-b py-4">
         <Button
           onClick={() => {
-            prompt?.likeByMe ? unlikePrompt() : likePrompt();
+            likePrompt(prompt?.likeByMe ?? false);
           }}
           variant="outline"
           className="gap-2 cursor-pointer"
