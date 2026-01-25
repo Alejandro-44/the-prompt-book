@@ -6,6 +6,7 @@ import { Input } from "./ui/input";
 import { useState } from "react";
 import { useAuth } from "@/features/auth/hooks";
 import SearchForm from "@/features/explore/components/SearchForm";
+import { ThemeToggle } from "./ThemeToggle";
 
 export const Header = () => {
   const { isAuthenticated } = useAuth();
@@ -59,6 +60,7 @@ export const Header = () => {
               <span className="hidden sm:inline">Share</span>
             </Button>
           )}
+          <ThemeToggle />
           <UserMenu />
         </div>
       </div>

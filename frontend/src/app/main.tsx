@@ -7,6 +7,7 @@ import { router } from "./router";
 import "@/app/index.css";
 
 import { AuthProvider } from "@/features/auth/providers";
+import { ThemeProvider } from "@/components/theme-provider";
 
 async function enableMocking() {
   if (import.meta.env.VITE_USE_MOCKS !== "true") {
@@ -21,7 +22,9 @@ enableMocking().then(() => {
     <React.StrictMode>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <RouterProvider router={router} />
+          <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+            <RouterProvider router={router} />
+          </ThemeProvider>
         </AuthProvider>
       </QueryClientProvider>
     </React.StrictMode>
