@@ -8,6 +8,7 @@ export function useInfinitePrompts() {
     fetchNextPage,
     hasNextPage,
     isFetching,
+    isPending,
     status,
   } = useInfiniteQuery({
     queryKey: ["infinite-prompts"],
@@ -30,6 +31,7 @@ export function useInfinitePrompts() {
     fetchNextPage,
     hasNextPage,
     isFetching,
+    isPending,
     status,
     error
   }

@@ -13,14 +13,14 @@ type PromptCommentsProps = {
 
 export function PromptComments({ promptId }: PromptCommentsProps) {
   const { user } = useAuth();
-  const { comments, isFetching, fetchNextPage, hasNextPage } =
+  const { comments, isPending, fetchNextPage, hasNextPage } =
     useInfiniteComments({ promptId });
   const { mutate } = useCreateComment({ promptId });
   const onCommentCreate = (data: CommentFormValues) => {
     mutate(data);
   };
 
-  if (isFetching) {
+  if (isPending) {
     return <PromptCommentsSkeleton />;
   }
 
@@ -32,8 +32,8 @@ export function PromptComments({ promptId }: PromptCommentsProps) {
       {user && <CommentForm user={user} onSubmit={onCommentCreate} />}
       <CommentsList comments={comments ?? []} />
       {hasNextPage && (
-        <Button className="mx-auto" disabled={isFetching} onClick={() => fetchNextPage()}>
-          {isFetching ? "Loading..." : "Load more"}
+        <Button className="mx-auto" disabled={isPending} onClick={() => fetchNextPage()}>
+          {isPending ? "Loading..." : "Load more"}
         </Button>
       )}
     </section>

@@ -4,16 +4,16 @@ import { PromptsFeedSkeleton } from "@/features/prompts/components/PromptsFeedSk
 import { useInfinitePrompts } from "@/features/prompts/hooks";
 
 export function HomePage() {
-  const { prompts, isFetching, hasNextPage, fetchNextPage } =
+  const { prompts, isPending, hasNextPage, fetchNextPage } =
     useInfinitePrompts();
 
   return (
     <div className="grid justify-items-center gap-6">
-      {isFetching && <PromptsFeedSkeleton />}
-      {!isFetching && prompts && <PromptsFeed prompts={prompts} />}
+      {isPending && <PromptsFeedSkeleton />}
+      {!isPending && prompts && <PromptsFeed prompts={prompts} />}
       {hasNextPage && (
-        <Button disabled={isFetching} onClick={() => fetchNextPage()}>
-          {isFetching ? "Loading..." : "Load more"}
+        <Button disabled={isPending} onClick={() => fetchNextPage()}>
+          {isPending ? "Loading..." : "Load more"}
         </Button>
       )}
     </div>

@@ -8,7 +8,7 @@ type CommentsHookProps = {
 export function useInfiniteComments({ promptId }: CommentsHookProps) {
   const {
     data,
-    isFetching,
+    isPending,
     error,
     fetchNextPage,
     hasNextPage,
@@ -31,7 +31,7 @@ export function useInfiniteComments({ promptId }: CommentsHookProps) {
 
   return {
     comments,
-    isFetching,
+    isPending,
     error,
     fetchNextPage,
     hasNextPage,

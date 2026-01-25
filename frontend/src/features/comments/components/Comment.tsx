@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import type { PromptComment } from "@/services";
+import { formatDate } from "@/utils";
 type CommentProps = {
   comment: PromptComment;
 };
@@ -17,7 +18,7 @@ export function Comment({ comment }: CommentProps) {
           <span className="font-medium">{comment.authorName}</span>
           <span className="text-muted-foreground">·</span>
           <span className="text-muted-foreground">
-            {comment.pubDate.toDateString()}
+            {formatDate(comment.pubDate.toISOString())}
           </span>
         </div>
         <p className="mt-1 text-sm text-foreground">{comment.content}</p>
