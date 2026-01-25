@@ -2,7 +2,6 @@ import { Link, useNavigate } from "react-router";
 import { UserMenu } from "./UserMenu";
 import { Button } from "./ui/button";
 import { Plus, Search, X } from "lucide-react";
-import { Input } from "./ui/input";
 import { useState } from "react";
 import { useAuth } from "@/features/auth/hooks";
 import SearchForm from "@/features/explore/components/SearchForm";
