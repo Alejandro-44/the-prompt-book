@@ -33,12 +33,12 @@ export function UserPage({ mode }: UserPageProps) {
   return (
     <div className="w-full grid max-w-6xl gap-4">
       {isUserLoading && <UserCardSkeleton />}
-      {user && <UserCard user={user} />}
+      {user && <UserCard user={user} mode={mode} />}
       <section>
         {isPromptsLoading && <PromptsGridSkeleton />}
         {prompts && (
           <Tabs defaultValue="prompts" className="w-full">
-            <TabsList>
+            <TabsList variant="line">
               <TabsTrigger value="prompts">Prompts</TabsTrigger>
               {mode == "me" && <TabsTrigger value="likes">Likes</TabsTrigger>}
             </TabsList>
