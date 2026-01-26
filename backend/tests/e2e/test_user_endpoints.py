@@ -30,6 +30,7 @@ async def test_register_user_and_access_its_own_info(e2e_client):
     data = response.json()
     User.model_validate(data)
     assert data["username"] == "testuser"
+    assert data["email"] == "testuser@example.com"
 
 
 async def test_get_my_prompts_with_filters(e2e_client, seed_data):

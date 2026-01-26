@@ -48,6 +48,15 @@ async def test_get_one_by_id_returns_user_sucessfully(services, seed_users, user
     assert user.is_active is True
 
 
+async def test_get_one_by_id_and_private_returns_private_user_sucessfully(services, seed_users, user_ids):
+    user_id = user_ids["johndoe"]
+    user = await services.user.get_one({ "id": user_id }, private=True)
+    assert user.username == "john doe"
+    assert user.handle == "john_doe"
+    assert user.email == "johndoe@example.com"
+    assert user.is_active is True
+
+
 async def test_get_one_by_id_returns_deleted_user_if_inactive(services, seed_users, user_ids):
     user_id = user_ids["invalid"]
 

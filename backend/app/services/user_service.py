@@ -19,7 +19,7 @@ class UserService:
     def __init__(self, user_repo: UserRepository):
         self._user_repo = user_repo
     
-    async def get_one(self, filters: dict, private: bool = False) -> User:
+    async def get_one(self, filters: dict, private: bool = False) -> User | PrivateUser:
         user_document = await self._user_repo.get_one(filters)
         if not user_document:
             raise UserNotFoundError

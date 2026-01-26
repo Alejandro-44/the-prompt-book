@@ -5,7 +5,7 @@ from pymongo.errors import DuplicateKeyError
 
 from app.services.user_service import UserService
 from app.core.exceptions import UserNotFoundError, UserAlreadyExistsError, DatabaseError
-from app.schemas.user_schema import UserCreate
+from app.schemas.user_schema import UserCreate, User, PrivateUser
 
 
 pytestmark = [pytest.mark.unit, pytest.mark.asyncio]
@@ -51,8 +51,22 @@ async def test_get_one_with_id_returns_user(service, mock_repo, mock_user):
 
     user = await service.get_one(filters)
     mock_repo.get_one.assert_awaited_once_with(filters)
-
+    User.model_validate(user)
     assert user.username == "John"
+
+
+async def test_get_one_private_returns_private_user(service, mock_repo, mock_user):
+    mock_repo.get_one.return_value = mock_user
+
+    filters = {
+        "id": MOCK_USER_ID
+    }
+
+    user = await service.get_one(filters, private=True)
+    mock_repo.get_one.assert_awaited_once_with(filters)
+    PrivateUser.model_validate(user)
+    assert user.username == "John"
+    assert user.email == "john@example.com"
 
 
 async def test_get_one_by_id_raises_not_found_when_user_does_not_exist(
