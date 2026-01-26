@@ -1,5 +1,5 @@
-import type { UserDTO, UserUpdateDTO } from "./users.dto";
-import type { User, UserUpdate } from "./users.model";
+import type { PrivateUserDTO, UserDTO, UserUpdateDTO } from "./users.dto";
+import type { PrivateUser, User, UserUpdate } from "./users.model";
 
 export const userMapper = {
   toUser: (dto: UserDTO): User => ({
@@ -7,6 +7,13 @@ export const userMapper = {
     username: dto.username,
     handle: dto.handle,
     isActive: dto.is_active,
+  }),
+  toPrivateUser: (dto: PrivateUserDTO): PrivateUser => ({
+    id: dto.id,
+    username: dto.username,
+    email: dto.email,
+    handle: dto.handle,
+    isActive: dto.is_active
   }),
   toUpdateUserDTO: (model: UserUpdate) => {
     const dto: UserUpdateDTO = {};
