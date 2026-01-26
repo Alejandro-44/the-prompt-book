@@ -5,13 +5,13 @@ from bson import ObjectId
 from bson.errors import InvalidId
 
 from app.dependencies import UserDependency, ServicesDependency
-from app.schemas import PromptSummary, User, PaginatedResponse
+from app.schemas import PromptSummary, PrivateUser, PaginatedResponse
 from app.core.exceptions import UserNotFoundError
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
 
-@router.get("/me", response_model=User)
+@router.get("/me", response_model=PrivateUser)
 async def get_me(current_user: UserDependency):
     """
     Get current logged in user
