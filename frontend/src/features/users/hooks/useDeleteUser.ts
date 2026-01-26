@@ -5,9 +5,9 @@ import { useMutation } from "@tanstack/react-query";
 export function useDeleteUser() {
   const { mutate: logout } = useLogout();
   return useMutation({
-    mutationFn: () => UsersService.deleteMe(),
-    onSuccess: () => {
+    mutationFn: async () => {
       logout();
-    }
+      await UsersService.deleteMe();
+    },
   })
 }
