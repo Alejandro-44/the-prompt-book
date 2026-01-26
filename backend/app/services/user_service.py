@@ -3,13 +3,14 @@ from datetime import datetime, timezone
 from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 
-from app.schemas.user_schema import UserCreate, User, PrivateUser
+from app.schemas.user_schema import UserCreate, User, PrivateUser, UpdateUser
 from app.core.security import hash_password
 from app.repositories.user_repository import UserRepository
 from app.core.exceptions import (
     UserNotFoundError,
     UserAlreadyExistsError,
     DatabaseError,
+    UnauthorizedError
 )
 from app.utils import generate_handle
 
@@ -83,8 +84,15 @@ class UserService:
                 continue
             except Exception as exc:
                 raise DatabaseError() from exc
-        
-    
+
+    async def update(self, user_id: ObjectId, user: User, data: UpdateUser):
+        if str(user_id) != user.id:
+            raise UnauthorizedError()
+
+        updated = await self._user_repo.update(user_id, data.model_dump())
+        if not updated:
+            raise DatabaseError("Failed to update user")
+
     async def deactivate(self, user_id: ObjectId) -> bool:
         deactivated = await self._user_repo.update(user_id, { "is_active": False })
         if not deactivated:

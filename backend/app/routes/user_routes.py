@@ -5,8 +5,8 @@ from bson import ObjectId
 from bson.errors import InvalidId
 
 from app.dependencies import UserDependency, ServicesDependency
-from app.schemas import PromptSummary, PrivateUser, PaginatedResponse
-from app.core.exceptions import UserNotFoundError
+from app.schemas import PromptSummary, User, PrivateUser, UpdateUser, PaginatedResponse
+from app.core.exceptions import UserNotFoundError, UnauthorizedError, DatabaseError
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -48,7 +48,7 @@ async def delete_me(user: UserDependency, service: ServicesDependency):
     await service.user.deactivate(ObjectId(user.id))
 
 
-@router.get("/{user_handle}")
+@router.get("/{user_handle}", response_model=User)
 async def get_user(
     user_handle: Annotated[str, Path(title="The handle of a user", max_length=30)],
     service: ServicesDependency):
@@ -56,7 +56,7 @@ async def get_user(
         return await service.user.get_one({ "handle": user_handle })
     except UserNotFoundError:
         raise HTTPException(
-            status_code=404,
+            status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid user id"
         )
 
@@ -91,6 +91,31 @@ async def get_user_prompts(
         )
     except InvalidId:
         raise HTTPException(
-            status_code=400,
+            status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid user id"
+        )
+
+
+@router.patch("/{user_id}")
+async def update_user(
+    user_id: str,
+    user_data: UpdateUser,
+    current_user: UserDependency,
+    services: ServicesDependency
+):
+    try:
+        await services.user.update(ObjectId(user_id), current_user, user_data)
+    except InvalidId:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid user id"
+        )
+    except UnauthorizedError:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You don't have access to this resource"
+        )
+    except DatabaseError:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
