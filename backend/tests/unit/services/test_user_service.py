@@ -4,8 +4,8 @@ from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 
 from app.services.user_service import UserService
-from app.core.exceptions import UserNotFoundError, UserAlreadyExistsError, DatabaseError
-from app.schemas.user_schema import UserCreate, User, PrivateUser
+from app.core.exceptions import UserNotFoundError, UserAlreadyExistsError, DatabaseError, UnauthorizedError
+from app.schemas.user_schema import UserCreate, User, PrivateUser, UpdateUser
 
 
 pytestmark = [pytest.mark.unit, pytest.mark.asyncio]
@@ -217,3 +217,35 @@ async def test_deactivate_user_fails(service, mock_repo):
 
     with pytest.raises(DatabaseError):
         await service.deactivate(ObjectId(MOCK_USER_ID))
+
+
+async def test_update_user_success(service, mock_repo, mock_user):
+    mock_repo.update.return_value = True
+
+    user_id = ObjectId(MOCK_USER_ID)
+    user = User.from_document(mock_user)
+    data = UpdateUser(username="UpdatedName", email="updated@example.com")
+
+    await service.update(user_id, user, data)
+
+    mock_repo.update.assert_awaited_once_with(user_id, data.model_dump())
+
+
+async def test_update_user_unauthorized(service, mock_repo, mock_user):
+    user_id = ObjectId(MOCK_RANDOM_ID)
+    user = User.from_document(mock_user)
+    data = UpdateUser(username="UpdatedName")
+
+    with pytest.raises(UnauthorizedError):
+        await service.update(user_id, user, data)
+
+
+async def test_update_user_database_error(service, mock_repo, mock_user):
+    mock_repo.update.return_value = False
+
+    user_id = ObjectId(MOCK_USER_ID)
+    user = User.from_document(mock_user)
+    data = UpdateUser(username="UpdatedName")
+
+    with pytest.raises(DatabaseError):
+        await service.update(user_id, user, data)

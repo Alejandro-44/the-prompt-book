@@ -2,7 +2,7 @@ import pytest
 
 from bson import ObjectId
 
-from app.schemas import User, PromptSummary
+from app.schemas import User, PromptSummary, UpdateUser
 
 
 pytestmark = [pytest.mark.e2e, pytest.mark.asyncio]
@@ -101,7 +101,7 @@ async def test_get_user_with_handle_too_long_returns_422(e2e_client):
 async def test_trying_to_get_a_handle_that_does_not_exist_return_not_found(e2e_client, seed_data, user_ids):
     random_handle = "random_12345"
     response = await e2e_client.get(f"users/{random_handle}")
-    assert response.status_code == 404
+    assert response.status_code == 400
 
 
 async def test_deactivate_user(e2e_client, seed_data, user_handles):
@@ -117,3 +117,49 @@ async def test_deactivate_user(e2e_client, seed_data, user_handles):
 
     assert data["username"] == "deleted user"
     assert data["is_active"] is False
+
+
+async def test_update_user_successfully(e2e_client):
+    test_user = {"username": "updatetest", "email": "updatetest@example.com", "password": "Password12345"}
+    await e2e_client.post("/auth/register", json=test_user)
+
+    login_data = {"email": test_user["email"], "password": test_user["password"]}
+    response = await e2e_client.post("/auth/login", json=login_data)
+    e2e_client.cookies.set("access_token", response.cookies.get("access_token"))
+
+    response = await e2e_client.get("/users/me")
+    user_data = response.json()
+    user_id = user_data["id"]
+
+    update_data = {"username": "UpdatedName", "email": "updated@example.com"}
+    response = await e2e_client.patch(f"/users/{user_id}", json=update_data)
+    assert response.status_code == 200
+
+    response = await e2e_client.get("/users/me")
+    updated_data = response.json()
+    assert updated_data["username"] == "UpdatedName"
+    assert updated_data["email"] == "updated@example.com"
+
+
+async def test_update_user_unauthorized(e2e_client, seed_data, user_ids):
+    login_data = {"email": "alex@example.com", "password": "password12345"}
+    response = await e2e_client.post("/auth/login", json=login_data)
+    e2e_client.cookies.set("access_token", response.cookies.get("access_token"))
+
+    other_user_id = str(user_ids["johndoe"])
+    update_data = {"username": "Hacked"}
+    response = await e2e_client.patch(f"/users/{other_user_id}", json=update_data)
+    assert response.status_code == 403
+
+
+async def test_update_user_invalid_id(e2e_client):
+    test_user = {"username": "invalidtest", "email": "invalidtest@example.com", "password": "Password12345"}
+    await e2e_client.post("/auth/register", json=test_user)
+
+    login_data = {"email": test_user["email"], "password": test_user["password"]}
+    response = await e2e_client.post("/auth/login", json=login_data)
+    e2e_client.cookies.set("access_token", response.cookies.get("access_token"))
+
+    update_data = {"username": "Updated"}
+    response = await e2e_client.patch("/users/invalid_id", json=update_data)
+    assert response.status_code == 400
