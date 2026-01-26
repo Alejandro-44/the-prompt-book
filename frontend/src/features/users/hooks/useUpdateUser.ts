@@ -12,9 +12,9 @@ export function useUpdateUser({ user }: UseUpdateUser) {
   return useMutation({
     mutationFn: (userData: UserUpdate) =>
       UsersService.update(user.id, userData),
-    onSuccess: () => {
-      client.invalidateQueries({
-        queryKey: ["user", user.handle],
+    onSuccess: async () => {
+      await client.invalidateQueries({
+        queryKey: ["auth", "me"],
       });
       navigate("/users/me");
     },

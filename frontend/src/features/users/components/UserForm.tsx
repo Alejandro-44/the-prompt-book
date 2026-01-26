@@ -5,21 +5,23 @@ import { Alert, AlertTitle } from "@/components/ui/alert";
 import { RHFInput } from "@/components/RHFInput";
 import { userSchema, type UserFormValues } from "../schema/";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useUpdateUser } from "../hooks";
-import { useUserStore } from "../contexts";
+import type { PrivateUser } from "@/services";
 
-export function UserForm() {
-  const { user } = useUserStore()
-  const { mutate, isPending, error } = useUpdateUser({ user: user! });
+type UseFormProps = {
+  user: PrivateUser;
+  handleSubmit: (data: UserFormValues) => void;
+  isPending: boolean;
+  error: Error | null;
+}
+
+export function UserForm({ user, handleSubmit, isPending, error }: UseFormProps) {
   const methods = useForm<UserFormValues>({
     resolver: zodResolver(userSchema),
     defaultValues: user!
   });
   const onSubmit = methods.handleSubmit((data: UserFormValues) => {
-    mutate(data);
+    handleSubmit(data);
   });
-
-  const errorMessage = error?.message;
 
   return (
     <FormProvider {...methods}>
@@ -42,7 +44,7 @@ export function UserForm() {
         {error && (
           <Alert variant="destructive">
             <AlertCircleIcon />
-            <AlertTitle>{errorMessage}</AlertTitle>
+            <AlertTitle>{error.message}</AlertTitle>
           </Alert>
         )}
       </form>
