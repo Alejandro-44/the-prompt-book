@@ -4,3 +4,5 @@ export type User = {
   handle: string;
   isActive: boolean;
 };
+
+export type UserUpdate = Partial<User & { email: string }>;

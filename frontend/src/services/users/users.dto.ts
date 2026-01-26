@@ -4,3 +4,5 @@ export type UserDTO = {
   handle: string;
   is_active: boolean;
 };
+
+export type UserUpdateDTO = Partial<UserDTO & { email: string }>;

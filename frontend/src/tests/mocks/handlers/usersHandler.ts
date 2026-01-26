@@ -1,6 +1,7 @@
 import { http, HttpResponse } from "msw";
 import { promptSummaryMocks, users } from "../data/mocks";
 import { getPaginatedPrompts } from "@/tests/utils/getPaginatedPrompts";
+import type { UserUpdateDTO } from "@/services";
 
 export const userHandlers = [
   http.get("http://127.0.0.1:8000/users/me", async () => {
@@ -22,7 +23,7 @@ export const userHandlers = [
       model,
       hashtags,
     });
-    return HttpResponse.json(response, );
+    return HttpResponse.json(response);
   }),
   http.delete("http://127.0.0.1:8000/users/me", async () => {
     return HttpResponse.json({}, { status: 204 });
@@ -30,8 +31,10 @@ export const userHandlers = [
   http.get<{ user_handle: string }>(
     "http://127.0.0.1:8000/users/:user_handle",
     async ({ params }) => {
-      return HttpResponse.json(users.find((user) => user.handle === params.user_handle));
-    }
+      return HttpResponse.json(
+        users.find((user) => user.handle === params.user_handle),
+      );
+    },
   ),
   http.get<{ user_handle: string }>(
     "http://127.0.0.1:8000/users/:user_handle/prompts",
@@ -51,6 +54,21 @@ export const userHandlers = [
         hashtags,
       });
       return HttpResponse.json(response);
-    }
+    },
+  ),
+  http.patch<{ user_id: string }>(
+    "http://127.0.0.1:8000/users/:user_id",
+    async ({ request, params }) => {
+      const userIdx = users.findIndex((user) => user.id === params.user_id);
+      if (!userIdx) {
+        return HttpResponse.json(
+          { message: "User not found" },
+          { status: 404 },
+        );
+      }
+      const data = (await request.json()) as UserUpdateDTO;
+      users[userIdx] = { ...users[userIdx], ...data };
+      return HttpResponse.json({}, { status: 204 });
+    },
   ),
 ];

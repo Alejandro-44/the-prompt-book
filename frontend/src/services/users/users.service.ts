@@ -1,6 +1,6 @@
 import { httpClient } from "../api/httpClient";
 import type { UserDTO } from "./users.dto";
-import type { User } from "./users.model";
+import type { User, UserUpdate } from "./users.model";
 import { userMapper } from "./users.mapper";
 import type { GetPromptsParams, PaginatedPrompts } from "../prompts/prompts.model";
 import type { GetPromptsResponse } from "../prompts/prompts.dto";
@@ -43,5 +43,10 @@ export class UsersService {
       page: data.page,
       pages: data.pages
     }
+  }
+
+  static async update(userId: string, data: UserUpdate) {
+    const userUpdateDTO = userMapper.toUpdateUserDTO(data)
+    await httpClient.patch(`/users/${userId}`, userUpdateDTO);
   }
 }

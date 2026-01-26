@@ -43,4 +43,17 @@ describe("UsersService", () => {
     expect(data.items).toHaveLength(4);
     expect(data.total).toBe(4);
   });
+
+  it("should call update user successfully", async () => {
+    const mockUserId = "6939872c7f7a423bcb83fe0b"
+    await UsersService.update(
+      mockUserId,
+      {
+        username: "alex doe"
+      }
+    )
+
+    const user = await UsersService.getUser("alex")
+    expect(user.username).toBe("alex doe")
+  })
 });
