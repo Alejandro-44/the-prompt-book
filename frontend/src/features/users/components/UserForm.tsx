@@ -10,14 +10,21 @@ import type { PrivateUser } from "@/services";
 type UseFormProps = {
   user: PrivateUser;
   handleSubmit: (data: UserFormValues) => void;
+  onDelete: () => void;
   isPending: boolean;
   error: Error | null;
-}
+};
 
-export function UserForm({ user, handleSubmit, isPending, error }: UseFormProps) {
+export function UserForm({
+  user,
+  handleSubmit,
+  onDelete,
+  isPending,
+  error,
+}: UseFormProps) {
   const methods = useForm<UserFormValues>({
     resolver: zodResolver(userSchema),
-    defaultValues: user!
+    defaultValues: user!,
   });
   const onSubmit = methods.handleSubmit((data: UserFormValues) => {
     handleSubmit(data);
@@ -34,7 +41,12 @@ export function UserForm({ user, handleSubmit, isPending, error }: UseFormProps)
           placeholder="youremail@example.com"
         />
         <div className="flex justify-end space-x-2">
-          <Button variant="destructive" type="button" disabled={isPending}>
+          <Button
+            variant="destructive"
+            type="button"
+            disabled={isPending}
+            onClick={onDelete}
+          >
             {isPending ? "Loading..." : "Delete"}
           </Button>
           <Button type="submit" disabled={isPending}>
