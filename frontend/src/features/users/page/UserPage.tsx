@@ -7,6 +7,7 @@ import { PromptsGridSkeleton } from "@/features/prompts/components/PromptsGridSk
 import { UserCardSkeleton } from "../components/UserCardSkeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { usePrompts } from "@/features/prompts/hooks";
+import { useRedirectOn } from "@/features/auth/hooks";
 
 type UserPageProps = {
   mode: "me" | "public";
@@ -14,7 +15,8 @@ type UserPageProps = {
 
 export function UserPage({ mode }: UserPageProps) {
   const { userHandle } = useParams();
-  const { user, isLoading: isUserLoading } = useUser({ mode, userHandle });
+  const { user, isLoading: isUserLoading, error } = useUser({ mode, userHandle });
+  useRedirectOn({ when: error?.status === 404, to: "/404" });
   const {
     prompts,
     isLoading: isPromptsLoading,
@@ -36,7 +38,7 @@ export function UserPage({ mode }: UserPageProps) {
       {user && <UserCard user={user} mode={mode} />}
       <section>
         {isPromptsLoading && <PromptsGridSkeleton />}
-        {prompts && (
+        {prompts && user && (
           <Tabs defaultValue="prompts" className="w-full">
             <TabsList variant="line">
               <TabsTrigger value="prompts">Prompts</TabsTrigger>
