@@ -3,17 +3,15 @@ import { UserMenu } from "./UserMenu";
 import { Button } from "./ui/button";
 import { Plus, Search, X } from "lucide-react";
 import { useState } from "react";
-import { useAuth } from "@/features/auth/hooks";
 import SearchForm from "@/features/explore/components/SearchForm";
 import { ThemeToggle } from "./ThemeToggle";
 
 export const Header = () => {
-  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const onSeacrh = (value: string) => {
     navigate(`/explore?search=${value}`);
-  }
+  };
   const openSearch = () => {
     setIsSearchOpen(true);
   };
@@ -23,8 +21,11 @@ export const Header = () => {
   return (
     <header className="sticky top-0 left-0 flex justify-center px-4 border-b mx-auto bg-background z-20">
       <div className="container flex h-16 items-center justify-between gap-4">
-        <Link to="/">
-          <span className="font-bold text-xl">ThePromptBook</span>
+        <Link className="flex align-center gap-x-2" to="/">
+          <div className="flex size-8 items-center justify-center rounded-lg bg-primary">
+            <span className="text-lg font-bold text-primary-foreground">P</span>
+          </div>
+          <span className="font-bold text-xl hidden md:inline">ThePromptBook</span>
         </Link>
 
         {isSearchOpen && (
@@ -40,7 +41,7 @@ export const Header = () => {
           <SearchForm onSearch={onSeacrh} />
         </div>
 
-        <div className="flex items-center gap-2 md:gap-6">
+        <menu className="flex items-center gap-2 md:gap-6">
           <Button
             className="md:hidden cursor-pointer"
             variant="ghost"
@@ -48,20 +49,18 @@ export const Header = () => {
           >
             <Search className="h-5 w-5" />
           </Button>
-          {isAuthenticated && (
-            <Button
-              onClick={() => navigate("/prompts/new")}
-              variant="outline"
-              size="sm"
-              className="gap-2 cursor-pointer"
-            >
-              <Plus className="h-4 w-4" />
-              <span className="hidden sm:inline">Share</span>
-            </Button>
-          )}
+          <Button
+            onClick={() => navigate("/prompts/new")}
+            variant="outline"
+            size="sm"
+            className="gap-2 cursor-pointer"
+          >
+            <Plus className="size-4" />
+            <span className="hidden md:inline">Share</span>
+          </Button>
           <ThemeToggle />
           <UserMenu />
-        </div>
+        </menu>
       </div>
     </header>
   );

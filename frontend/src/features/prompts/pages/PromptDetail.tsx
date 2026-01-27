@@ -6,7 +6,7 @@ export function PromptDetail() {
   const { promptId } = useParams();
 
   return (
-    <div className="container max-w-4xl grid gap-2">
+    <div className="grid max-w-4xl mx-auto gap-2">
       <PromptCardDetail promptId={promptId || ""} />
       <PromptComments promptId={promptId || ""}/>
     </div>

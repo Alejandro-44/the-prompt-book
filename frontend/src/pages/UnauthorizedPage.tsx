@@ -9,12 +9,23 @@ export function UnauthorizedPage() {
       <p className="text-base mb-4">
         You do not have permission to access this page.
       </p>
-      <button
-        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        onClick={() => navigate("/login")}
-      >
-        Login
-      </button>
+      <p className="text-base mb-4">
+        Login with your account to continue or create a new account if you don't have one.
+      </p>
+      <div className="grid gap-y-4">
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          onClick={() => navigate("/login")}
+        >
+          Login
+        </button>
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          onClick={() => navigate("/register")}
+        >
+          Register
+        </button>
+      </div>
     </div>
   );
 }
