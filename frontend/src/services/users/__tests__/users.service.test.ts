@@ -1,11 +1,12 @@
 import { UsersService } from "../users.service";
 
 describe("UsersService", () => {
-  it("should get the current logged user", async () => {
+  it("should get the current logged user with private schema", async () => {
     const data = await UsersService.getMe();
     expect(data).toEqual({
       id: "6939872c7f7a423bcb83fe0b",
       username: "alex",
+      email: "alex@example.com",
       handle: "alex",
       isActive: true,
     });
