@@ -132,3 +132,51 @@ async def test_delete_returns_false_if_not_owner(
     )
 
     assert deleted is False
+
+
+async def test_update_author_data_updates_comments_author_info(
+    comments_repo, seed_comments, user_ids
+):
+    author_id = user_ids["johndoe"]
+
+    updated = await comments_repo.update_author_data(
+        author_id, new_name="Updated Name", new_handle="updated_handle"
+    )
+
+    assert updated is True
+
+    comments = await comments_repo._CommentsRepository__collection.find({"author_id": author_id}).to_list()
+
+    for comment in comments:
+        assert comment["author_name"] == "Updated Name"
+        assert comment["author_handle"] == "updated_handle"
+
+
+async def test_update_author_data_updates_only_name_if_handle_none(
+    comments_repo, seed_comments, user_ids
+):
+    author_id = user_ids["johndoe"]
+
+    updated = await comments_repo.update_author_data(
+        author_id, new_name="Updated Name", new_handle=None
+    )
+
+    assert updated is True
+
+    comments = await comments_repo._CommentsRepository__collection.find({"author_id": author_id}).to_list()
+
+    for comment in comments:
+        assert comment["author_name"] == "Updated Name"
+        assert comment["author_handle"] == "john_doe"
+
+
+async def test_update_author_data_returns_false_if_no_comments(
+    comments_repo
+):
+    non_existent_author_id = ObjectId()
+
+    updated = await comments_repo.update_author_data(
+        non_existent_author_id, new_name="Updated Name", new_handle="updated_handle"
+    )
+
+    assert updated is False

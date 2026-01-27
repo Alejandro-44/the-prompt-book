@@ -230,3 +230,51 @@ async def test_increment_likes_decreases_likes_count(
     )
     assert saved["likes_count"] == initial_likes - 1
 
+
+async def test_update_author_data_updates_prompts_author_info(
+    prompts_repo, seed_prompts, user_ids
+):
+    author_id = user_ids["alex"]
+
+    updated = await prompts_repo.update_author_data(
+        author_id, new_name="Updated Name", new_handle="updated_handle"
+    )
+
+    assert updated is True
+
+    prompts = await prompts_repo._PromptsRepository__collection.find({"author_id": author_id}).to_list()
+
+    for prompt in prompts:
+        assert prompt["author_name"] == "Updated Name"
+        assert prompt["author_handle"] == "updated_handle"
+
+
+async def test_update_author_data_updates_only_name_if_handle_none(
+    prompts_repo, seed_prompts, user_ids
+):
+    author_id = user_ids["alex"]
+
+    updated = await prompts_repo.update_author_data(
+        author_id, new_name="Updated Name", new_handle=None
+    )
+
+    assert updated is True
+
+    prompts = await prompts_repo._PromptsRepository__collection.find({"author_id": author_id}).to_list()
+
+    for prompt in prompts:
+        assert prompt["author_name"] == "Updated Name"
+        assert prompt["author_handle"] == "alex"
+
+
+async def test_update_author_data_returns_false_if_no_prompts(
+    prompts_repo
+):
+    non_existent_author_id = ObjectId()
+
+    updated = await prompts_repo.update_author_data(
+        non_existent_author_id, new_name="Updated Name", new_handle="updated_handle"
+    )
+
+    assert updated is False
+

@@ -61,3 +61,16 @@ class CommentsService:
         if not deleted:
             raise CommentNotFoundError()
         return deleted
+    
+    async def update_author_data(self, author_id: ObjectId, new_name: str=None, new_handle: str=None):
+        updated = False
+        try:
+            updated = await self._comments_repo.update_author_data(
+                author_id,
+                new_name,
+                new_handle
+            )
+        except Exception as exc:
+            raise DatabaseError() from exc
+
+        return updated

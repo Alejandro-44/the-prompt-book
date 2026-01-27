@@ -11,6 +11,7 @@ type UseFormProps = {
   user: PrivateUser;
   handleSubmit: (data: UserFormValues) => void;
   onDelete: () => void;
+  onCancel: () => void;
   isPending: boolean;
   error: Error | null;
 };
@@ -19,6 +20,7 @@ export function UserForm({
   user,
   handleSubmit,
   onDelete,
+  onCancel,
   isPending,
   error,
 }: UseFormProps) {
@@ -41,6 +43,13 @@ export function UserForm({
           placeholder="youremail@example.com"
         />
         <div className="flex justify-end space-x-2">
+          <Button
+            variant="outline"
+            type="button"
+            onClick={onCancel}
+          >
+            Cancel
+          </Button>
           <Button
             variant="destructive"
             type="button"

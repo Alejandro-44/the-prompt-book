@@ -38,13 +38,12 @@ export function UserEditDialog() {
         <Button
           onClick={() => setOpen(true)}
           variant="outline"
-          className="absolute right-0 top-0"
+          className="absolute right-4 top-6"
         >
-          <PenLine className="size-4 mr-2" />
-          Edit profile
+          <PenLine className="size-4" /><span className="hidden sm:inline ml-2">Edit profile</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent showCloseButton={false} className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Edit profile</DialogTitle>
           <DialogDescription>
@@ -54,6 +53,7 @@ export function UserEditDialog() {
         <UserForm
           user={user!}
           handleSubmit={onUpdateUser}
+          onCancel={() => setOpen(false)}
           onDelete={onDeleteUser}
           isPending={isPending}
           error={error}

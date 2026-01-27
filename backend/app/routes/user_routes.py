@@ -45,7 +45,10 @@ async def get_my_prompts(
 
 @router.delete("/me", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_me(user: UserDependency, service: ServicesDependency):
-    await service.user.deactivate(ObjectId(user.id))
+    deactivated = await service.user.deactivate(ObjectId(user.id))
+    if deactivated:
+        await service.prompts.update_author_data(ObjectId(user.id), new_name="deleted user", new_handle="deleted")
+        await service.comments.update_author_data(ObjectId(user.id), new_name="deleted user", new_handle="deleted")
 
 
 @router.get("/{user_handle}", response_model=User)
@@ -96,7 +99,7 @@ async def get_user_prompts(
         )
 
 
-@router.patch("/{user_id}")
+@router.patch("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def update_user(
     user_id: str,
     user_data: UpdateUser,
@@ -104,7 +107,16 @@ async def update_user(
     services: ServicesDependency
 ):
     try:
-        await services.user.update(ObjectId(user_id), current_user, user_data)
+        updated = await services.user.update(ObjectId(user_id), current_user, user_data)
+        if updated:
+            await services.prompts.update_author_data(
+                ObjectId(user_id),
+                new_name=user_data.username,
+            )
+            await services.comments.update_author_data(
+                ObjectId(user_id),
+                new_name=user_data.username,
+            )
     except InvalidId:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

@@ -11,7 +11,7 @@ from app.utils import extract_hashtags
 
 class PromptsService:
     def __init__(self, prompts_repo: PromptsRepository, likes_repo: LikesRepository):
-        self.__prompts_repo = prompts_repo
+        self._prompts_repo = prompts_repo
         self.__likes_repo = likes_repo
 
     async def _validate_prompt_ownership(
@@ -33,7 +33,7 @@ class PromptsService:
             liked_ids = list(await self.__likes_repo.get_prompt_ids_by_user(filters.get("liked_by")))
             filters["liked_ids"] = liked_ids
 
-        items, total = await self.__prompts_repo.get_summary(
+        items, total = await self._prompts_repo.get_summary(
             filters,
             skip,
             limit
@@ -48,7 +48,7 @@ class PromptsService:
         }
     
     async def get_one(self, prompt_id: ObjectId, user: User | None = None) -> Prompt:
-        prompt_document = await self.__prompts_repo.get_one(prompt_id)
+        prompt_document = await self._prompts_repo.get_one(prompt_id)
 
         if not prompt_document:
             raise PromptNotFoundError()
@@ -77,7 +77,7 @@ class PromptsService:
         })
 
         try:
-            inserted_id = await self.__prompts_repo.create(prompt_data)
+            inserted_id = await self._prompts_repo.create(prompt_data)
         except Exception as exc:
             raise DatabaseError() from exc
 
@@ -91,7 +91,7 @@ class PromptsService:
             new_data["hashtags"] = extract_hashtags(new_data["description"])
 
         try:            
-            await self.__prompts_repo.update(prompt_id, new_data)    
+            await self._prompts_repo.update(prompt_id, new_data)    
         except Exception as exc:
             raise DatabaseError() from exc
         
@@ -101,8 +101,21 @@ class PromptsService:
         await self._validate_prompt_ownership(prompt_id, user_id)
 
         try:
-            await self.__prompts_repo.delete(prompt_id)
+            await self._prompts_repo.delete(prompt_id)
         except Exception as exc:
             raise DatabaseError() from exc
 
         return True
+
+    async def update_author_data(self, author_id: ObjectId, new_name: str=None, new_handle: str=None):
+        updated = False
+        try:
+            updated = await self._prompts_repo.update_author_data(
+                author_id,
+                new_name,
+                new_handle
+            )
+        except Exception as exc:
+            raise DatabaseError() from exc
+
+        return updated
