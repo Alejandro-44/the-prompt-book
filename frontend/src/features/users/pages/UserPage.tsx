@@ -2,12 +2,14 @@ import { AppPagination } from "@/components/AppPagination";
 import { UserCard } from "../components/UserCard";
 import { useUser, useUserPrompts } from "../hooks";
 import { PromptsGrid } from "@/features/prompts/components/PromptsGrid";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { PromptsGridSkeleton } from "@/features/prompts/components/PromptsGridSkeleton";
 import { UserCardSkeleton } from "../components/UserCardSkeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { usePrompts } from "@/features/prompts/hooks";
 import { useRedirectOn } from "@/features/auth/hooks";
+import { Button } from "@/components/ui/button";
+import { HeartCrack, PenLine, Sparkles } from "lucide-react";
 
 type UserPageProps = {
   mode: "me" | "public";
@@ -15,8 +17,13 @@ type UserPageProps = {
 
 export function UserPage({ mode }: UserPageProps) {
   const { userHandle } = useParams();
-  const { user, isLoading: isUserLoading, error } = useUser({ mode, userHandle });
+  const {
+    user,
+    isLoading: isUserLoading,
+    error,
+  } = useUser({ mode, userHandle });
   useRedirectOn({ when: error?.status === 404, to: "/404" });
+  const navigate = useNavigate();
   const {
     prompts,
     isLoading: isPromptsLoading,
@@ -29,7 +36,7 @@ export function UserPage({ mode }: UserPageProps) {
     prompts: likedPrompts,
     page: likesPage,
     pages: likesPages,
-    setPage: setLikesPages
+    setPage: setLikesPages,
   } = usePrompts({ liked_by: user?.id });
 
   return (
@@ -45,21 +52,62 @@ export function UserPage({ mode }: UserPageProps) {
               {mode == "me" && <TabsTrigger value="likes">Likes</TabsTrigger>}
             </TabsList>
             <TabsContent value="prompts">
-              <PromptsGrid prompts={prompts} editable={mode === "me"} />
-              <AppPagination
-                page={page!}
-                totalPages={pages!}
-                onPageChange={setPage}
-              />
+              {prompts.length === 0 && (
+                <div className="py-16 text-center animate-fade-in">
+                  <div className="mx-auto size-20 rounded-full bg-primary/10 flex items-center justify-center mb-6">
+                    <Sparkles className="size-10 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2">
+                    Share your first prompt!
+                  </h3>
+                  <p className="text-muted-foreground max-w-sm mx-auto mb-6">
+                    You haven't posted any prompts yet. Share your best prompts
+                    with the community and help others get the most out of AI.
+                  </p>
+                  <Button
+                    className="cursor-pointer gap-2"
+                    onClick={() => navigate("/prompts/new")}
+                  >
+                    <PenLine className="size-4" />
+                    Create my first prompt
+                  </Button>
+                </div>
+              )}
+              {prompts.length > 0 && (
+                <>
+                  <PromptsGrid prompts={prompts} editable={mode === "me"} />
+                  <AppPagination
+                    page={page!}
+                    totalPages={pages!}
+                    onPageChange={setPage}
+                  />
+                </>
+              )}
             </TabsContent>
-            {mode == "me" && <TabsContent value="likes">
-              <PromptsGrid prompts={likedPrompts} />
-              <AppPagination
-                page={likesPage!}
-                totalPages={likesPages!}
-                onPageChange={setLikesPages}
-              />
-            </TabsContent>}
+            {mode == "me" && (
+              <TabsContent value="likes">
+                {likedPrompts.length === 0 && (
+                  <div className="py-16 text-center animate-fade-in">
+                    <div className="mx-auto size-20 rounded-full bg-primary/10 flex items-center justify-center mb-6">
+                      <HeartCrack className="size-10 text-primary" />
+                    </div>
+                    <h3 className="text-xl font-semibold mb-2">
+                      You haven't given any likes yet
+                    </h3>
+                  </div>
+                )}
+                {likedPrompts.length > 0 && (
+                  <>
+                    <PromptsGrid prompts={likedPrompts} />
+                    <AppPagination
+                      page={likesPage!}
+                      totalPages={likesPages!}
+                      onPageChange={setLikesPages}
+                    />
+                  </>
+                )}
+              </TabsContent>
+            )}
           </Tabs>
         )}
       </section>

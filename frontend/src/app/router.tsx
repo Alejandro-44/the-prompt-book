@@ -2,7 +2,7 @@ import { createBrowserRouter } from "react-router";
 import { RegisterPage } from "@/features/auth/pages/RegisterPage";
 import { LoginPage } from "@/features/auth/pages/LoginPage";
 import { Layout } from "@/components/Layout";
-import { UserPage } from "@/features/users/page/UserPage";
+import { UserPage } from "@/features/users/pages/UserPage";
 import { HomePage } from "@/features/home/pages/HomePage";
 import { PromptDetail } from "@/features/prompts/pages/PromptDetail";
 import { ProtectedRoute } from "@/features/auth/components/ProtectedRoute";
