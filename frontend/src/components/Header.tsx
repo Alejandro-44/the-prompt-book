@@ -20,8 +20,8 @@ export const Header = () => {
   };
   return (
     <header className="sticky top-0 left-0 flex justify-center px-4 border-b mx-auto bg-background z-20">
-      <div className="container flex h-16 items-center justify-between gap-4">
-        <Link className="flex align-center gap-x-2" to="/">
+      <div className="container grid grid-cols-2 md:grid-cols-[1fr_1.5fr_1fr] h-16 items-center">
+        <Link className= "flex align-baseline gap-x-2" to="/">
           <div className="flex size-8 items-center justify-center rounded-lg bg-primary">
             <span className="text-lg font-bold text-primary-foreground">P</span>
           </div>
@@ -37,11 +37,11 @@ export const Header = () => {
           </div>
         )}
 
-        <div className="hidden md:flex flex-1 items-center justify-center max-w-md">
+        <div className="hidden md:flex items-center justify-center w-full">
           <SearchForm onSearch={onSeacrh} />
         </div>
 
-        <menu className="flex items-center gap-2 md:gap-6">
+        <menu className="justify-self-end flex items-center gap-2">
           <Button
             className="md:hidden cursor-pointer"
             variant="ghost"

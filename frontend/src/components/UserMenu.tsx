@@ -36,10 +36,10 @@ export function UserMenu() {
   if (!user) {
     return (
       <div className="flex gap-1">
-        <Button onClick={handleSignIn} variant="ghost" className="border-2 border-foreground sm:border-none cursor-pointer">
+        <Button onClick={handleSignIn} variant="ghost" className="border-2 border-foreground lg:border-none cursor-pointer">
           Sign In
         </Button>
-        <Button onClick={handleSignUp} variant="ghost" className="hidden sm:flex border-2 border-foreground cursor-pointer">
+        <Button onClick={handleSignUp} variant="ghost" className="hidden lg:flex border-2 border-foreground cursor-pointer">
           Sign Up
         </Button>
       </div>
