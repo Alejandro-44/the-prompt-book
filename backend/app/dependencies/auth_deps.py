@@ -59,7 +59,7 @@ async def get_current_user(
         user = await services.user.get_one({ 
             "id": ObjectId(user_id),
             "is_active": True 
-        })
+        }, private=True)
     except UserNotFoundError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

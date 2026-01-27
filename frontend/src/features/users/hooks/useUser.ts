@@ -1,6 +1,7 @@
-import { UsersService } from "@/services";
+import { UsersService, type User } from "@/services";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/features/auth/hooks";
+import type { ApiError } from "@/services/api/api.types";
 
 type UseUserParams = {
   mode: "me" | "public";
@@ -14,10 +15,11 @@ export function useUser({ mode, userHandle }: UseUserParams) {
     data: publicUser,
     isLoading: publicLoading,
     error: publicError,
-  } = useQuery({
+  } = useQuery<User, ApiError>({
     queryKey: ["user", userHandle],
     queryFn: () => UsersService.getUser(userHandle!),
     enabled: mode === "public" && !!userHandle,
+    retry: false,
   });
 
   const isLoading = mode === "me" ? authLoading : publicLoading;

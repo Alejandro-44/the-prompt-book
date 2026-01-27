@@ -8,6 +8,7 @@ import type {
   UpdatePasswordDTO,
   User,
   Token,
+  PrivateUser,
 } from "@/services";
 import { useUserStore } from "@/features/users/contexts";
 
@@ -16,7 +17,7 @@ export const authKeys = {
 };
 
 export function useMe() {
-  return useQuery<User>({
+  return useQuery<PrivateUser>({
     queryKey: authKeys.me,
     queryFn: () => UsersService.getMe(),
     staleTime: Infinity,

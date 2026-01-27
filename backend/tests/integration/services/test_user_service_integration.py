@@ -2,8 +2,8 @@ import pytest
 
 from bson import ObjectId
 
-from app.schemas.user_schema import UserCreate
-from app.core.exceptions import UserAlreadyExistsError, UserNotFoundError, DatabaseError
+from app.schemas.user_schema import UserCreate, User, UpdateUser
+from app.core.exceptions import UserAlreadyExistsError, UserNotFoundError, DatabaseError, UnauthorizedError
 
 
 pytestmark = [pytest.mark.integration, pytest.mark.asyncio]
@@ -48,14 +48,13 @@ async def test_get_one_by_id_returns_user_sucessfully(services, seed_users, user
     assert user.is_active is True
 
 
-async def test_get_one_by_id_returns_deleted_user_if_inactive(services, seed_users, user_ids):
-    user_id = user_ids["invalid"]
-
-    result = await services.user.get_one({ "id": user_id })
-
-    assert result.username == "deleted user"
-    assert result.handle == "deleted"
-    assert result.is_active is False
+async def test_get_one_by_id_and_private_returns_private_user_sucessfully(services, seed_users, user_ids):
+    user_id = user_ids["johndoe"]
+    user = await services.user.get_one({ "id": user_id }, private=True)
+    assert user.username == "john doe"
+    assert user.handle == "john_doe"
+    assert user.email == "johndoe@example.com"
+    assert user.is_active is True
 
 
 async def test_get_one_by_handle_returns_user_sucessfully(services, seed_users, user_handles):
@@ -75,3 +74,37 @@ async def test_deactivate_user_successfully(services, seed_users, user_ids):
 async def test_deactivate_nonexistent_user_raises(services):
     with pytest.raises(DatabaseError):
         await services.user.deactivate(ObjectId())
+
+
+async def test_update_user_successfully(services, seed_users, user_ids):
+    user_id = user_ids["johndoe"]
+    user = await services.user.get_one({ "id": user_id })
+
+    update_data = UpdateUser(username="Updated John", email="updatedjohn@example.com")
+
+    await services.user.update(user_id, user, update_data)
+
+    updated_user = await services.user.get_one({ "id": user_id })
+    assert updated_user.username == "Updated John"
+    assert updated_user.handle == "john_doe"  # handle shouldn't change
+    assert updated_user.is_active is True
+
+
+async def test_update_user_unauthorized(services, seed_users, user_ids):
+    user_id = user_ids["johndoe"]
+    wrong_user_id = user_ids["matt"]
+    user = await services.user.get_one({ "id": user_id })
+
+    update_data = UpdateUser(username="Hacked")
+
+    with pytest.raises(UnauthorizedError):
+        await services.user.update(wrong_user_id, user, update_data)
+
+
+async def test_update_nonexistent_user_raises(services):
+    fake_user_id = ObjectId()
+    fake_user = User(id=str(fake_user_id), username="fake", handle="fake", is_active=True)
+    update_data = UpdateUser(username="Updated")
+
+    with pytest.raises(DatabaseError):
+        await services.user.update(fake_user_id, fake_user, update_data)

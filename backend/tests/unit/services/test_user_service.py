@@ -4,8 +4,8 @@ from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 
 from app.services.user_service import UserService
-from app.core.exceptions import UserNotFoundError, UserAlreadyExistsError, DatabaseError
-from app.schemas.user_schema import UserCreate
+from app.core.exceptions import UserNotFoundError, UserAlreadyExistsError, DatabaseError, UnauthorizedError
+from app.schemas.user_schema import UserCreate, User, PrivateUser, UpdateUser
 
 
 pytestmark = [pytest.mark.unit, pytest.mark.asyncio]
@@ -31,17 +31,6 @@ def mock_user():
     }
 
 
-@pytest.fixture
-def mock_deleted_user():
-    return {
-        "_id": ObjectId(MOCK_USER_ID),
-        "username": "test",
-        "email": "test@example.com",
-        "handle": "test_123",
-        "is_active": False
-    }
-
-
 async def test_get_one_with_id_returns_user(service, mock_repo, mock_user):
     mock_repo.get_one.return_value = mock_user
 
@@ -51,8 +40,22 @@ async def test_get_one_with_id_returns_user(service, mock_repo, mock_user):
 
     user = await service.get_one(filters)
     mock_repo.get_one.assert_awaited_once_with(filters)
-
+    User.model_validate(user)
     assert user.username == "John"
+
+
+async def test_get_one_private_returns_private_user(service, mock_repo, mock_user):
+    mock_repo.get_one.return_value = mock_user
+
+    filters = {
+        "id": MOCK_USER_ID
+    }
+
+    user = await service.get_one(filters, private=True)
+    mock_repo.get_one.assert_awaited_once_with(filters)
+    PrivateUser.model_validate(user)
+    assert user.username == "John"
+    assert user.email == "john@example.com"
 
 
 async def test_get_one_by_id_raises_not_found_when_user_does_not_exist(
@@ -63,15 +66,6 @@ async def test_get_one_by_id_raises_not_found_when_user_does_not_exist(
 
     with pytest.raises(UserNotFoundError):
         await service.get_one({ "id": ObjectId(MOCK_RANDOM_ID)})
-
-
-async def test_get_one_by_id_returns_deleted_user(service, mock_repo, mock_deleted_user):
-    mock_repo.get_one.return_value = mock_deleted_user
-
-    user = await service.get_one({ "id": ObjectId(MOCK_RANDOM_ID)})
-
-    assert user.username == "deleted user"
-    assert user.is_active is False
 
 
 async def test_register_user_success(service, mock_repo, mocker):
@@ -203,3 +197,35 @@ async def test_deactivate_user_fails(service, mock_repo):
 
     with pytest.raises(DatabaseError):
         await service.deactivate(ObjectId(MOCK_USER_ID))
+
+
+async def test_update_user_success(service, mock_repo, mock_user):
+    mock_repo.update.return_value = True
+
+    user_id = ObjectId(MOCK_USER_ID)
+    user = User.from_document(mock_user)
+    data = UpdateUser(username="UpdatedName", email="updated@example.com")
+
+    await service.update(user_id, user, data)
+
+    mock_repo.update.assert_awaited_once_with(user_id, data.model_dump())
+
+
+async def test_update_user_unauthorized(service, mock_repo, mock_user):
+    user_id = ObjectId(MOCK_RANDOM_ID)
+    user = User.from_document(mock_user)
+    data = UpdateUser(username="UpdatedName")
+
+    with pytest.raises(UnauthorizedError):
+        await service.update(user_id, user, data)
+
+
+async def test_update_user_database_error(service, mock_repo, mock_user):
+    mock_repo.update.return_value = False
+
+    user_id = ObjectId(MOCK_USER_ID)
+    user = User.from_document(mock_user)
+    data = UpdateUser(username="UpdatedName")
+
+    with pytest.raises(DatabaseError):
+        await service.update(user_id, user, data)

@@ -1,13 +1,16 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import type { User } from "@/services";
+import { UserEditDialog } from "./UserEditDialog";
+
 
 type UserCardProps = {
   user: User;
+  mode?: "me" | "public";
 };
 
-export function UserCard({ user }: UserCardProps) {
+export function UserCard({ user, mode = "public" }: UserCardProps) {
   return (
-    <article className="border-b px-4 py-6">
+    <article className="relative border-b px-4 py-6">
       <div className="flex items-start gap-4">
         <Avatar className="size-20">
           <AvatarFallback className="text-2xl">
@@ -24,6 +27,8 @@ export function UserCard({ user }: UserCardProps) {
           </div>
         </div>
       </div>
+
+      { mode == "me" && <UserEditDialog />}
     </article>
   );
 }

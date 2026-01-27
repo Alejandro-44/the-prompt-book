@@ -3,13 +3,14 @@ from datetime import datetime, timezone
 from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 
-from app.schemas.user_schema import UserCreate, User
+from app.schemas.user_schema import UserCreate, User, PrivateUser, UpdateUser
 from app.core.security import hash_password
 from app.repositories.user_repository import UserRepository
 from app.core.exceptions import (
     UserNotFoundError,
     UserAlreadyExistsError,
     DatabaseError,
+    UnauthorizedError
 )
 from app.utils import generate_handle
 
@@ -19,19 +20,16 @@ class UserService:
     def __init__(self, user_repo: UserRepository):
         self._user_repo = user_repo
     
-    async def get_one(self, filters: dict) -> User:
+    async def get_one(self, filters: dict, private: bool = False) -> User | PrivateUser:
         user_document = await self._user_repo.get_one(filters)
         if not user_document:
             raise UserNotFoundError
         
-        user = User.from_document(user_document)
-        if not user.is_active:
-            return User(
-                id=user.id,
-                username="deleted user",
-                handle="deleted",
-                is_active=False
-            )
+        user = None
+        if private:
+            user = PrivateUser.from_document(user_document)
+        else:
+            user = User.from_document(user_document)
         
         return user
     
@@ -78,8 +76,16 @@ class UserService:
                 continue
             except Exception as exc:
                 raise DatabaseError() from exc
-        
-    
+
+    async def update(self, user_id: ObjectId, user: User, data: UpdateUser):
+        if str(user_id) != user.id:
+            raise UnauthorizedError()
+
+        updated = await self._user_repo.update(user_id, data.model_dump())
+        if not updated:
+            raise DatabaseError("Failed to update user")
+        return updated
+
     async def deactivate(self, user_id: ObjectId) -> bool:
         deactivated = await self._user_repo.update(user_id, { "is_active": False })
         if not deactivated:

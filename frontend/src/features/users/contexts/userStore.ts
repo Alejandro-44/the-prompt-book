@@ -1,12 +1,12 @@
 import { create } from "zustand"
 
-import type { User } from "@/services";
+import type { PrivateUser } from "@/services";
 
 type UserState = {
-  user: User | null;
+  user: PrivateUser | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  setUser: (user: User) => void;
+  setUser: (user: PrivateUser) => void;
   clearUser: () => void;
   setLoading: (loading: boolean) => void;
 };

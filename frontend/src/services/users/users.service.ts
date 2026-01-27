@@ -1,15 +1,15 @@
 import { httpClient } from "../api/httpClient";
-import type { UserDTO } from "./users.dto";
-import type { User } from "./users.model";
+import type { PrivateUserDTO, UserDTO } from "./users.dto";
+import type { PrivateUser, User, UserUpdate } from "./users.model";
 import { userMapper } from "./users.mapper";
 import type { GetPromptsParams, PaginatedPrompts } from "../prompts/prompts.model";
 import type { GetPromptsResponse } from "../prompts/prompts.dto";
 import { promptSummaryMapper } from "../prompts/prompts.mapper";
 
 export class UsersService {
-  static async getMe(): Promise<User> {
-    const data = await httpClient.get<UserDTO>("/users/me");
-    return userMapper.toUser(data);
+  static async getMe(): Promise<PrivateUser> {
+    const data = await httpClient.get<PrivateUserDTO>("/users/me");
+    return userMapper.toPrivateUser(data);
   }
 
   static async deleteMe(): Promise<void> {
@@ -43,5 +43,10 @@ export class UsersService {
       page: data.page,
       pages: data.pages
     }
+  }
+
+  static async update(userId: string, data: UserUpdate) {
+    const userUpdateDTO = userMapper.toUpdateUserDTO(data)
+    await httpClient.patch(`/users/${userId}`, userUpdateDTO);
   }
 }
