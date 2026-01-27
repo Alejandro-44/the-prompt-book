@@ -92,6 +92,7 @@ class UserService:
         updated = await self._user_repo.update(user_id, data.model_dump())
         if not updated:
             raise DatabaseError("Failed to update user")
+        return updated
 
     async def deactivate(self, user_id: ObjectId) -> bool:
         deactivated = await self._user_repo.update(user_id, { "is_active": False })

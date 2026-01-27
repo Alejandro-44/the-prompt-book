@@ -40,3 +40,18 @@ class CommentsRepository:
         result = await self.__collection.delete_one({ "_id": comment_id, "author_id": author_id })
         return result.deleted_count > 0
  
+    async def update_author_data(self, author_id: ObjectId, new_name: str=None, new_handle: str=None):
+        update_fields = {}
+        if new_name is not None:
+            update_fields["author_name"] = new_name
+        if new_handle is not None:
+            update_fields["author_handle"] = new_handle
+
+        updated = await self.__collection.update_many(
+            {"author_id": author_id},
+            {
+                "$set": update_fields
+            }
+        )
+
+        return updated.modified_count > 0
