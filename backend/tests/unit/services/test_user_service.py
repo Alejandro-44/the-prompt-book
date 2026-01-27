@@ -31,17 +31,6 @@ def mock_user():
     }
 
 
-@pytest.fixture
-def mock_deleted_user():
-    return {
-        "_id": ObjectId(MOCK_USER_ID),
-        "username": "test",
-        "email": "test@example.com",
-        "handle": "test_123",
-        "is_active": False
-    }
-
-
 async def test_get_one_with_id_returns_user(service, mock_repo, mock_user):
     mock_repo.get_one.return_value = mock_user
 
@@ -77,15 +66,6 @@ async def test_get_one_by_id_raises_not_found_when_user_does_not_exist(
 
     with pytest.raises(UserNotFoundError):
         await service.get_one({ "id": ObjectId(MOCK_RANDOM_ID)})
-
-
-async def test_get_one_by_id_returns_deleted_user(service, mock_repo, mock_deleted_user):
-    mock_repo.get_one.return_value = mock_deleted_user
-
-    user = await service.get_one({ "id": ObjectId(MOCK_RANDOM_ID)})
-
-    assert user.username == "deleted user"
-    assert user.is_active is False
 
 
 async def test_register_user_success(service, mock_repo, mocker):

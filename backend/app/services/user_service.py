@@ -31,14 +31,6 @@ class UserService:
         else:
             user = User.from_document(user_document)
         
-        if not user.is_active:
-            return User(
-                id=user.id,
-                username="deleted user",
-                handle="deleted",
-                is_active=False
-            )
-        
         return user
     
     async def _user_handle_exists(self, handle: str):

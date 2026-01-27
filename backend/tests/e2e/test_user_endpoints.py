@@ -101,7 +101,7 @@ async def test_get_user_with_handle_too_long_returns_422(e2e_client):
 async def test_trying_to_get_a_handle_that_does_not_exist_return_not_found(e2e_client, seed_data, user_ids):
     random_handle = "random_12345"
     response = await e2e_client.get(f"users/{random_handle}")
-    assert response.status_code == 400
+    assert response.status_code == 404
 
 
 async def test_deactivate_user(e2e_client, seed_data, user_handles):
@@ -113,10 +113,7 @@ async def test_deactivate_user(e2e_client, seed_data, user_handles):
     assert response.status_code == 204
 
     response = await e2e_client.get(f"users/{user_handle}")
-    data = response.json()
-
-    assert data["username"] == "deleted user"
-    assert data["is_active"] is False
+    assert response.status_code == 404
 
 
 async def test_update_user_successfully(e2e_client):
@@ -133,7 +130,7 @@ async def test_update_user_successfully(e2e_client):
 
     update_data = {"username": "UpdatedName", "email": "updated@example.com"}
     response = await e2e_client.patch(f"/users/{user_id}", json=update_data)
-    assert response.status_code == 200
+    assert response.status_code == 204
 
     response = await e2e_client.get("/users/me")
     updated_data = response.json()

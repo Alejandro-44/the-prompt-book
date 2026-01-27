@@ -56,11 +56,11 @@ async def get_user(
     user_handle: Annotated[str, Path(title="The handle of a user", max_length=30)],
     service: ServicesDependency):
     try:
-        return await service.user.get_one({ "handle": user_handle })
+        return await service.user.get_one({ "handle": user_handle, "is_active": True })
     except UserNotFoundError:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid user id"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
         )
 
 
