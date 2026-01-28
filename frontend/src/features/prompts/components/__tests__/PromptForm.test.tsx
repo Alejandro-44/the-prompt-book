@@ -32,6 +32,7 @@ describe("PromptForm", () => {
   describe("PromptForm creation mode", () => {
     afterEach(() => {
       cleanup();
+      vi.clearAllMocks();
     });
 
     it("renders without crashing", () => {
