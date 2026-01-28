@@ -8,8 +8,9 @@ class PromptBase(BaseModel):
     title: str
     description: str
     prompt: str
-    result_example: str
     model: str
+    result_example: str | None = None
+    media_url: str | None = None
 
 
 class PromptCreate(PromptBase):
@@ -33,8 +34,9 @@ class Prompt(PromptBase):
             title=document["title"],
             description=document["description"],
             prompt=document["prompt"],
-            result_example=document["result_example"],
             model=document["model"],
+            result_example=document.get("result_example"),
+            media_url=document.get("media_url"),
             hashtags=document.get("hashtags", []),
             pub_date=document["pub_date"],
             author_id=str(document["author_id"]),

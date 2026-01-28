@@ -5,8 +5,9 @@ export type PromptDTO = {
   title: string;
   description: string;
   prompt: string;
-  result_example: string;
   model: string;
+  result_example: string;
+  media_url: string;
   hashtags: string[];
   pub_date: string;
   likes_count: number;
@@ -32,8 +33,9 @@ export type PromptCreateDTO = {
   title: string;
   description: string;
   prompt: string;
-  result_example: string;
   model: string;
+  result_example?: string;
+  media_url?: string;
 };
 
 export type PromptUpdateDTO = Partial<PromptCreateDTO>;

@@ -18,10 +18,21 @@ const mockPrompt = {
   hashtags: ["marketing", "saas"],
 };
 
+const mockPromptWithMedia = {
+  id: "def-456",
+  title: "Generate an image",
+  description: "Create a beautiful image",
+  prompt: "Generate an image of a sunset",
+  mediaUrl: "https://example.com/image.png",
+  model: "gpt-4",
+  hashtags: ["image", "sunset"],
+};
+
 describe("PromptForm", () => {
   describe("PromptForm creation mode", () => {
     afterEach(() => {
       cleanup();
+      vi.clearAllMocks();
     });
 
     it("renders without crashing", () => {
@@ -30,7 +41,7 @@ describe("PromptForm", () => {
       expect(screen.getByLabelText(/title/i)).toBeDefined();
       expect(screen.getByLabelText(/prompt/i)).toBeDefined();
       expect(screen.getByLabelText(/description/i)).toBeDefined();
-      expect(screen.getByLabelText(/result/i)).toBeDefined();
+      expect(screen.getByLabelText(/text output/i)).toBeDefined();
       expect(screen.getByLabelText(/model/i)).toBeDefined();
       expect(screen.getByRole("button", { name: /share/i })).toBeDefined();
       expect(screen.getByRole("button", { name: /cancel/i })).toBeDefined();
@@ -47,7 +58,7 @@ describe("PromptForm", () => {
       );
       await user.type(screen.getByLabelText(/prompt/i), mockPrompt.prompt);
       await user.type(
-        screen.getByLabelText(/result/i),
+        screen.getByLabelText(/text output/i),
         mockPrompt.resultExample
       );
 
@@ -58,6 +69,40 @@ describe("PromptForm", () => {
       fireEvent.change(hiddenSelect, {
         target: { value: "gpt-4" },
       });
+
+      await user.click(screen.getByRole("button", { name: /share/i }));
+
+      await waitFor(() => {
+        expect(mockOnSubmit).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    it("call onSubmit function when it send a prompt with media URL", async () => {
+      renderWithProviders(<PromptForm mode="create" onSubmit={mockOnSubmit} />);
+      const user = userEvent.setup();
+
+      await user.type(screen.getByLabelText(/title/i), mockPromptWithMedia.title);
+      await user.type(
+        screen.getByLabelText(/description/i),
+        mockPromptWithMedia.description
+      );
+      await user.type(screen.getByLabelText(/prompt/i), mockPromptWithMedia.prompt);
+
+      const hiddenSelect = document.querySelector(
+        'select[aria-hidden="true"]'
+      ) as HTMLSelectElement;
+
+      fireEvent.change(hiddenSelect, {
+        target: { value: "gpt-4" },
+      });
+
+      const mediaTab = screen.getByTestId("media-result-tab");
+      await user.click(mediaTab);
+      
+      await user.type(
+        screen.getByLabelText(/image\/video url/i),
+        mockPromptWithMedia.mediaUrl
+      );
 
       await user.click(screen.getByRole("button", { name: /share/i }));
 
@@ -83,7 +128,7 @@ describe("PromptForm", () => {
       );
       expect(errors[3].textContent).toBe("Select a model");
       expect(errors[4].textContent).toBe(
-        "Result example must be at least 10 characters"
+        "You must provide a result example or a media URL"
       );
     });
 
@@ -106,6 +151,10 @@ describe("PromptForm", () => {
   });
 
   describe("PromptForm edit mode", () => {
+    afterEach(() => {
+      cleanup();
+      vi.clearAllMocks();
+    });
     it("renders without crashing", () => {
       renderWithProviders(<PromptForm mode="edit" onSubmit={mockOnSubmit} />);
 
@@ -134,6 +183,26 @@ describe("PromptForm", () => {
       expect(screen.getByDisplayValue(mockPrompt.prompt)).toBeDefined();
       expect(screen.getByDisplayValue(mockPrompt.resultExample)).toBeDefined();
       expect(screen.getByDisplayValue(new RegExp(mockPrompt.model, "i")));
+    });
+
+    it("render all default values successfully when it has media", async () => {
+      const user = userEvent.setup();
+      renderWithProviders(
+        <PromptForm
+          mode="edit"
+          onSubmit={vi.fn()}
+          isLoading={false}
+          defaultValues={mockPromptWithMedia}
+        />
+      );
+      expect(screen.getByDisplayValue(mockPromptWithMedia.title)).toBeDefined();
+      expect(screen.getByDisplayValue(mockPromptWithMedia.prompt)).toBeDefined();
+      expect(screen.getByDisplayValue(new RegExp(mockPromptWithMedia.model, "i")));
+
+      const mediaTab = screen.getByTestId("media-result-tab");
+      await user.click(mediaTab);
+
+      expect(screen.getByDisplayValue(mockPromptWithMedia.title)).toBeDefined();
     });
 
     it("disable action buttons when isLoading paramther is false", async () => {

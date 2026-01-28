@@ -13,6 +13,7 @@ const mockPrompts = [
     pubDate: new Date("2024-02-23T12:05:00"),
     authorName: "creative_io",
     authorHandle: "creative_io",
+    likesCount: 42,
   },
   {
     id: "69398c1d5393462cecf974c8",
@@ -24,6 +25,7 @@ const mockPrompts = [
     pubDate: new Date("2024-02-22T09:12:00"),
     authorName: "creative_io",
     authorHandle: "creative_io",
+    likesCount: 30,
   },
   {
     id: "69398c1d5393462cecf974c7",
@@ -35,6 +37,7 @@ const mockPrompts = [
     pubDate: new Date("2024-02-21T17:40:00"),
     authorName: "creative_io",
     authorHandle: "creative_io",
+    likesCount: 10,
   },
 ]
 

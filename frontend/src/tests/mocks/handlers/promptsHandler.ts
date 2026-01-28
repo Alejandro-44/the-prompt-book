@@ -51,14 +51,31 @@ export const promptsHandlers = [
         !prompt.title ||
         !prompt.description ||
         !prompt.prompt ||
-        !prompt.model ||
-        !prompt.result_example
+        !prompt.model
       ) {
         return HttpResponse.json(
           { message: "Missing required fields" },
           { status: 400 },
         );
       }
+
+      const mockedId = "mockedid789456";
+      promptMocks.push({
+        id: mockedId,
+        title: prompt.title,
+        description: prompt.description,
+        prompt: prompt.prompt,
+        model: prompt.model,
+        result_example: prompt.result_example || "",
+        media_url: prompt.media_url || "",
+        hashtags: [],
+        likes_count: 0,
+        like_by_me: false,
+        pub_date: new Date().toISOString(),
+        author_id: "6939872c7f7a423bcb83fe0b",
+        author_name: "alex",
+        author_handle: "alex",
+      });
 
       return HttpResponse.json(
         {

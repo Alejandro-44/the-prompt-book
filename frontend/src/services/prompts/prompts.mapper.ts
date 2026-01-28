@@ -7,7 +7,8 @@ export const promptMapper = {
     title: dto.title,
     description: dto.description,
     prompt: dto.prompt,
-    resultExample: dto.result_example,
+    resultExample: dto.result_example || "",
+    mediaUrl: dto.media_url || "",
     model: dto.model,
     hashtags: dto.hashtags,
     pubDate: new Date(dto.pub_date),
@@ -17,9 +18,6 @@ export const promptMapper = {
     authorName: dto.author_name,
     authorHandle: dto.author_handle,
   }),
-};
-
-export const promptSummaryMapper = {
   toPromptSummary: (dto: PromptSummaryDTO): PromptSummary => ({
     id: dto.id,
     title: dto.title,
@@ -31,19 +29,23 @@ export const promptSummaryMapper = {
     authorName: dto.author_name,
     authorHandle: dto.author_handle,
   }),
-};
-
-export const promptCreateMapper = {
+  toPromptComment: (dto: PromptCommentDTO): PromptComment => ({
+    id: dto.id,
+    content: dto.content,
+    promptId: dto.prompt_id,
+    pubDate: new Date(dto.pub_date),
+    authorId: dto.author_id,
+    authorName: dto.author_name,
+    authorHandle: dto.author_handle,
+  }),
   toPromptCreateDTO: (model: PromptCreate): PromptCreateDTO => ({
     title: model.title,
     description: model.description,
     prompt: model.prompt,
     result_example: model.resultExample,
+    media_url: model.mediaUrl,
     model: model.model
   }),
-};
-
-export const promptUpdateMapper = {
   toPartialPromptCreateDTO: (model: Partial<PromptCreate>): Partial<PromptCreateDTO> => {
     const dto: Partial<PromptCreateDTO> = {};
     if (model.title !== undefined) {
@@ -61,18 +63,9 @@ export const promptUpdateMapper = {
     if (model.model !== undefined) {
       dto.model = model.model;
     }
+    if (model.mediaUrl !== undefined) {
+      dto.media_url = model.mediaUrl;
+    }
     return dto;
   },
-};
-
-export const promptCommentMapper = {
-  toPromptComment: (dto: PromptCommentDTO): PromptComment => ({
-    id: dto.id,
-    content: dto.content,
-    promptId: dto.prompt_id,
-    pubDate: new Date(dto.pub_date),
-    authorId: dto.author_id,
-    authorName: dto.author_name,
-    authorHandle: dto.author_handle,
-  }),
 };
