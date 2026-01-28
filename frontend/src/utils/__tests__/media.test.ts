@@ -41,16 +41,6 @@ describe('getMediaType', () => {
     ).toBe('youtube');
   });
 
-  it('detects image from known image hosts without extension', () => {
-    expect(
-      getMediaType('https://imgur.com/abc123')
-    ).toBe('image');
-
-    expect(
-      getMediaType('https://images.unsplash.com/photo-123456')
-    ).toBe('image');
-  });
-
   it('returns generic-link for unknown urls', () => {
     expect(
       getMediaType('https://example.com/some-page')

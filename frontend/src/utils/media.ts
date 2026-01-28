@@ -27,13 +27,6 @@ export const getMediaType = (url?: string): MediaType => {
     return 'video';
   }
 
-  if (
-    ['imgur.com', 'unsplash.com']
-      .some(h => hostname.includes(h))
-  ) {
-    return 'image';
-  }
-
   return 'generic-link';
 };
 
