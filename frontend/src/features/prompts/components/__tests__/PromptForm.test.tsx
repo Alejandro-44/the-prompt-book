@@ -58,7 +58,7 @@ describe("PromptForm", () => {
       );
       await user.type(screen.getByLabelText(/prompt/i), mockPrompt.prompt);
       await user.type(
-        screen.getByLabelText(/result/i),
+        screen.getByLabelText(/text output/i),
         mockPrompt.resultExample
       );
 
@@ -100,7 +100,7 @@ describe("PromptForm", () => {
       await user.click(mediaTab);
       
       await user.type(
-        screen.getByLabelText(/media url/i),
+        screen.getByLabelText(/image\/video url/i),
         mockPromptWithMedia.mediaUrl
       );
 
@@ -116,7 +116,7 @@ describe("PromptForm", () => {
       const user = userEvent.setup();
       await user.click(screen.getByRole("button", { name: /share/i }));
       const errors = await screen.findAllByRole("alert");
-      expect(errors).toHaveLength(4);
+      expect(errors).toHaveLength(5);
       expect(errors[0].textContent).toBe(
         "Title must be at least 3 characters"
       );
@@ -127,6 +127,9 @@ describe("PromptForm", () => {
         "Prompt must be at least 10 characters"
       );
       expect(errors[3].textContent).toBe("Select a model");
+      expect(errors[4].textContent).toBe(
+        "You must provide a result example or a media URL"
+      );
     });
 
     it("redirect to home page when cancel button is clicked", async () => {
@@ -148,6 +151,10 @@ describe("PromptForm", () => {
   });
 
   describe("PromptForm edit mode", () => {
+    afterEach(() => {
+      cleanup();
+      vi.clearAllMocks();
+    });
     it("renders without crashing", () => {
       renderWithProviders(<PromptForm mode="edit" onSubmit={mockOnSubmit} />);
 

@@ -7,7 +7,7 @@ describe("promptSchema", () => {
       description: "this is a prompt description",
       prompt: "This is a test prompt with at least 10 characters",
       resultExample: "This is a result example with at least 10 characters",
-      model: "gpt-4"
+      model: "gpt-4",
     };
 
     const result = promptSchema.safeParse(data);
@@ -19,7 +19,7 @@ describe("promptSchema", () => {
     it("returns an error if title is less than 3 characters", () => {
       const result = promptSchema.safeParse({
         title: "Hi",
-      description: "this is a prompt description",
+        description: "this is a prompt description",
         prompt: "This is a test prompt with at least 10 characters",
         resultExample: "This is a result example with at least 10 characters",
         model: "gpt-4",
@@ -63,7 +63,9 @@ describe("promptSchema", () => {
 
     const errors = (result as any).error.flatten().fieldErrors;
 
-    expect(errors.description?.[0]).toBe("Description must be at least 10 characters");
+    expect(errors.description?.[0]).toBe(
+      "Description must be at least 10 characters",
+    );
   });
 
   it("returns an error if prompt is less than 10 characters", () => {
@@ -78,7 +80,6 @@ describe("promptSchema", () => {
     expect(result.success).toBe(false);
 
     const errors = (result as any).error.flatten().fieldErrors;
-    
 
     expect(errors.prompt?.[0]).toBe("Prompt must be at least 10 characters");
   });
@@ -95,7 +96,9 @@ describe("promptSchema", () => {
 
     const errors = (result as any).error.flatten().fieldErrors;
 
-    expect(errors.resultExample?.[0]).toBe("Result example must be at least 10 characters");
+    expect(errors.resultExample?.[0]).toBe(
+      "Result example must be at least 10 characters",
+    );
   });
 
   it("returns an error if model is empty", () => {
@@ -112,5 +115,24 @@ describe("promptSchema", () => {
     const errors = (result as any).error.flatten().fieldErrors;
 
     expect(errors.model?.[0]).toBe("Select a model");
+  });
+
+  it("should fail when both resultExample and mediaUrl are empty", () => {
+    const result = promptSchema.safeParse({
+      title: "Test Prompt",
+      description: "This is a prompt description",
+      prompt: "This prompt has more than 10 characters",
+      model: "gpt-4",
+      resultExample: "",
+      mediaUrl: "",
+    });
+
+    expect(result.success).toBe(false);
+
+    if (!result.success) {
+      const paths = result.error.issues.map((issue) => issue.path[0]);
+      expect(paths).toContain("resultExample");
+      expect(paths).toContain("mediaUrl");
+    }
   });
 });
