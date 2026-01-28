@@ -5,8 +5,9 @@ export type Prompt = {
   title: string;
   description: string;
   prompt: string;
-  resultExample: string;
   model: string;
+  resultExample?: string;
+  mediaUrl?: string;
   hashtags: string[];
   pubDate: Date;
   likesCount: number;
@@ -32,8 +33,9 @@ export type PromptCreate = {
   title: string;
   description: string;
   prompt: string;
-  resultExample: string;
   model: string;
+  resultExample?: string;
+  mediaUrl?: string;
 };
 
 export type PromptCreateResponse = {

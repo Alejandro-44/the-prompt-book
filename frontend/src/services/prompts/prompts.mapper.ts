@@ -17,9 +17,6 @@ export const promptMapper = {
     authorName: dto.author_name,
     authorHandle: dto.author_handle,
   }),
-};
-
-export const promptSummaryMapper = {
   toPromptSummary: (dto: PromptSummaryDTO): PromptSummary => ({
     id: dto.id,
     title: dto.title,
@@ -31,9 +28,15 @@ export const promptSummaryMapper = {
     authorName: dto.author_name,
     authorHandle: dto.author_handle,
   }),
-};
-
-export const promptCreateMapper = {
+  toPromptComment: (dto: PromptCommentDTO): PromptComment => ({
+    id: dto.id,
+    content: dto.content,
+    promptId: dto.prompt_id,
+    pubDate: new Date(dto.pub_date),
+    authorId: dto.author_id,
+    authorName: dto.author_name,
+    authorHandle: dto.author_handle,
+  }),
   toPromptCreateDTO: (model: PromptCreate): PromptCreateDTO => ({
     title: model.title,
     description: model.description,
@@ -41,9 +44,6 @@ export const promptCreateMapper = {
     result_example: model.resultExample,
     model: model.model
   }),
-};
-
-export const promptUpdateMapper = {
   toPartialPromptCreateDTO: (model: Partial<PromptCreate>): Partial<PromptCreateDTO> => {
     const dto: Partial<PromptCreateDTO> = {};
     if (model.title !== undefined) {
@@ -63,16 +63,4 @@ export const promptUpdateMapper = {
     }
     return dto;
   },
-};
-
-export const promptCommentMapper = {
-  toPromptComment: (dto: PromptCommentDTO): PromptComment => ({
-    id: dto.id,
-    content: dto.content,
-    promptId: dto.prompt_id,
-    pubDate: new Date(dto.pub_date),
-    authorId: dto.author_id,
-    authorName: dto.author_name,
-    authorHandle: dto.author_handle,
-  }),
 };
