@@ -43,6 +43,7 @@ export const promptMapper = {
     description: model.description,
     prompt: model.prompt,
     result_example: model.resultExample,
+    media_url: model.mediaUrl,
     model: model.model
   }),
   toPartialPromptCreateDTO: (model: Partial<PromptCreate>): Partial<PromptCreateDTO> => {
@@ -61,6 +62,9 @@ export const promptMapper = {
     }
     if (model.model !== undefined) {
       dto.model = model.model;
+    }
+    if (model.mediaUrl !== undefined) {
+      dto.media_url = model.mediaUrl;
     }
     return dto;
   },
