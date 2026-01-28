@@ -6,8 +6,8 @@ export type PromptDTO = {
   description: string;
   prompt: string;
   model: string;
-  result_example?: string;
-  media_url?: string;
+  result_example: string;
+  media_url: string;
   hashtags: string[];
   pub_date: string;
   likes_count: number;

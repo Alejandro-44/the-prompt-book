@@ -6,8 +6,8 @@ export type Prompt = {
   description: string;
   prompt: string;
   model: string;
-  resultExample?: string;
-  mediaUrl?: string;
+  resultExample: string;
+  mediaUrl: string;
   hashtags: string[];
   pubDate: Date;
   likesCount: number;
