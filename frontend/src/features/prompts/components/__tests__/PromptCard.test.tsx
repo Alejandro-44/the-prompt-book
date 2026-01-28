@@ -12,6 +12,7 @@ const mockPrompt = {
   model: "gpt-4o",
   hashtags: ["javascript"],
   pubDate: new Date("2024-02-22T09:12:00"),
+  likesCount: 30,
   authorId: "6939876c7f7a423bcb83fe0e",
   authorName: "creative_io",
   authorHandle: "creative_io",
