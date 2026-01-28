@@ -8,6 +8,7 @@ import { useLikePrompt, usePrompt } from "../hooks";
 import { useRedirectOn } from "@/features/auth/hooks";
 import { PromptCardDetailSkeleton } from "./PromptCardDetailSkeleton";
 import { HashtagText } from "./HashtagText";
+import { MediaPreview } from "@/components/MediaPreview";
 
 type Props = {
   promptId: string;
@@ -16,11 +17,8 @@ type Props = {
 export function PromptCardDetail({ promptId }: Props) {
   const { prompt, isLoading, error } = usePrompt({ promptId });
   useRedirectOn({ when: error?.status === 404, to: "/404" });
-
   const { mutate: likePrompt } = useLikePrompt({ promptId });
-
   const [copied, setCopied] = useState(false);
-
   const handleCopy = async () => {
     await navigator.clipboard.writeText(prompt?.prompt || "");
     setCopied(true);
@@ -88,12 +86,17 @@ export function PromptCardDetail({ promptId }: Props) {
           </pre>
         </div>
       </section>
-      <section className="space-y-3">
+      {prompt?.mediaUrl && (
+        <section>
+             <MediaPreview url={prompt.mediaUrl} altText={`Result of ${prompt.title}`} />
+        </section>
+      )}
+      {prompt?.resultExample && (<section className="space-y-3">
         <h2 className="text-xl font-semibold">Result</h2>
         <div className="rounded-lg border bg-card p-4">
-          <p className="text-muted-foreground">{prompt?.resultExample}</p>
+          <p className="text-muted-foreground">{prompt.resultExample}</p>
         </div>
-      </section>
+      </section>)}
 
       <div className="flex items-center gap-4 border-t border-b py-4">
         <Button
