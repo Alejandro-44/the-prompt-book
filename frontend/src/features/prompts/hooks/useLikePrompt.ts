@@ -10,33 +10,41 @@ export function useLikePrompt({ promptId }: LikePrompt) {
   const queryKey = ["prompt", promptId];
 
   return useMutation({
-    mutationFn: (liked: boolean) =>
-      liked
+    mutationFn: (likeByMe: boolean) => {
+      return likeByMe
         ? PromptsService.unlikePrompt(promptId)
-        : PromptsService.likePrompt(promptId),
-    onMutate: async () => {
+        : PromptsService.likePrompt(promptId);
+    },
+
+    onMutate: async (likeByMe: boolean) => {
       await queryClient.cancelQueries({ queryKey });
-      const previousPrompt = queryClient.getQueryData<Prompt>(queryKey);
+
+      const previousPrompt =
+        queryClient.getQueryData<Prompt>(queryKey);
 
       queryClient.setQueryData<Prompt>(queryKey, (old) => {
         if (!old) return old;
+
         return {
           ...old,
-          isLiked: !old.likeByMe,
-          likesCount: old.likeByMe ? old.likesCount - 1 : old.likesCount + 1,
+          likeByMe: !likeByMe,
+          likesCount: likeByMe
+            ? old.likesCount - 1
+            : old.likesCount + 1,
         };
       });
+
       return { previousPrompt };
     },
-    onError: (_, __, context) => {
+
+    onError: (_error, _vars, context) => {
       if (context?.previousPrompt) {
         queryClient.setQueryData(queryKey, context.previousPrompt);
       }
     },
+
     onSettled: () => {
-      queryClient.invalidateQueries({
-        queryKey,
-      });
+      queryClient.invalidateQueries({ queryKey });
     },
   });
 }
