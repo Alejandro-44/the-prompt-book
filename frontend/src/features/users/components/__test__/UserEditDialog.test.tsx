@@ -1,5 +1,4 @@
 import { screen } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
 import userEvent from "@testing-library/user-event";
 import { renderWithProviders } from "@/tests/utils/renderWithProviders";
 import { useUpdateUser, useDeleteUser } from "../../hooks";
