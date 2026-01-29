@@ -1,5 +1,4 @@
 import { screen, fireEvent } from '@testing-library/react';
-import { vi } from 'vitest';
 import { UnauthorizedPage } from '../UnauthorizedPage';
 import { renderWithProviders } from '../../tests/utils/renderWithProviders';
 

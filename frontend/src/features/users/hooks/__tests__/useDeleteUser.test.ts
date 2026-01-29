@@ -1,4 +1,3 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHookWithClient } from "@/tests/utils/renderHookWithClient";
 import { useDeleteUser } from "../useDeleteUser";
 import { UsersService } from "@/services";

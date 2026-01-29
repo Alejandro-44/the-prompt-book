@@ -1,4 +1,3 @@
-import { describe, it, expect } from 'vitest';
 import { userSchema } from '../user.schema';
 
 describe('userSchema', () => {

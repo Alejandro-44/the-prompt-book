@@ -1,5 +1,4 @@
 import { screen, fireEvent } from '@testing-library/react';
-import { vi } from 'vitest';
 import { NotFoundPage } from '../NotFoundPage';
 import { renderWithProviders } from '../../tests/utils/renderWithProviders';
 
