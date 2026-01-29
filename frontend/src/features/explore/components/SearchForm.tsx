@@ -8,6 +8,7 @@ type SearchFormProps = {
 export default function SearchForm({ onSearch }: SearchFormProps) {
   return (
     <form
+      role="form"
       onSubmit={(event) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
