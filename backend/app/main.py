@@ -10,7 +10,6 @@ from app.core.config import settings
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     try:
-        # Definir conexion a la base de datos:
         client = AsyncMongoClient(settings.MONGO_URI)
         database = client.get_database(settings.MONGO_DB)
 
@@ -18,14 +17,12 @@ async def lifespan(app: FastAPI):
         app.state.client = client
         app.state.database = database
 
-        # Asegurarse que la app puede conectarse a la base de datos
         pong = await database.command("ping")
         if int(pong["ok"]) != 1:
             raise Exception("Cluster connection is not okay!")
-        # Regresar a la ejecucion de la app
+
         yield
 
-        # Cerrar conexion
         await client.close()
     except Exception as e:
         print("Error connecting to the database:", e)
@@ -34,10 +31,16 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan, title=settings.PROJECT_NAME)
 
+
 origins = [
     "http://127.0.0.1:5173",
     "http://localhost:5173",
 ]
+
+if settings.CORS_ORIGINS:
+    origins += settings.cors_origins_list
+
+print(origins)
 
 app.add_middleware(
     CORSMiddleware,
