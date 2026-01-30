@@ -7,7 +7,7 @@ type PromptsFeedProps = {
 
 export function PromptsFeed({ prompts }: PromptsFeedProps) {
   return (
-    <section data-testid="prompts-feed" className="max-w-2xl grid">
+    <section data-testid="prompts-feed" className="max-w-2xl grid w-full">
       {prompts.map((prompt) => <PromptCard key={prompt.id} className="border-b" prompt={prompt} />)}
     </section>
   )
