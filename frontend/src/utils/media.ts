@@ -8,12 +8,10 @@ export const getMediaType = (url?: string): MediaType => {
     return 'youtube';
   }
 
-  let hostname = '';
   let extension = '';
 
   try {
     const parsed = new URL(url);
-    hostname = parsed.hostname;
     extension = parsed.pathname.split('.').pop()?.toLowerCase() ?? '';
   } catch {
     return 'generic-link';
