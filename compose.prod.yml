@@ -1,0 +1,60 @@
+services:
+  mongodb:
+    image: mongodb/mongodb-community-server:8.2.3-ubi8
+    container_name: the-prompt-book-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: ${MONGO_DB}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    volumes:
+      - mongo_data_prod:/data/db
+    networks:
+      - backend
+    expose:
+    - "27017"
+
+  backend:
+    image: the-prompt-book-backend:stable
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: the-prompt-book-backend
+    restart: unless-stopped
+    depends_on:
+      - mongodb
+    environment:
+      PROJECT_NAME: "The Prompt Book"
+      MONGO_URI: ${MONGO_URI}
+      MONGO_DB: ${MONGO_DB}
+      JWT_SECRET: ${JWT_SECRET}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES}
+      CORS_ORIGINS: ${CORS_ORIGINS}
+    expose:
+      - "8000"
+    networks:
+      - backend
+      - frontend
+
+  frontend:
+    image: the-prompt-book-frontend:stable
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL}
+    container_name: the-prompt-book-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    networks:
+      - frontend
+
+volumes:
+  mongo_data_prod:
+
+networks:
+  backend:
+    driver: bridge
+  frontend:
+    driver: bridge
