@@ -1,0 +1,43 @@
+services:
+  mongo:
+    image: mongodb/mongodb-community-server:8.2.3-ubi8
+    container_name: the-prompt-book-mongodb
+    environment:
+      - MONGO_INITDB_DATABASE=thepromptbook
+    restart: unless-stopped
+    volumes:
+      - mongo_data_test:/data/db
+    ports:
+      - "27017:27017"
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: the-prompt-book-backend
+    restart: unless-stopped
+    environment:
+      - PROJECT_NAME="The Prompt Book (TEST)"
+      - MONGO_URI=mongodb://mongo:27017
+      - MONGO_DB=thepromptbook_test
+      - JWT_SECRET=secret_para_testing_123
+      - ACCESS_TOKEN_EXPIRE_MINUTES=30
+    depends_on:
+      - mongo
+    ports:
+      - "8000:8000"
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_BASE_URL=http://localhost:8000
+    container_name: the-prompt-book-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+
+volumes:
+  mongo_data_test:
