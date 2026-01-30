@@ -6,6 +6,7 @@ from pymongo import AsyncMongoClient
 
 from app.routes import auth_routes, user_routes, prompt_routes
 from app.core.config import settings
+from app.core.db import create_indexes
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -20,6 +21,8 @@ async def lifespan(app: FastAPI):
         pong = await database.command("ping")
         if int(pong["ok"]) != 1:
             raise Exception("Cluster connection is not okay!")
+        
+        await create_indexes(database)
 
         yield
 
