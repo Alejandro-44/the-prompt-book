@@ -63,7 +63,7 @@ export class PromptsService {
     page: number,
   ): Promise<PaginatedComments> {
     const data = await httpClient.get<GetCommentsResponse>(
-      `/prompts/${id}/comments`,
+      `/prompts/${id}/comments/`,
       { params: { page } },
     );
     const processedComments = data.items.map(promptMapper.toPromptComment);

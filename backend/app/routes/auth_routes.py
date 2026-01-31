@@ -70,7 +70,7 @@ async def login(
         )
 
 
-@router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
+@router.post("/logout/", status_code=status.HTTP_204_NO_CONTENT)
 async def logout(response: Response, current_user: UserDependency):
 
     response.delete_cookie(
