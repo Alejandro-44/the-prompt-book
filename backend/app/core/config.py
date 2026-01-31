@@ -1,6 +1,4 @@
 from pydantic_settings import BaseSettings
-from pydantic import field_validator
-
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "The Prompt Book API"
@@ -8,13 +6,16 @@ class Settings(BaseSettings):
     MONGO_DB: str = "thepromptbook"
     JWT_SECRET: str = "supersecret" 
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
-
-    # CORS
+    ENV: str = "dev"
     CORS_ORIGINS: str = ""
 
     @property
     def cors_origins_list(self) -> list[str]:
         return [o.strip() for o in self.CORS_ORIGINS.split(",") if o]
+
+    @property
+    def is_prod(self) -> bool:
+        return self.ENV == "prod"
 
 
 settings = Settings()

@@ -15,6 +15,7 @@ from app.core.exceptions import (
     UserNotFoundError,
     UnauthorizedError
 )
+from app.core.config import settings
 
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
@@ -56,7 +57,7 @@ async def login(
             key="access_token",
             value=token,
             httponly=True,
-            secure=False,
+            secure=settings.is_prod,
             samesite="strict",
             path="/"
         )
@@ -75,7 +76,7 @@ async def logout(response: Response, current_user: UserDependency):
     response.delete_cookie(
         key="access_token",
         httponly=True,
-        secure=False,
+        secure=settings.is_prod,
         samesite="strict",
         path="/"
     )
