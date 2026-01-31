@@ -13,7 +13,7 @@ export class UsersService {
   }
 
   static async deleteMe(): Promise<void> {
-    await httpClient.delete("/users/me");
+    await httpClient.delete("/users/me/");
   }
 
   static async getMyPrompts(params: GetPromptsParams): Promise<PaginatedPrompts> {
@@ -29,7 +29,7 @@ export class UsersService {
   }
 
   static async getUser(userHandle: string): Promise<User> {
-    const data = await httpClient.get<UserDTO>(`/users/${userHandle}`);
+    const data = await httpClient.get<UserDTO>(`/users/${userHandle}/`);
     return userMapper.toUser(data);
   }
 

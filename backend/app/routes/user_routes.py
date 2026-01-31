@@ -11,7 +11,7 @@ from app.core.exceptions import UserNotFoundError, UnauthorizedError, DatabaseEr
 router = APIRouter(prefix="/users", tags=["Users"])
 
 
-@router.get("/me", response_model=PrivateUser)
+@router.get("/me/", response_model=PrivateUser)
 async def get_me(current_user: UserDependency):
     """
     Get current logged in user
