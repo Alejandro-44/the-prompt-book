@@ -57,7 +57,7 @@ async def login(
             value=token,
             httponly=True,
             secure=True,
-            samesite="lax",
+            samesite="none",
             path="/"
         )
 
