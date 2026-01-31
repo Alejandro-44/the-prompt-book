@@ -11,7 +11,7 @@ from app.core.exceptions import UserNotFoundError, UnauthorizedError, DatabaseEr
 router = APIRouter(prefix="/users", tags=["Users"])
 
 
-@router.get("/me", response_model=PrivateUser)
+@router.get("/me/", response_model=PrivateUser)
 async def get_me(current_user: UserDependency):
     """
     Get current logged in user
@@ -19,7 +19,7 @@ async def get_me(current_user: UserDependency):
     return current_user
 
 
-@router.get("/me/prompts", response_model=PaginatedResponse[PromptSummary], summary="Get my prompts")
+@router.get("/me/prompts/", response_model=PaginatedResponse[PromptSummary], summary="Get my prompts")
 async def get_my_prompts(
     current_user: UserDependency,
     services: ServicesDependency,
@@ -43,7 +43,7 @@ async def get_my_prompts(
     )
 
 
-@router.delete("/me", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/me/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_me(user: UserDependency, service: ServicesDependency):
     deactivated = await service.user.deactivate(ObjectId(user.id))
     if deactivated:
@@ -51,7 +51,7 @@ async def delete_me(user: UserDependency, service: ServicesDependency):
         await service.comments.update_author_data(ObjectId(user.id), new_name="deleted user", new_handle="deleted")
 
 
-@router.get("/{user_handle}", response_model=User)
+@router.get("/{user_handle}/", response_model=User)
 async def get_user(
     user_handle: Annotated[str, Path(title="The handle of a user", max_length=30)],
     service: ServicesDependency):
@@ -64,7 +64,7 @@ async def get_user(
         )
 
 
-@router.get("/{user_handle}/prompts", response_model=PaginatedResponse[PromptSummary], summary="Get user prompts")
+@router.get("/{user_handle}/prompts/", response_model=PaginatedResponse[PromptSummary], summary="Get user prompts")
 async def get_user_prompts(
     user_handle: Annotated[str, Path(title="The handle of a user", max_length=30)],
     services: ServicesDependency,
@@ -99,7 +99,7 @@ async def get_user_prompts(
         )
 
 
-@router.patch("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.patch("/{user_id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def update_user(
     user_id: str,
     user_data: UpdateUser,

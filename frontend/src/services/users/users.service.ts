@@ -8,12 +8,12 @@ import { promptMapper } from "../prompts/prompts.mapper";
 
 export class UsersService {
   static async getMe(): Promise<PrivateUser> {
-    const data = await httpClient.get<PrivateUserDTO>("/users/me");
+    const data = await httpClient.get<PrivateUserDTO>("/users/me/");
     return userMapper.toPrivateUser(data);
   }
 
   static async deleteMe(): Promise<void> {
-    await httpClient.delete("/users/me");
+    await httpClient.delete("/users/me/");
   }
 
   static async getMyPrompts(params: GetPromptsParams): Promise<PaginatedPrompts> {
@@ -29,7 +29,7 @@ export class UsersService {
   }
 
   static async getUser(userHandle: string): Promise<User> {
-    const data = await httpClient.get<UserDTO>(`/users/${userHandle}`);
+    const data = await httpClient.get<UserDTO>(`/users/${userHandle}/`);
     return userMapper.toUser(data);
   }
 
@@ -47,6 +47,6 @@ export class UsersService {
 
   static async update(userId: string, data: UserUpdate) {
     const userUpdateDTO = userMapper.toUpdateUserDTO(data)
-    await httpClient.patch(`/users/${userId}`, userUpdateDTO);
+    await httpClient.patch(`/users/${userId}/`, userUpdateDTO);
   }
 }
