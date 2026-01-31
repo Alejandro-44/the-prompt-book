@@ -51,11 +51,11 @@ export class PromptsService {
 
   static async update(id: string, prompt: Partial<PromptCreate>) {
     const promptDTO = promptMapper.toPartialPromptCreateDTO(prompt);
-    await httpClient.patch(`/prompts/${id}`, promptDTO);
+    await httpClient.patch(`/prompts/${id}/`, promptDTO);
   }
 
   static async delete(id: string) {
-    await httpClient.delete(`/prompts/${id}`);
+    await httpClient.delete(`/prompts/${id}/`);
   }
 
   static async getPromptComments(
@@ -77,14 +77,14 @@ export class PromptsService {
   }
 
   static async createComment(promptId: string, comment: PromptCommentCreate) {
-    await httpClient.post(`/prompts/${promptId}/comments`, comment);
+    await httpClient.post(`/prompts/${promptId}/comments/`, comment);
   }
 
   static async likePrompt(promptId: string) {
-    await httpClient.post(`/prompts/${promptId}/like`);
+    await httpClient.post(`/prompts/${promptId}/like/`);
   }
 
   static async unlikePrompt(promptId: string) {
-    await httpClient.delete(`/prompts/${promptId}/like`);
+    await httpClient.delete(`/prompts/${promptId}/like/`);
   }
 }

@@ -14,20 +14,20 @@ import type { Token } from "./auth.model";
 
 export class AuthService {
   static async register(data: UserCreateDTO): Promise<User> {
-    const response = await httpClient.post<UserDTO>("/auth/register", data);
+    const response = await httpClient.post<UserDTO>("/auth/register/", data);
     return userMapper.toUser(response);
   }
 
   static async login(data: UserLoginDTO): Promise<Token> {
-    const response = await httpClient.post<TokenDTO>("/auth/login", data);
+    const response = await httpClient.post<TokenDTO>("/auth/login/", data);
     return authMapper.toToken(response);
   }
 
   static async logout(): Promise<void> {
-    await httpClient.post<void>("/auth/logout");
+    await httpClient.post<void>("/auth/logout/");
   }
 
   static async changePassword(data: UpdatePasswordDTO): Promise<void> {
-    await httpClient.post<void>("/auth/change-password", data);
+    await httpClient.post<void>("/auth/change-password/", data);
   }
 }

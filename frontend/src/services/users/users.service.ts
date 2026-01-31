@@ -8,7 +8,7 @@ import { promptMapper } from "../prompts/prompts.mapper";
 
 export class UsersService {
   static async getMe(): Promise<PrivateUser> {
-    const data = await httpClient.get<PrivateUserDTO>("/users/me");
+    const data = await httpClient.get<PrivateUserDTO>("/users/me/");
     return userMapper.toPrivateUser(data);
   }
 
@@ -47,6 +47,6 @@ export class UsersService {
 
   static async update(userId: string, data: UserUpdate) {
     const userUpdateDTO = userMapper.toUpdateUserDTO(data)
-    await httpClient.patch(`/users/${userId}`, userUpdateDTO);
+    await httpClient.patch(`/users/${userId}/`, userUpdateDTO);
   }
 }
