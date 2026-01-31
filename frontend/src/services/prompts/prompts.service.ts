@@ -33,7 +33,7 @@ export class PromptsService {
   }
 
   static async getPromptDetail(id: string): Promise<Prompt> {
-    const data = await httpClient.get<PromptDTO>(`/prompts/${id}`);
+    const data = await httpClient.get<PromptDTO>(`/prompts/${id}/`);
     return promptMapper.toPrompt(data);
   }
 
