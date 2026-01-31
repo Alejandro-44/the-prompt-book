@@ -15,12 +15,13 @@ from app.core.exceptions import (
     UserNotFoundError,
     UnauthorizedError
 )
+from app.core.config import settings
 
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
 
-@router.post("/register", response_model=User, summary="Create new user", status_code=status.HTTP_201_CREATED)
+@router.post("/register/", response_model=User, summary="Create new user", status_code=status.HTTP_201_CREATED)
 async def register(user: UserCreate, services: ServicesDependency):
     """
     Create a new user
@@ -40,7 +41,7 @@ async def register(user: UserCreate, services: ServicesDependency):
 
 
 
-@router.post("/login", response_model=Token, summary="Login user", status_code=status.HTTP_200_OK)
+@router.post("/login/", response_model=Token, summary="Login user", status_code=status.HTTP_200_OK)
 async def login(
     login: UserLogin,
     response: Response,
@@ -56,8 +57,8 @@ async def login(
             key="access_token",
             value=token,
             httponly=True,
-            secure=True,
-            samesite="lax",
+            secure=settings.is_prod,
+            samesite="strict",
             path="/"
         )
 
@@ -69,19 +70,19 @@ async def login(
         )
 
 
-@router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
+@router.post("/logout/", status_code=status.HTTP_204_NO_CONTENT)
 async def logout(response: Response, current_user: UserDependency):
 
     response.delete_cookie(
         key="access_token",
         httponly=True,
-        secure=True,      # Solo HTTPS en producción
-        samesite="lax",
+        secure=settings.is_prod,
+        samesite="strict",
         path="/"
     )
 
 
-@router.post("/change-password", summary="Change password", status_code=status.HTTP_204_NO_CONTENT)
+@router.post("/change-password/", summary="Change password", status_code=status.HTTP_204_NO_CONTENT)
 async def change_password(
     request: UpdatePassword,
     user: UserDependency,

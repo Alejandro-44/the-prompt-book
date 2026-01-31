@@ -56,7 +56,7 @@ async def get_prompts(
 
 
 @router.get(
-    "/{prompt_id}",
+    "/{prompt_id}/",
     response_model=Prompt,
     status_code=status.HTTP_200_OK
 )
@@ -94,7 +94,7 @@ async def create_prompt(
 
 
 @router.patch(
-    "/{prompt_id}",
+    "/{prompt_id}/",
     status_code=status.HTTP_204_NO_CONTENT
 )
 async def update_prompt(
@@ -128,7 +128,7 @@ async def update_prompt(
 
 
 @router.delete(
-    "/{prompt_id}", 
+    "/{prompt_id}/", 
     status_code=status.HTTP_204_NO_CONTENT
 )
 async def delete_prompt(
@@ -161,7 +161,7 @@ async def delete_prompt(
 
 
 @router.get(
-    "/{prompt_id}/comments",
+    "/{prompt_id}/comments/",
     response_model=PaginatedResponse[Comment],
     status_code=status.HTTP_200_OK
 )
@@ -181,7 +181,7 @@ async def get_comments(
 
 
 @router.post(
-    "/{prompt_id}/comments",
+    "/{prompt_id}/comments/",
     status_code=status.HTTP_201_CREATED
 )
 async def create_comment(
@@ -210,7 +210,7 @@ async def create_comment(
         
 
 @router.delete(
-    "/comments/{comment_id}",
+    "/comments/{comment_id}/",
     status_code=status.HTTP_204_NO_CONTENT
 )
 async def delete_comment(
@@ -233,7 +233,7 @@ async def delete_comment(
 
 
 @router.post(
-    "/{prompt_id}/like",
+    "/{prompt_id}/like/",
     status_code=status.HTTP_201_CREATED
 )
 async def like_prompt(
@@ -256,7 +256,7 @@ async def like_prompt(
 
 
 @router.delete(
-    "/{prompt_id}/like",
+    "/{prompt_id}/like/",
     status_code=status.HTTP_204_NO_CONTENT
 )
 async def unlike_prompt(
