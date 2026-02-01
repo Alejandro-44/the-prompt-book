@@ -21,7 +21,7 @@ export const Header = () => {
   return (
     <header className="sticky top-0 left-0 flex justify-center px-4 border-b mx-auto bg-background z-20">
       <div className="container grid grid-cols-2 md:grid-cols-[1fr_1.5fr_1fr] items-center h-16">
-        <Link className= "flex align-baseline gap-x-2" to="/">
+        <Link className= "flex justify-start align-baseline gap-x-2" to="/">
           <div className="flex size-8 items-center justify-center rounded-lg bg-primary">
             <span className="text-lg font-bold text-primary-foreground">P</span>
           </div>
@@ -56,7 +56,7 @@ export const Header = () => {
             className="gap-2 cursor-pointer"
           >
             <Plus className="size-4" />
-            <span className="hidden md:inline">Share</span>
+            <span className="hidden lg:inline">Share</span>
           </Button>
           <ThemeToggle />
           <UserMenu />
