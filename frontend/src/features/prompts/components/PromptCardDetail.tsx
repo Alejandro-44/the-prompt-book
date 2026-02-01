@@ -60,7 +60,7 @@ export function PromptCardDetail({ promptId }: Props) {
       </header>
       <section className="space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Prompt</h2>
+          <h2 className="text-2xl font-semibold">Prompt</h2>
           <Button
             variant="outline"
             size="sm"
@@ -70,12 +70,12 @@ export function PromptCardDetail({ promptId }: Props) {
           >
             {copied ? (
               <>
-                <Check className="h-4 w-4" />
+                <Check className="size-4" />
                 Copied
               </>
             ) : (
               <>
-                <CopyIcon className="h-4 w-4" />
+                <CopyIcon className="size-4" />
                 Copy
               </>
             )}
@@ -89,14 +89,20 @@ export function PromptCardDetail({ promptId }: Props) {
       </section>
       {prompt?.mediaUrl && (
         <section>
-             <MediaPreview url={prompt.mediaUrl} altText={`Result of ${prompt.title}`} />
+          <MediaPreview
+            url={prompt.mediaUrl}
+            altText={`Result of ${prompt.title}`}
+          />
         </section>
       )}
-      {prompt?.resultExample && (<section className="space-y-3">
-        <h2 className="text-xl font-semibold">Result</h2>
-        <MarkdownRenderer content={prompt.resultExample} />
-      </section>)}
-
+      {prompt?.resultExample && (
+        <section className="space-y-3">
+          <h2 className="text-2xl font-semibold">Result</h2>
+          <div className="rounded-lg border bg-card p-4">
+            <MarkdownRenderer content={prompt.resultExample} />
+          </div>
+        </section>
+      )}
       <div className="flex items-center gap-4 border-t border-b py-4">
         <Button
           onClick={() => {
