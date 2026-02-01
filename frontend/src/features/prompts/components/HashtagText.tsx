@@ -13,7 +13,7 @@ export function HashtagText({ text }: HashtagTextProps) {
     navitage(`/explore?search=${value}`)
   }
   return (
-    <p className="text-muted-foreground leading-relaxed">
+    <p className="text-foreground leading-relaxed">
       {parts.map((part, i) =>
         part.type === "hashtag" ? (
           <span
