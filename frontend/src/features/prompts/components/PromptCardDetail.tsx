@@ -9,6 +9,7 @@ import { useRedirectOn } from "@/features/auth/hooks";
 import { PromptCardDetailSkeleton } from "./PromptCardDetailSkeleton";
 import { HashtagText } from "./HashtagText";
 import { MediaPreview } from "@/components/MediaPreview";
+import { MarkdownRenderer } from "./MarkdownRenderer";
 
 type Props = {
   promptId: string;
@@ -93,9 +94,7 @@ export function PromptCardDetail({ promptId }: Props) {
       )}
       {prompt?.resultExample && (<section className="space-y-3">
         <h2 className="text-xl font-semibold">Result</h2>
-        <div className="rounded-lg border bg-card p-4">
-          <p className="text-muted-foreground">{prompt.resultExample}</p>
-        </div>
+        <MarkdownRenderer content={prompt.resultExample} />
       </section>)}
 
       <div className="flex items-center gap-4 border-t border-b py-4">
