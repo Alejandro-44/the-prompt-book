@@ -17,7 +17,7 @@ export function MediaPreview({ url, altText = "Media content" }: MediaPreviewPro
         <img 
           src={url} 
           alt={altText} 
-          className="w-full h-auto object-cover max-h-[500px]" 
+          className="w-full h-auto object-cover" 
           loading="lazy"
         />
       </div>
