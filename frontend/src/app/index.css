@@ -132,3 +132,8 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+textarea {
+  field-sizing: content;
+}
+
