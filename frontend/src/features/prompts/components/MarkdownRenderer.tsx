@@ -17,6 +17,14 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
         code: ({ children }) => (
           <code className="bg-background px-1 rounded">{children}</code>
         ),
+        th: ({ children }) => (
+          <th className="border px-3 py-2 text-left bg-muted font-medium">
+            {children}
+          </th>
+        ),
+        td: ({ children }) => (
+          <td className="border px-3 py-2">{children}</td>
+        ),
       }}
     >
       {content}

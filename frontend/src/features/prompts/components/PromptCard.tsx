@@ -41,19 +41,21 @@ export function PromptCard({
           </Avatar>
 
           <div className="flex-1 min-w-0 flex flex-col space-y-3">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span className="font-medium text-foreground">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground min-w-0">
+              <span className="font-medium text-foreground truncate max-w-40">
                 {prompt.authorName}
               </span>
               <span>·</span>
-              <span>{formatDate(prompt.pubDate.toDateString())}</span>
+              <span className="truncate">
+                {formatDate(prompt.pubDate.toISOString())}
+              </span>
               <span>·</span>
-              <span className="bg-muted px-1.5 py-0.5 text-xs font-medium">
+              <span className="bg-muted px-1.5 py-0.5 text-xs font-medium truncate max-w-24">
                 {prompt.model}
               </span>
             </div>
 
-            <h1 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
+            <h1 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">
               {prompt.title}
             </h1>
 
