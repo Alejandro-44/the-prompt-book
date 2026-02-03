@@ -9,8 +9,8 @@ export function PromptTags({ hashtags }: PromptTagsProps) {
   const remaining = hashtags.length - visible.length;
 
   return (
-    <div className="flex items-center flex-wrap gap-2 max-h-6 overflow-hidden">
-      {visible.map((hashtag) => (
+    <div className="flex flex-wrap gap-2 max-h-6 sm:max-w-full overflow-hidden">
+      {hashtags.map((hashtag) => (
         <Tag key={hashtag} hashtag={hashtag} />
       ))}
 

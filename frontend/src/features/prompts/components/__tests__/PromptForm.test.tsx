@@ -14,7 +14,7 @@ const mockPrompt = {
     "Write a catchy #marketing headline for a #SaaS that helps users automate workflows.",
   resultExample:
     "Automate Everything: The Smartest Way to Scale Your Productivity.",
-  model: "gpt-4",
+  model: "Gemini 3 pro",
   hashtags: ["marketing", "saas"],
 };
 
@@ -24,7 +24,7 @@ const mockPromptWithMedia = {
   description: "Create a beautiful image",
   prompt: "Generate an image of a sunset",
   mediaUrl: "https://example.com/image.png",
-  model: "gpt-4",
+  model: "Gemini 3 pro",
   hashtags: ["image", "sunset"],
 };
 
@@ -67,7 +67,7 @@ describe("PromptForm", () => {
       ) as HTMLSelectElement;
 
       fireEvent.change(hiddenSelect, {
-        target: { value: "gpt-4" },
+        target: { value: "gemini-3-pro" },
       });
 
       await user.click(screen.getByRole("button", { name: /share/i }));
@@ -93,7 +93,7 @@ describe("PromptForm", () => {
       ) as HTMLSelectElement;
 
       fireEvent.change(hiddenSelect, {
-        target: { value: "gpt-4" },
+        target: { value: "gemini-3-pro" },
       });
 
       const mediaTab = screen.getByTestId("media-result-tab");
