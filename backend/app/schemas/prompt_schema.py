@@ -51,6 +51,7 @@ class PromptUpdate(BaseModel):
     description: Optional[str] = None
     prompt: Optional[str] = None
     result_example: Optional[str] = None
+    media_url: Optional[str] = None
     model: Optional[str] = None
 
 class PromptSummary(BaseModel):

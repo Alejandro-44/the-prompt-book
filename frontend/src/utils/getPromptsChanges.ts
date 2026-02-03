@@ -23,6 +23,10 @@ export function getPromptChanges(
     changes.resultExample = current.resultExample;
   }
 
+  if (original.mediaUrl !== current.mediaUrl) {
+    changes.mediaUrl = current.mediaUrl;
+  }
+
   if (original.model !== current.model) {
     changes.model = current.model;
   }
