@@ -3,7 +3,7 @@ import { Header } from "./Header";
 
 export function Layout() {
   return (
-    <>
+    <div className="grid grid-rows-[auto_1fr_auto] min-h-dvh">
       <Header />
       <main className="container max-w-6xl mx-auto px-4 py-6">
         <Outlet />
@@ -23,6 +23,6 @@ export function Layout() {
           </span>
         </div>
       </footer>
-    </>
+    </div>
   );
 }

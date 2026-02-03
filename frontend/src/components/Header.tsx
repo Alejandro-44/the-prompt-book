@@ -19,7 +19,7 @@ export const Header = () => {
     setIsSearchOpen(false);
   };
   return (
-    <header className="sticky top-0 left-0 flex justify-center px-4 border-b mx-auto bg-background z-20">
+    <header className="sticky top-0 left-0 flex justify-center w-full px-4 border-b mx-auto bg-background z-20">
       <div className="container grid grid-cols-2 md:grid-cols-[1fr_1.5fr_1fr] items-center h-16">
         <Link className= "flex justify-start align-baseline gap-x-2" to="/">
           <div className="flex size-8 items-center justify-center rounded-lg bg-primary">
