@@ -63,7 +63,7 @@ export function MediaPreview({ url, altText = "Media content" }: MediaPreviewPro
         <FileIcon className="size-6 text-muted-foreground" />
       </div>
       <div className="flex-1 overflow-hidden">
-        <p className="font-medium truncate text-sm">Archivo adjunto / Enlace externo</p>
+        <p className="font-medium truncate text-sm">Link to extenal resource</p>
         <p className="text-xs text-muted-foreground truncate">{url}</p>
       </div>
       <ExternalLink className="size-4 text-muted-foreground" />
