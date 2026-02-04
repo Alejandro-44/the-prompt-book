@@ -48,9 +48,21 @@ export function PromptForm({
   return (
     <FormProvider {...methods}>
       <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
-        <RHFInput name="title" label="Title" />
-        <RHFTextArea name="description" label="Description" />
-        <RHFTextArea name="prompt" label="Prompt" />
+        <RHFInput
+          name="title"
+          label="Title"
+          placeholder="Put a title that summarizes your prompt"
+        />
+        <RHFTextArea
+          name="description"
+          label="Description"
+          placeholder="Describe the purpose of your prompt. What problem does it solve? What do you achieve with it?"
+        />
+        <RHFTextArea
+          name="prompt"
+          label="Prompt"
+          placeholder="Your prompt here"
+        />
         <RHFSelect
           name="model"
           label="Model"
