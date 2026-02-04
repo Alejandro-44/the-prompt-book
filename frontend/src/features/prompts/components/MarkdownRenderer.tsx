@@ -14,16 +14,22 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
           <h1 className="font-bold text-foreground">{children}</h1>
         ),
         p: ({ children }) => <p className="mb-2 text-foreground">{children}</p>,
-        code: ({ children }) => (
-          <code className="bg-background px-1 rounded">{children}</code>
-        ),
         th: ({ children }) => (
           <th className="border px-3 py-2 text-left bg-muted font-medium">
             {children}
           </th>
         ),
-        td: ({ children }) => (
-          <td className="border px-3 py-2">{children}</td>
+        td: ({ children }) => <td className="border px-3 py-2">{children}</td>,
+        hr: () => <hr className="my-6 border-foreground" />,
+        pre: ({ children }) => (
+          <div className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen overflow-x-auto">
+            <div className="mx-auto max-w-4xl px-4">
+              <pre className="rounded-lg bg-muted p-4 text-sm">{children}</pre>
+            </div>
+          </div>
+        ),
+        code: ({ children }) => (
+          <code className="font-mono text-sm">{children}</code>
         ),
       }}
     >
