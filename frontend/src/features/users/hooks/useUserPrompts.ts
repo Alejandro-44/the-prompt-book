@@ -1,14 +1,26 @@
-import { UsersService, type GetPromptsParams, type PaginatedPrompts } from "@/services";
+import {
+  UsersService,
+  type GetPromptsParams,
+  type PaginatedPrompts,
+} from "@/services";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
 interface UseUserPromptsParams extends GetPromptsParams {
   mode: "me" | "public";
   userHandle?: GetPromptsParams["author_handle"];
-};
+}
 
-export function useUserPrompts({ mode, userHandle, limit, hashtags, model, search, liked_by }: UseUserPromptsParams) {
-  const [page, setPage] = useState(1)
+export function useUserPrompts({
+  mode,
+  userHandle,
+  limit,
+  hashtags,
+  model,
+  search,
+  liked_by,
+}: UseUserPromptsParams) {
+  const [page, setPage] = useState(1);
   const isMe = mode === "me";
   const { data, isLoading, error } = useQuery<PaginatedPrompts>({
     queryKey: isMe
@@ -16,8 +28,22 @@ export function useUserPrompts({ mode, userHandle, limit, hashtags, model, searc
       : ["users", userHandle, "prompts", page, limit],
     queryFn: () =>
       isMe
-        ? UsersService.getMyPrompts({ page, hashtags, model, search, liked_by })
-        : UsersService.getUserPrompts(userHandle!, { page, hashtags, model, search, liked_by }),
+        ? UsersService.getMyPrompts({
+            page,
+            hashtags,
+            model,
+            search,
+            limit,
+            liked_by,
+          })
+        : UsersService.getUserPrompts(userHandle!, {
+            page,
+            hashtags,
+            model,
+            search,
+            limit,
+            liked_by,
+          }),
     enabled: isMe || !!userHandle,
   });
 

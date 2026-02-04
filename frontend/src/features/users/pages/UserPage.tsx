@@ -30,14 +30,14 @@ export function UserPage({ mode }: UserPageProps) {
     page,
     pages,
     setPage,
-  } = useUserPrompts({ mode, userHandle });
+  } = useUserPrompts({ mode, userHandle, limit: 9 });
 
   const {
     prompts: likedPrompts,
     page: likesPage,
     pages: likesPages,
     setPage: setLikesPages,
-  } = usePrompts({ liked_by: user?.id });
+  } = usePrompts({ liked_by: user?.id, limit: 9 });
 
   return (
     <div className="w-full grid max-w-6xl gap-4">
@@ -75,7 +75,7 @@ export function UserPage({ mode }: UserPageProps) {
               )}
               {prompts.length > 0 && (
                 <>
-                  <PromptsGrid prompts={prompts} editable={mode === "me"} />
+                  <PromptsGrid prompts={prompts} editable={mode === "me"} itemsLimit={9} />
                   <AppPagination
                     page={page!}
                     totalPages={pages!}
