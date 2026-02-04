@@ -11,7 +11,13 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
       remarkPlugins={[remarkGfm]}
       components={{
         h1: ({ children }) => (
-          <h1 className="font-bold text-foreground">{children}</h1>
+          <h1 className="text-xl font-bold text-foreground">{children}</h1>
+        ),
+        h2: ({ children }) => (
+          <h2 className="text-lg font-bold text-foreground">{children}</h2>
+        ),
+        h3: ({ children }) => (
+          <h3 className="font-bold text-foreground">{children}</h3>
         ),
         p: ({ children }) => <p className="mb-2 text-foreground">{children}</p>,
         th: ({ children }) => (
