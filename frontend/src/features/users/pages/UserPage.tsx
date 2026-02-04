@@ -75,7 +75,7 @@ export function UserPage({ mode }: UserPageProps) {
               )}
               {prompts.length > 0 && (
                 <>
-                  <PromptsGrid prompts={prompts} editable={mode === "me"} />
+                  <PromptsGrid prompts={prompts} editable={mode === "me"} itemsLimit={9} />
                   <AppPagination
                     page={page!}
                     totalPages={pages!}
