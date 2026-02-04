@@ -9,7 +9,6 @@
   - [Built with](#built-with)
   - [What I learned](#what-i-learned)
   - [Continued development](#continued-development)
-  - [Useful resources](#useful-resources)
 - [Author](#author)
 
 ## Overview
@@ -53,4 +52,4 @@ I hope to continue improving this project. First, I would like to improve the UI
 
 ## Author
 
-- Linkedin - [Add your name here](https://www.your-site.com)
+- Linkedin - [Alejandro Argüello Duarte](https://www.linkedin.com/in/alejandro-arguello-duarte/)
