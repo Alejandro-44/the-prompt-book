@@ -28,7 +28,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
         td: ({ children }) => <td className="border px-3 py-2">{children}</td>,
         hr: () => <hr className="my-6 border-foreground" />,
         pre: ({ children }) => (
-          <div className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen overflow-x-auto">
+          <div className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen overflow-hidden">
             <div className="mx-auto max-w-4xl px-4">
               <pre className="rounded-lg bg-muted p-4 text-sm">{children}</pre>
             </div>
