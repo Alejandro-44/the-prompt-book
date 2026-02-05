@@ -41,17 +41,17 @@ export function PromptCard({
           </Avatar>
 
           <div className="flex-1 min-w-0 flex flex-col space-y-3">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground min-w-0">
-              <span className="font-medium text-foreground truncate max-w-40">
+            <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+              <span className="font-medium text-foreground truncate max-w-max">
                 {prompt.authorName}
               </span>
               <span>·</span>
-              <span className="truncate">
-                {formatDate(prompt.pubDate.toISOString())}
-              </span>
-              <span>·</span>
-              <span className="bg-muted px-1.5 py-0.5 text-xs font-medium truncate max-w-24">
+              <span className="bg-muted px-1.5 py-0.5 text-xs font-medium truncate max-w-max">
                 {prompt.model}
+              </span>
+              <span className="hidden sm:inline">·</span>
+              <span className="hidden sm:inline truncate">
+                {formatDate(prompt.pubDate.toISOString())}
               </span>
             </div>
 
