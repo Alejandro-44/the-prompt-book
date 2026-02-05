@@ -60,17 +60,17 @@ export function MediaPreview({
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex items-center gap-3 p-4 rounded-lg border bg-muted/50 hover:bg-muted transition-colors group"
+      className="flex flex-wrap items-center gap-3 p-4 rounded-lg border bg-muted/50 hover:bg-muted transition-colors group"
     >
       <div className="p-2 bg-background rounded-md border shrink-0">
         <FileIcon className="size-6 text-muted-foreground" />
       </div>
 
       <div className="flex-1 basis-0 min-w-0 overflow-hidden">
-        <p className="font-medium text-sm">
-          Link to external resource
+        <p className="font-medium text-sm">Link to external resource</p>
+        <p className="text-xs text-muted-foreground wrap-anywhere">
+          {url}
         </p>
-        <p className="text-xs text-muted-foreground text-ellipsis">{url}</p>
       </div>
 
       <ExternalLink className="size-4 text-muted-foreground" />
